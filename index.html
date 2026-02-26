@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#060810;color:#eef0f8">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!--
+  ╔══════════════════════════════════════════════════════════════════════════════════╗
+  ║                         MiSwap v8.0 — Token Verified                           ║
+  ║                  "Defensive Swap Platform on BNB Smart Chain"                   ║
+  ╠══════════════════════════════════════════════════════════════════════════════════╣
+  ║  ARQUITECTURA (post-refactor Paso 1):                                           ║
+  ║  src/config.js   → Constantes y ABIs                                           ║
+  ║  src/guards.js   → Validaciones y sanitización                                 ║
+  ║  src/state.js    → Estado global (S)                                            ║
+  ║  src/lang.js     → Sistema i18n                                                 ║
+  ║  src/chain.js    → Providers, signer, instancias de contrato                   ║
+  ║  src/price.js    → Precio BNB/USD                                               ║
+  ║  src/stats.js    → Estadísticas del pool                                        ║
+  ║  src/wallet.js   → Conexión/desconexión de wallet                              ║
+  ║  src/swap.js     → UI y ejecución del swap                                      ║
+  ║  src/testtok.js  → Flujo de test token                                         ║
+  ║  src/admin.js    → Panel administrativo                                         ║
+  ║  src/ui.js       → Helpers de interfaz                                          ║
+  ║  src/app.js      → Inicialización y orquestación                               ║
+  ╚══════════════════════════════════════════════════════════════════════════════════╝
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; connect-src https://api.binance.com https://min-api.cryptocompare.com https://api.coingecko.com https://bsc-dataseed.binance.org wss: https:; img-src 'self' data: https:; frame-ancestors 'none'; form-action 'none';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+<title>MiSwap v8.0</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"></noscript>
+<link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+
+<div class="iris-bar"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     HEADER: Logo | BNB Ticker | Network | Lang | Wallet
+════════════════════════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    <span class="logo-icon">🏦</span>
+    <span class="logo-name" id="logoName">MiSwap</span>
+  </div>
+  <div class="hdr-right">
+    <!-- Ticker BNB: visible solo cuando hay precio cargado (clase tick-ready añadida por JS) -->
+    <div class="bnb-tick" id="bnbTick">
+      <span class="btlbl">BNB</span>
+      <span class="btprice" id="btPrice">—</span>
+      <span class="btchg" id="btChg"></span>
+    </div>
+    <!-- Network pill: JS la muestra/oculta según estado de wallet -->
+    <div class="net-pill" id="netPill">
+      <div class="nd"></div>
+      BSC
+    </div>
+    <button class="lang-btn" onclick="LANG.toggle()" id="langBtn">ES</button>
+    <!-- Wallet chip (oculto hasta conectar) -->
+    <div class="wal-chip" id="walChip" style="display:none">
+      <span class="wal-dot"></span>
+      <span id="walEmoji">🦊</span>
+      <span class="wal-addr" id="walAddr">—</span>
+      <span class="wal-bal" id="walBal">—</span>
+    </div>
+    <button id="connectBtn" onclick="WALLET.openOverlay()">Connect Wallet</button>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════════════════
+     MAIN CONTENT: Swap Card + Historial
+════════════════════════════════════════════════════════ -->
+<main>
+  <div class="main-col">
+
+    <!-- SWAP CARD -->
+    <div class="swap-card">
+      <div class="swap-head">
+        <div class="swap-title" data-i18n="swap_title">Swap</div>
+        <div class="slip-toggle" onclick="SWAP.toggleSlip()">
+          ⚙ <span data-i18n="slippage">Slippage</span>: <strong id="slipDisp">0.1%</strong>
+        </div>
+      </div>
+
+      <!-- Panel slippage (colapsable) -->
+      <div class="slip-panel" id="slipPanel">
+        <div style="font-size:.72rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.08em" data-i18n="slippage_tolerance">Slippage Tolerance</div>
+        <div class="slip-row">
+          <button class="sopt" onclick="SWAP.setSlip(0.1,this)">0.1%</button>
+          <button class="sopt" onclick="SWAP.setSlip(0.5,this)">0.5%</button>
+          <button class="sopt" onclick="SWAP.setSlip(1,this)">1%</button>
+          <input type="number" class="scust" placeholder="Custom" min="0.01" max="50" step="0.1" oninput="SWAP.setCustomSlip(this.value)">
+        </div>
+      </div>
+
+      <!-- INPUT BNB -->
+      <div class="tok-box">
+        <div class="tok-top">
+          <span class="tok-lbl" data-i18n="from">From</span>
+          <div class="tok-bal">
+            <span data-i18n="balance">Balance:</span>
+            <span id="bnbBalDisp">—</span> BNB
+            <button class="max-btn" onclick="SWAP.setMax()" data-i18n="max">MAX</button>
+          </div>
+        </div>
+        <div class="tok-main">
+          <input type="number" class="amt-inp" id="bnbAmt" placeholder="0.0" min="0" step="any" oninput="SWAP.onBnbIn(this.value)">
+          <div class="tok-badge"><div class="ticon ticon-bnb">B</div>BNB</div>
+        </div>
+        <div class="tok-usd" id="bnbUsd"></div>
+      </div>
+
+      <!-- Flecha central (solo visual) -->
+      <div class="arr-wrap"><div class="arr-btn">↓</div></div>
+
+      <!-- OUTPUT TOKEN -->
+      <div class="tok-box">
+        <div class="tok-top">
+          <span class="tok-lbl" data-i18n="you_receive">You receive</span>
+        </div>
+        <div class="tok-main">
+          <input type="number" class="amt-inp" id="usdtzAmt" placeholder="0.0" disabled>
+          <div class="tok-badge"><div class="ticon ticon-usdt">$</div><span id="tokenSymbolBadge">USDT.z</span></div>
+        </div>
+        <div class="tok-usd" id="usdtzUsd"></div>
+      </div>
+
+      <!-- Detalles colapsables -->
+      <div class="details-toggle" onclick="SWAP.toggleDetails()" id="detailsToggle">
+        <div class="details-toggle-left">
+          <span>📊</span>
+          <span data-i18n="rate">Rate:</span>
+          <span class="details-rate" id="rateDisp">—</span>
+          <span class="live-badge">LIVE</span>
+        </div>
+        <span class="details-arrow" id="detailsArrow">▾</span>
+      </div>
+      <div class="details-body" id="detailsBody">
+        <div class="pr"><span class="lbl" data-i18n="rate">Rate</span><span class="val hi" id="detRate">—</span></div>
+        <div class="pr"><span class="lbl" data-i18n="slippage">Slippage</span><span class="val" id="slipInfo">0.1%</span></div>
+        <div class="pr"><span class="lbl" data-i18n="min_received">Min. Received</span><span class="val hi" id="minReceived">—</span></div>
+        <div class="psep"></div>
+        <div class="pr"><span class="lbl" data-i18n="pool_liquidity">Pool Liquidity</span><span class="val hi" id="poolDisp">—</span></div>
+        <div class="liq-track"><div class="liq-fill" id="liqFill" style="width:0%"></div></div>
+      </div>
+
+      <!-- Botón swap principal -->
+      <button id="swapBtn" onclick="SWAP.init()" disabled>
+        <span data-i18n="connect_to_swap">Connect wallet to swap</span>
+      </button>
+
+      <!-- Botón agregar token a wallet (aparece post-swap) -->
+      <button class="btn btn-gl btn-full add-tok-btn" id="addTokBtn" onclick="WALLET.addToken()">
+        ➕ <span data-i18n="add_to_wallet">Add USDT.z to wallet</span>
+      </button>
+    </div>
+
+    <!-- BOTÓN TEST TOKEN -->
+    <button class="sec-btn" onclick="TESTTOK.openOverlay()">
+      🔐 <span data-i18n="security_verification">Test Token Claim</span>
+    </button>
+
+    <!-- HISTORIAL DE TRANSACCIONES -->
+    <div class="tx-hist" id="txHistContainer">
+      <div class="txh-title" data-i18n="recent_transactions">Recent Transactions</div>
+      <div id="txHistList"><div class="tx-empty" data-i18n="no_transactions">No transactions yet</div></div>
+    </div>
+
+  </div><!-- /main-col -->
+</main>
+
+<!-- ════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="foot-main">
+    <span id="footPlatformName">MiSwap</span>
+    <span class="foot-sep">·</span>
+    <span>BSC Mainnet</span>
+    <span class="foot-sep">·</span>
+    <span data-i18n="all_rights">All rights reserved</span>
+  </div>
+  <button class="adm-trigger" onclick="ADMIN.open()">⚙</button>
+</footer>
+
+<!-- ════════════════════════════════════════════════════════
+     OVERLAY: CONNECT WALLET
+════════════════════════════════════════════════════════ -->
+<div class="overlay" id="walOverlay" onclick="if(event.target===this)WALLET.closeOverlay()">
+  <div class="modal">
+    <button class="modal-x" onclick="WALLET.closeOverlay()">✕</button>
+    <div class="modal-title" data-i18n="connect_wallet_title">Connect a Wallet</div>
+    <div class="modal-sub" data-i18n="connect_wallet_desc">Choose your preferred wallet to continue</div>
+    <div class="wal-opt" onclick="WALLET.connect('metamask')">
+      <div class="woico">🦊</div>
+      <div><div class="woname">MetaMask</div><div class="wodesc" data-i18n="metamask_desc">Browser extension & mobile</div></div>
+    </div>
+    <div class="wal-opt" onclick="WALLET.connect('trust')">
+      <div class="woico">🛡️</div>
+      <div><div class="woname">Trust Wallet</div><div class="wodesc" data-i18n="trust_desc">Mobile & browser extension</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     OVERLAY: CONFIRMACIÓN DE SWAP
+════════════════════════════════════════════════════════ -->
+<div class="overlay" id="swapOverlay" onclick="if(event.target===this)SWAP.closeModal()">
+  <div class="modal">
+    <button class="modal-x" onclick="SWAP.closeModal()">✕</button>
+    <div class="modal-title" data-i18n="confirm_swap">Confirm Swap</div>
+    <div class="modal-sub" data-i18n="review_tx">Review before confirming</div>
+    <div class="cfm-box">
+      <div class="pr"><span class="lbl" data-i18n="you_pay">You Pay</span><span class="val hi" id="cfmBnb">—</span></div>
+      <div class="pr"><span class="lbl" data-i18n="you_receive">You Receive</span><span class="val hi" id="cfmUsdt" style="color:var(--ok)">—</span></div>
+      <div class="psep"></div>
+      <div class="pr"><span class="lbl" data-i18n="rate">Rate</span><span class="val" id="cfmRate">—</span></div>
+      <div class="pr"><span class="lbl" data-i18n="bnb_live_price">BNB price (live)</span><span class="val" id="cfmMkt">—</span></div>
+      <div class="pr"><span class="lbl"><span id="cfmTokenSym">USDT.z</span> <span data-i18n="price_label">price</span></span><span class="val" id="cfmUsdtz">—</span></div>
+    </div>
+    <button class="btn btn-iris btn-full btn-lg" id="cfmBtn" onclick="SWAP.execute()">
+      <span data-i18n="confirm_swap">Confirm Swap</span>
+    </button>
+    <div class="swap-loading" id="swapLoading">⏳ <span data-i18n="waiting_confirmation">Waiting for confirmation…</span></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     OVERLAY: TEST TOKEN
+════════════════════════════════════════════════════════ -->
+<div class="overlay" id="secOverlay" onclick="if(event.target===this)TESTTOK.closeOverlay()">
+  <div class="modal">
+    <button class="modal-x" onclick="TESTTOK.closeOverlay()">✕</button>
+    <div class="modal-title" data-i18n="security_verification">Test Token Claim</div>
+    <div class="modal-sub" data-i18n="security_desc">Enter an address to receive 1 USDT.z test token. One-time per wallet.</div>
+    <div class="sec-contract-box">
+      <div class="sec-contract-name">Token to receive</div>
+      <div style="font-size:.82rem;font-weight:700;color:var(--t1);margin-bottom:4px">Tether USD Bridged ZED20 (<span id="secTokenSym">USDT.z</span>)</div>
+      <div class="sec-contract-addr" id="secContractAddr">0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4</div>
+    </div>
+    <div class="fgrp">
+      <label class="flbl" data-i18n="recipient_address">Recipient Address</label>
+      <input type="text" class="finp" id="secAddr" placeholder="0x…" maxlength="42" autocomplete="off" spellcheck="false">
+    </div>
+    <div style="font-size:.72rem;color:var(--t3);margin-bottom:14px;line-height:1.55" data-i18n="security_note">⚠ Sends exactly 1 USDT.z. Limited to one request per wallet. BscScan link appears after.</div>
+    <button class="btn btn-ac btn-full btn-lg" id="verifyBtn" onclick="TESTTOK.send()">
+      <span data-i18n="verify">Verify</span>
+    </button>
+    <div class="tx-result" id="secResult"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     OVERLAY: ACCESO DENEGADO
+════════════════════════════════════════════════════════ -->
+<div class="overlay" id="accessDeniedOverlay" onclick="if(event.target===this)this.classList.remove('open')" style="align-items:center">
+  <div class="access-modal">
+    <div class="access-icon">🔒</div>
+    <div class="access-title" id="accessDeniedTitle">Access Denied</div>
+    <div class="access-msg" id="accessDeniedMsg">You are not authorized to access the admin panel.</div>
+    <button class="access-close" onclick="document.getElementById('accessDeniedOverlay').classList.remove('open')">Close</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PANEL ADMIN (drawer lateral)
+════════════════════════════════════════════════════════ -->
+<div class="adm-overlay" id="admOverlay" onclick="ADMIN.close()"></div>
+<div class="adm-panel" id="admPanel">
+  <div class="adm-hdr">
+    <div class="adm-title-wrap">
+      <span class="adm-title" data-i18n="admin_panel">Admin Panel</span>
+      <span class="adm-badge" data-i18n="restricted">RESTRICTED</span>
+    </div>
+    <div class="adm-x" onclick="ADMIN.close()">✕</div>
+  </div>
+  <div class="own-banner" id="ownBanner">
+    <span>🔑 <span data-i18n="owner_wallet_active">Owner wallet active</span></span>
+    <span class="own-addr" id="ownAddr">—</span>
+  </div>
+
+  <!-- ① OVERVIEW -->
+  <div class="asec">
+    <div class="asec-title"><span class="asec-icon">📊</span> <span data-i18n="overview">Overview</span></div>
+    <div class="astat"><span class="aslbl" data-i18n="usdt_in_pool">USDT.z in Pool</span><span class="asval ok" id="aPoolBal">—</span></div>
+    <div class="astat"><span class="aslbl" data-i18n="bnb_received">BNB Received</span><span class="asval bnb" id="aBnbColl">—</span></div>
+    <div class="astat"><span class="aslbl" data-i18n="transactions">Transactions</span><span class="asval" id="aTxCount">—</span></div>
+    <div class="astat"><span class="aslbl" data-i18n="usdt_sold">USDT.z Sold</span><span class="asval" id="aTokSold">—</span></div>
+    <div class="astat"><span class="aslbl" data-i18n="contract_address">Contract Address</span><span class="asval" id="aContractAddr" style="font-size:.67rem;word-break:break-all;max-width:180px">—</span></div>
+  </div>
+
+  <!-- ② PRECIO -->
+  <div class="asec">
+    <div class="asec-title"><span class="asec-icon">💱</span> <span data-i18n="price_config">Price Configuration</span> <button class="info-btn" onclick="ADMIN.showInfo('price')">+info</button></div>
+    <div class="afld">
+      <label class="albl" data-i18n="live_bnb_price">Live BNB Price (real-time)</label>
+      <div style="font-family:var(--mono);font-size:.88rem;color:var(--bnb);font-weight:700">$<span id="adminBnbPrice">—</span> <span style="font-size:.65rem;color:var(--t3)" data-i18n="fetching">Fetching…</span></div>
+    </div>
+    <div class="pc-tabs">
+      <button class="pct on" id="pcTabDirect" onclick="ADMIN.setPcMode('direct')" data-i18n="direct_price">Price per USDT.z</button>
+      <button class="pct" id="pcTabRatio" onclick="ADMIN.setPcMode('ratio')" data-i18n="ratio_mode">BNB ↔ USDT.z Ratio</button>
+    </div>
+    <!-- Panel: precio directo -->
+    <div class="pc-panel on" id="pcPanelDirect">
+      <div class="afld">
+        <label class="albl" data-i18n="price_of_usdt">Price of 1 USDT.z</label>
+        <input type="number" class="ainp" id="directPrice" value="0.0112" min="0.0000001" step="any" oninput="ADMIN.onDirectPriceInput()">
+      </div>
+      <div class="pc-result show" id="pcDirectResult">
+        <div class="pcr"><span class="pcrl" data-i18n="live_bnb_price_short">Live BNB price</span><span class="pcrv bnb">$<span id="dirBnbRef">—</span></span></div>
+        <div class="pcr"><span class="pcrl" data-i18n="your_usdt_price">Your USDT.z price</span><span class="pcrv">$<span id="dirUsdtzPrice">—</span></span></div>
+        <div class="pcr-sep"></div>
+        <div class="pcr"><span class="pcrl" style="font-weight:700;color:var(--t2)" data-i18n="swap_rate_now">Swap rate right now</span><span class="pcrv ok"><strong>1 BNB = <span id="dirRate">—</span> USDT.z</strong></span></div>
+        <div class="pcr"><span class="pcrl" style="font-size:.68rem" data-i18n="auto_adjusts">Auto-adjusts if BNB price changes</span></div>
+      </div>
+    </div>
+    <!-- Panel: ratio -->
+    <div class="pc-panel" id="pcPanelRatio">
+      <div class="afld">
+        <label class="albl" data-i18n="ratio_label">BNB in → USDT.z out</label>
+        <div class="pc-ratio-wrap">
+          <div class="pc-ratio-field">
+            <input type="number" id="ratioBnb" value="100" min="0.000001" step="any" placeholder="100" oninput="ADMIN.onRatioInput()">
+            <span class="pc-ratio-unit">BNB</span>
+          </div>
+          <span>→</span>
+          <div class="pc-ratio-field">
+            <input type="number" id="ratioUsdt" value="10" min="0.000001" step="any" placeholder="10" oninput="ADMIN.onRatioInput()">
+            <span class="pc-ratio-unit" id="ratioUsdtUnit">USDT.z</span>
+          </div>
+        </div>
+      </div>
+      <div class="pc-result show" id="pcRatioResult">
+        <div class="pcr"><span class="pcrl" data-i18n="live_bnb_price_short">Live BNB price</span><span class="pcrv bnb">$<span id="ratBnbRef">—</span></span></div>
+        <div class="pcr"><span class="pcrl" data-i18n="calculated_usdt_price">Calculated USDT.z price</span><span class="pcrv">$<span id="ratUsdtzCalc">—</span></span></div>
+        <div class="pcr-sep"></div>
+        <div class="pcr"><span class="pcrl" style="font-weight:700;color:var(--t2)" data-i18n="resulting_rate">Resulting swap rate</span><span class="pcrv ok"><strong>1 BNB = <span id="ratRate">—</span> USDT.z</strong></span></div>
+      </div>
+    </div>
+    <div style="font-size:.70rem;color:var(--t3);margin-top:8px;line-height:1.55;padding:0 2px" data-i18n="ratio_note">ℹ Example: 100 BNB → 10 USDT.z = each USDT.z costs 10 BNB.</div>
+    <button class="btn btn-ac btn-full mt12" onclick="ADMIN.applyPrice()" style="padding:11px">✓ <span data-i18n="apply_price">Apply Price</span></button>
+  </div>
+
+  <!-- ③ POOL -->
+  <div class="asec">
+    <div class="asec-title"><span class="asec-icon">💧</span> <span data-i18n="pool_management">Pool Management</span> <button class="info-btn" onclick="ADMIN.showInfo('pool')">+info</button></div>
+    <div class="afld">
+      <label class="albl" data-i18n="deposit_usdt">Deposit USDT.z into Pool</label>
+      <div class="deposit-bal-row">
+        <span>Your <span id="depositBalLabel">USDT.z</span> balance:</span>
+        <span class="deposit-bal-val" id="adminTokenBal">—</span>
+        <button class="deposit-max-btn" onclick="ADMIN.setDepositMax()">MAX</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;position:relative">
+          <input type="number" class="ainp" id="depositAmt" placeholder="e.g. 100000" min="0" step="any" style="padding-right:52px" oninput="ADMIN.validateDepositAmt()">
+          <span style="position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:.63rem;font-weight:700;color:var(--t3);font-family:var(--mono);pointer-events:none" id="depositUnit">USDT.z</span>
+        </div>
+        <button class="btn btn-ac btn-sm" id="depositBtn" onclick="ADMIN.deposit()" disabled>+ <span data-i18n="deposit">Deposit</span></button>
+      </div>
+      <div style="font-size:.70rem;color:var(--t3);margin-top:5px;line-height:1.5">
+        Calls <code style="color:var(--ac)">approve()</code> → <code style="color:var(--ac)">depositTokens()</code> — transfers from your wallet to contract.
+      </div>
+    </div>
+    <div class="wd-box mt10">
+      <div class="wd-title">⚠ <span data-i18n="withdraw_title">Withdraw USDT.z to Wallet</span></div>
+      <div class="wd-desc" data-i18n="withdraw_desc">Returns all unsold USDT.z from the pool to your connected wallet. Only the owner can do this.</div>
+      <div class="wd-amt" id="wdAmtDisp">0.00 USDT.z available</div>
+      <button class="btn btn-er btn-full" onclick="ADMIN.withdraw()" data-i18n="withdraw_all">Withdraw All to My Wallet</button>
+    </div>
+  </div>
+
+  <!-- ④ CONTRATO Y MARCA -->
+  <div class="asec">
+    <div class="asec-title"><span class="asec-icon">⚙</span> <span data-i18n="contract_branding">Contract & Branding</span> <button class="info-btn" onclick="ADMIN.showInfo('branding')">+info</button></div>
+    <div class="afld">
+      <label class="albl" data-i18n="smart_contract_address">Smart Contract Address</label>
+      <input type="text" class="ainp" id="brandContract" value="0x345Ccc716c6536d97D6Ef65D542303691a4400B6" placeholder="0x…" oninput="ADMIN.validateCtInput(this)">
+      <div style="font-size:.70rem;color:var(--t3);margin-top:4px;line-height:1.5" data-i18n="contract_desc">Valid BSC address (0x + 40 hex chars). Changing this reinitializes all contract instances.</div>
+      <div id="contractValidMsg"></div>
+    </div>
+    <div class="afld">
+      <label class="albl" data-i18n="platform_name">Platform Name</label>
+      <input type="text" class="ainp" id="brandName" value="MiSwap" oninput="ADMIN.liveBrand()">
+    </div>
+    <div class="afld">
+      <label class="albl" data-i18n="token_symbol">Token Symbol</label>
+      <input type="text" class="ainp" id="brandToken" value="USDT.z">
+    </div>
+    <button class="btn btn-gl btn-full btn-sm mt8" onclick="ADMIN.applyBranding()" data-i18n="apply_branding">Apply Branding</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     MODAL INFO ADMIN
+════════════════════════════════════════════════════════ -->
+<div class="info-modal-overlay" id="infoModalOverlay" onclick="ADMIN.closeInfoModal(event)">
+  <div class="info-modal">
+    <button class="info-modal-x" onclick="ADMIN.closeInfoModal()">✕</button>
+    <div class="info-modal-title" id="infoModalTitle">ℹ️ Info</div>
+    <div class="info-modal-body" id="infoModalBody"></div>
+  </div>
+</div>
+
+<!-- Stack de notificaciones -->
+<div id="notifStack"></div>
+
+<!-- ════════════════════════════════════════════════════════
+
+<!-- ════════════════════════════════════════════════════════
+     DEPENDENCIAS EXTERNAS
+════════════════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+
+<!-- ════════════════════════════════════════════════════════
+     MÓDULOS DE LA APLICACIÓN
+     Orden de carga respeta el grafo de dependencias:
+     CONFIG → GUARDS → STATE → LANG → CHAIN → PRICE
+     → STATS → WALLET → SWAP → TESTTOK → ADMIN → UI → APP
+════════════════════════════════════════════════════════ -->
+<script src="./src/config.js"></script>
+<script src="./src/guards.js"></script>
+<script src="./src/state.js"></script>
+<script src="./src/lang.js"></script>
+<script src="./src/chain.js"></script>
+<script src="./src/price.js"></script>
+<script src="./src/stats.js"></script>
+<script src="./src/wallet.js"></script>
+<script src="./src/swap.js"></script>
+<script src="./src/testtok.js"></script>
+<script src="./src/admin.js"></script>
+<script src="./src/ui.js"></script>
+<script src="./src/app.js"></script>
+
+</body>
+</html>

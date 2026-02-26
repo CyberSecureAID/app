@@ -1,0 +1,14 @@
+{
+  "name": "miswap",
+  "version": "8.0.0",
+  "description": "MiSwap — Defensive Swap Platform on BNB Smart Chain",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
