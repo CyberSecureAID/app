@@ -63,7 +63,8 @@ const CONFIG = Object.freeze({
    * verifica también con c.isAdmin() onchain.
    */
   AUTHORIZED_WALLETS: [
-    // Agrega wallets en minúsculas: '0xtu_wallet_admin'
+    '0x5a4d637ab7065eef1829c98a4ba3e18b541abda7',
+    '0x6f3928326f082029236321f033425dda881cfa4f'
   ],
 
   /*
