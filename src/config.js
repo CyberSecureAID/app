@@ -52,7 +52,7 @@ const CONFIG = Object.freeze({
     BNB_PRICE_MAX: 100_000,
     TOKEN_PRICE_MIN: 0.0000001,
     TOKEN_PRICE_MAX: 100_000,
-    GAS_RESERVE_BNB: 0.001, // BNB que no se puede gastar (reserva para gas)
+    GAS_RESERVE_BNB: 0.0003, // BNB que no se puede gastar (reserva para gas)
   }),
 
   /*
