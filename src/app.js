@@ -145,6 +145,15 @@ const APP = {
       if (document.visibilityState === 'visible') PRICE.refresh().catch(() => {});
     });
 
+    // Cargar historial persistido desde localStorage (sobrevive recargas)
+    try {
+      const saved = localStorage.getItem('miswap_tx_history');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) STATE.txHistory = parsed.slice(0, 10);
+      }
+    } catch (_) { /* localStorage no disponible — historial vacío */ }
+
     UI.renderLiqBar();
     UI.renderTxHist();
     SWAP.updateBtn();
