@@ -84,11 +84,16 @@ function bindEvents() {
       document.getElementById('accessDeniedOverlay').classList.remove('open');
     });
 
-  // ── ADMIN PANEL ──
+  // ── ADMIN DASHBOARD ──
   document.getElementById('admOverlay')
     .addEventListener('click', () => ADMIN.close());
   document.getElementById('admX')
     .addEventListener('click', () => ADMIN.close());
+
+  // Navegación sidebar
+  document.querySelectorAll('.dash-nav-item').forEach(btn => {
+    btn.addEventListener('click', () => ADMIN._switchView(btn.dataset.view));
+  });
   document.querySelectorAll('.info-btn').forEach(btn => {
     btn.addEventListener('click', () => ADMIN.showInfo(btn.dataset.info));
   });
@@ -102,22 +107,30 @@ function bindEvents() {
     .addEventListener('input', () => ADMIN.onRatioInput());
   document.getElementById('ratioUsdt')
     .addEventListener('input', () => ADMIN.onRatioInput());
-  document.querySelector('.btn-ac.btn-full.mt12')
-    .addEventListener('click', () => ADMIN.applyPrice());
+  // Apply price button — in dashboard viewPrice
+  document.querySelectorAll('.dash-btn-green').forEach(btn => {
+    if (btn.textContent.includes('Aplicar Precio')) {
+      btn.addEventListener('click', () => ADMIN.applyPrice());
+    }
+    if (btn.textContent.includes('Aplicar Configuración')) {
+      btn.addEventListener('click', () => ADMIN.applyBranding());
+    }
+  });
+  // Withdraw button
+  const wdBtn = document.querySelector('.dash-btn-red');
+  if (wdBtn) wdBtn.addEventListener('click', () => ADMIN.withdraw());
   document.getElementById('depositMaxBtn')
     .addEventListener('click', () => ADMIN.setDepositMax());
   document.getElementById('depositAmt')
     .addEventListener('input', () => ADMIN.validateDepositAmt());
   document.getElementById('depositBtn')
     .addEventListener('click', () => ADMIN.deposit());
-  document.querySelector('.btn-er.btn-full')
-    .addEventListener('click', () => ADMIN.withdraw());
+  // (withdraw handled above in dash-btn-red)
   document.getElementById('brandContract')
     .addEventListener('input', function() { ADMIN.validateCtInput(this); });
   document.getElementById('brandName')
     .addEventListener('input', () => ADMIN.liveBrand());
-  document.querySelector('.btn-gl.btn-full.btn-sm.mt8')
-    .addEventListener('click', () => ADMIN.applyBranding());
+  // (applyBranding handled above in dash-btn-green loop)
 
   // ── INFO MODAL ──
   document.getElementById('infoModalOverlay')
