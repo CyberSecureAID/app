@@ -373,6 +373,10 @@ const SWAP = {
     // Historial
     STATE.txHistory.unshift({ bnb: safeBnb, token: safeOut, hash: safeHash, time: new Date().toLocaleTimeString() });
     if (STATE.txHistory.length > 10) STATE.txHistory.pop();
+    // Persistir historial en localStorage para sobrevivir recargas
+    try {
+      localStorage.setItem('miswap_tx_history', JSON.stringify(STATE.txHistory));
+    } catch (_) { /* localStorage no disponible — continuar sin persistencia */ }
 
     // Limpiar inputs
     const bnbInp = document.getElementById('bnbAmt'); if (bnbInp) bnbInp.value = '';
