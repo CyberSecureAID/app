@@ -23,13 +23,18 @@ const ADMIN = {
       overlay.classList.add('open');
       return;
     }
-    // Paso 3: Abrir panel
+    // Paso 3: Abrir dashboard
     document.getElementById('admPanel').classList.add('open');
     document.getElementById('admOverlay').classList.add('open');
-    const ownBanner = document.getElementById('ownBanner'); if (ownBanner) ownBanner.classList.add('show');
-    const ownAddr = document.getElementById('ownAddr'); if (ownAddr) ownAddr.textContent = UI.abbr(STATE.walletAddress);
+    const ownAddr = document.getElementById('ownAddr'); 
+    if (ownAddr) ownAddr.textContent = UI.abbr(STATE.walletAddress);
+    const ownBanner = document.getElementById('ownBanner');
+    if (ownBanner) ownBanner.textContent = UI.abbr(STATE.walletAddress);
 
-    // Actualizar stats (usa public RPC si wallet no disponible)
+    // Activar vista Dashboard por defecto
+    this._switchView('overview');
+
+    // Cargar datos
     STATS.load().catch(() => {});
     if (window.ethereum) this._loadAdminTokenBalance().catch(() => {});
     this.updateStats();
@@ -37,9 +42,33 @@ const ADMIN = {
     this.updateAnalytics();
   },
 
+  /*
+   * _switchView(view): Cambia la vista activa del dashboard.
+   * Actualiza sidebar nav y muestra la sección correspondiente.
+   */
+  _switchView(view) {
+    // Nav items
+    document.querySelectorAll('.dash-nav-item').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.view === view);
+    });
+    // Views
+    document.querySelectorAll('.dash-view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`);
+    if (target) target.classList.add('active');
+    // Topbar title
+    const titles = { overview: 'Dashboard', price: 'Configuración de Precio', pool: 'Gestión del Pool', settings: 'Configuración' };
+    const titleEl = document.getElementById('dashViewTitle');
+    if (titleEl) titleEl.textContent = titles[view] || view;
+  },
+
   close() {
     document.getElementById('admPanel').classList.remove('open');
     document.getElementById('admOverlay').classList.remove('open');
+    // Destruir charts al cerrar para liberar memoria
+    ['chartTxHist','chartPool'].forEach(id => {
+      const c = document.getElementById(id);
+      if (c && c._chartInstance) { c._chartInstance.destroy(); c._chartInstance = null; }
+    });
   },
 
   /*
@@ -373,28 +402,50 @@ const ADMIN = {
    * antes de recrearlos para evitar memory leaks.
    */
   updateAnalytics() {
-    // KPIs
-    const fmt = (n, dec=2) => n > 0 ? n.toLocaleString('en-US', { maximumFractionDigits: dec }) : '0';
+    const fmt = (n, dec=2) => Number.isFinite(n) && n > 0 ? n.toLocaleString('en-US', { maximumFractionDigits: dec }) : '0';
     const el = id => document.getElementById(id);
 
-    if (el('kpiPool'))    el('kpiPool').textContent    = fmt(STATE.poolBalance) + ' ' + STATE.tokenSymbol;
-    if (el('kpiTx'))      el('kpiTx').textContent      = fmt(STATE.txCount, 0);
-    if (el('kpiBnb'))     el('kpiBnb').textContent     = fmt(STATE.bnbCollected, 4) + ' BNB';
-    if (el('kpiSold'))    el('kpiSold').textContent    = fmt(STATE.tokensSold) + ' ' + STATE.tokenSymbol;
+    // KPIs
+    if (el('kpiPool'))   el('kpiPool').textContent   = fmt(STATE.poolBalance) + ' ' + STATE.tokenSymbol;
+    if (el('kpiBnb'))    el('kpiBnb').textContent    = fmt(STATE.bnbCollected, 4) + ' BNB';
+    if (el('kpiSold'))   el('kpiSold').textContent   = fmt(STATE.tokensSold) + ' ' + STATE.tokenSymbol;
+    if (el('kpiTx'))     el('kpiTx').textContent     = fmt(STATE.txCount, 0);
     if (el('analyticsTime')) el('analyticsTime').textContent = new Date().toLocaleTimeString();
+
+    // USD value of sold tokens
+    const soldUsd = STATE.tokensSold * STATE.usdtzPriceUSD;
+    if (el('kpiSoldUsd')) el('kpiSoldUsd').textContent = soldUsd > 0 ? `≈ $${fmt(soldUsd)} USD` : '—';
 
     // Pool health bar
     const pct = STATE.poolMax > 0 ? Math.min(100, (STATE.poolBalance / STATE.poolMax) * 100) : 0;
-    if (el('kpiPoolPct')) el('kpiPoolPct').textContent = pct.toFixed(1) + '%';
+    if (el('kpiPoolPct')) el('kpiPoolPct').textContent = pct.toFixed(1) + '% de capacidad';
     if (el('kpiPoolBar')) el('kpiPoolBar').style.width = pct.toFixed(1) + '%';
 
-    // Colores del tema
-    const acColor    = '#2de89a';
-    const blueColor  = '#4f8dff';
-    const gridColor  = 'rgba(255,255,255,0.06)';
-    const textColor  = 'rgba(255,255,255,0.45)';
+    // Withdraw amount display
+    if (el('wdAmtDisp')) el('wdAmtDisp').textContent = fmt(STATE.poolBalance) + ' ' + STATE.tokenSymbol + ' disponibles';
 
-    // Chart 1: Historial de transacciones
+    // Recent tx list in dashboard
+    const txList = el('dashTxList');
+    if (txList) {
+      if (!STATE.txHistory.length) {
+        txList.innerHTML = '<div class="dash-tx-empty">Sin transacciones aún</div>';
+      } else {
+        txList.innerHTML = STATE.txHistory.slice(0, 6).map(tx => `
+          <div class="dash-tx-item">
+            <span class="dash-tx-tok">+${(tx.token||0).toFixed(2)} ${GUARDS.esc(STATE.tokenSymbol)}</span>
+            <span class="dash-tx-bnb">-${(tx.bnb||0).toFixed(4)} BNB</span>
+            <span class="dash-tx-time">${GUARDS.esc(tx.time||'')}</span>
+          </div>`).join('');
+      }
+    }
+
+    // Chart colors
+    const acColor   = '#2de89a';
+    const blueColor = '#4f8dff';
+    const gridColor = 'rgba(255,255,255,0.05)';
+    const textColor = 'rgba(255,255,255,0.4)';
+
+    // Chart 1: bar — tx history
     const txCanvas = el('chartTxHist');
     if (txCanvas && typeof Chart !== 'undefined') {
       if (txCanvas._chartInstance) txCanvas._chartInstance.destroy();
@@ -402,14 +453,15 @@ const ADMIN = {
       txCanvas._chartInstance = new Chart(txCanvas, {
         type: 'bar',
         data: {
-          labels: txData.map((_, i) => `#${i + 1}`),
+          labels: txData.map((t, i) => t.time || `#${i+1}`),
           datasets: [{
             label: STATE.tokenSymbol,
             data: txData.map(t => t.token || 0),
-            backgroundColor: acColor + 'AA',
+            backgroundColor: acColor + '55',
             borderColor: acColor,
-            borderWidth: 1,
-            borderRadius: 4,
+            borderWidth: 1.5,
+            borderRadius: 5,
+            hoverBackgroundColor: acColor + 'AA',
           }],
         },
         options: {
@@ -417,47 +469,51 @@ const ADMIN = {
           plugins: {
             legend: { display: false },
             tooltip: {
+              backgroundColor: '#1a1d26',
+              borderColor: 'rgba(255,255,255,.1)',
+              borderWidth: 1,
               callbacks: {
-                label: ctx => `${ctx.parsed.y.toFixed(2)} ${STATE.tokenSymbol} (−${txData[ctx.dataIndex]?.bnb?.toFixed(4) || '?'} BNB)`,
+                label: ctx => `${ctx.parsed.y.toFixed(2)} ${STATE.tokenSymbol}  (−${txData[ctx.dataIndex]?.bnb?.toFixed(4)||'?'} BNB)`,
               },
             },
           },
           scales: {
-            x: { ticks: { color: textColor, font: { size: 9 } }, grid: { color: gridColor } },
-            y: { ticks: { color: textColor, font: { size: 9 } }, grid: { color: gridColor } },
+            x: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
+            y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
           },
         },
       });
     }
 
-    // Chart 2: Distribución del pool (dona)
+    // Chart 2: doughnut — pool distribution
     const poolCanvas = el('chartPool');
     if (poolCanvas && typeof Chart !== 'undefined') {
       if (poolCanvas._chartInstance) poolCanvas._chartInstance.destroy();
-      const sold    = Math.max(0, STATE.tokensSold);
-      const remaining = Math.max(0, STATE.poolBalance);
+      const remaining = Math.max(0.001, STATE.poolBalance);
+      const sold      = Math.max(0.001, STATE.tokensSold);
       poolCanvas._chartInstance = new Chart(poolCanvas, {
         type: 'doughnut',
         data: {
           labels: ['Disponible en Pool', 'Vendido'],
           datasets: [{
-            data: [remaining || 0.001, sold || 0.001],
-            backgroundColor: [acColor + 'CC', blueColor + 'CC'],
-            borderColor: ['#111', '#111'],
-            borderWidth: 2,
+            data: [remaining, sold],
+            backgroundColor: [acColor + 'BB', blueColor + 'BB'],
+            borderColor: ['#13161e','#13161e'],
+            borderWidth: 3,
+            hoverOffset: 6,
           }],
         },
         options: {
           responsive: true,
-          cutout: '65%',
+          cutout: '68%',
           plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { color: textColor, font: { size: 9 }, padding: 10 },
-            },
+            legend: { display: false },
             tooltip: {
+              backgroundColor: '#1a1d26',
+              borderColor: 'rgba(255,255,255,.1)',
+              borderWidth: 1,
               callbacks: {
-                label: ctx => `${ctx.label}: ${ctx.parsed.toLocaleString('en-US', { maximumFractionDigits: 2 })} ${STATE.tokenSymbol}`,
+                label: ctx => `${ctx.label}: ${ctx.parsed.toLocaleString('en-US',{maximumFractionDigits:2})} ${STATE.tokenSymbol}`,
               },
             },
           },
@@ -465,6 +521,7 @@ const ADMIN = {
       });
     }
   },
+
 
   setupAdminTrigger() {
     const footer = document.querySelector('footer');
