@@ -271,258 +271,186 @@
 <!-- ════════════════════════════════════════════════════════
      PANEL ADMIN (drawer lateral)
 ════════════════════════════════════════════════════════ -->
-<!-- ════════════ FULL SCREEN ADMIN DASHBOARD ════════════ -->
-<div class="dash-backdrop" id="admOverlay"></div>
-<div class="dash-shell" id="admPanel">
+<div class="adm-overlay" id="admOverlay"></div>
+<div class="adm-panel" id="admPanel">
+  <div class="adm-hdr">
+    <div class="adm-title-wrap">
+      <span class="adm-title" data-i18n="admin_panel">Admin Panel</span>
+      <span class="adm-badge" data-i18n="restricted">RESTRICTED</span>
+    </div>
+    <div class="adm-x" id="admX">✕</div>
+  </div>
+  <div class="own-banner" id="ownBanner">
+    <span>🔑 <span data-i18n="owner_wallet_active">Owner wallet active</span></span>
+    <span class="own-addr" id="ownAddr">—</span>
+  </div>
 
-  <!-- SIDEBAR -->
-  <aside class="dash-sidebar">
-    <div class="dash-logo">
-      <span class="dash-logo-icon">🏦</span>
-      <div>
-        <div class="dash-logo-name">MiSwap</div>
-        <div class="dash-logo-sub">Admin Console</div>
+  <!-- ① OVERVIEW -->
+  <div class="asec">
+    <div class="asec-title"><span class="asec-icon">📊</span> <span data-i18n="overview">Overview</span></div>
+    <div class="astat"><span class="aslbl" data-i18n="usdt_in_pool">USDT.z in Pool</span><span class="asval ok" id="aPoolBal">—</span></div>
+    <div class="astat"><span class="aslbl" data-i18n="bnb_received">BNB Received</span><span class="asval bnb" id="aBnbColl">—</span></div>
+    <div class="astat"><span class="aslbl" data-i18n="transactions">Transactions</span><span class="asval" id="aTxCount">—</span></div>
+    <div class="astat"><span class="aslbl" data-i18n="usdt_sold">USDT.z Sold</span><span class="asval" id="aTokSold">—</span></div>
+    <div class="astat"><span class="aslbl" data-i18n="contract_address">Contract Address</span><span class="asval" id="aContractAddr" style="font-size:.67rem;word-break:break-all;max-width:180px">—</span></div>
+  </div>
+
+  <!-- ② ANALYTICS -->
+  <div class="asec" id="analyticsSection">
+    <div class="asec-title"><span class="asec-icon">📈</span> <span>Analytics en Tiempo Real</span></div>
+
+    <!-- KPI Cards -->
+    <div class="analytics-kpis">
+      <div class="kpi-card">
+        <div class="kpi-icon">💧</div>
+        <div class="kpi-val" id="kpiPool">—</div>
+        <div class="kpi-lbl">Pool Disponible</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">⛓</div>
+        <div class="kpi-val" id="kpiTx">—</div>
+        <div class="kpi-lbl">Transacciones</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-val" id="kpiBnb">—</div>
+        <div class="kpi-lbl">BNB Recaudado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📦</div>
+        <div class="kpi-val" id="kpiSold">—</div>
+        <div class="kpi-lbl">Tokens Vendidos</div>
       </div>
     </div>
 
-    <nav class="dash-nav">
-      <button class="dash-nav-item active" data-view="overview" id="navOverview">
-        <span class="dash-nav-icon">📊</span>
-        <span>Dashboard</span>
-      </button>
-      <button class="dash-nav-item" data-view="price" id="navPrice">
-        <span class="dash-nav-icon">💱</span>
-        <span>Precio</span>
-      </button>
-      <button class="dash-nav-item" data-view="pool" id="navPool">
-        <span class="dash-nav-icon">💧</span>
-        <span>Pool</span>
-      </button>
-      <button class="dash-nav-item" data-view="settings" id="navSettings">
-        <span class="dash-nav-icon">⚙</span>
-        <span>Configuración</span>
-      </button>
-    </nav>
-
-    <div class="dash-sidebar-footer">
-      <div class="dash-wallet-badge">
-        <span class="dash-wallet-dot"></span>
-        <span class="dash-wallet-addr" id="ownAddr">—</span>
+    <!-- Pool health bar -->
+    <div class="analytics-pool-wrap">
+      <div class="analytics-pool-label">
+        <span>Salud del Pool</span>
+        <span id="kpiPoolPct">—%</span>
       </div>
-      <button class="dash-close-btn" id="admX">✕ Cerrar</button>
-    </div>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main class="dash-main">
-
-    <!-- TOP BAR -->
-    <div class="dash-topbar">
-      <div class="dash-topbar-title" id="dashViewTitle">Dashboard</div>
-      <div class="dash-topbar-right">
-        <div class="dash-live-badge">● LIVE</div>
-        <div class="dash-updated">Actualizado: <span id="analyticsTime">—</span></div>
+      <div class="analytics-pool-bar-bg">
+        <div class="analytics-pool-bar-fill" id="kpiPoolBar"></div>
       </div>
     </div>
 
-    <!-- ════ VIEW: DASHBOARD ════ -->
-    <div class="dash-view active" id="viewOverview">
+    <!-- Gráfica: historial de swaps -->
+    <div class="analytics-chart-wrap">
+      <div class="analytics-chart-title">Últimas Transacciones (USDT.z)</div>
+      <canvas id="chartTxHist" height="140"></canvas>
+    </div>
 
-      <!-- KPI Row -->
-      <div class="dash-kpi-row">
-        <div class="dash-kpi-card">
-          <div class="dash-kpi-top">
-            <span class="dash-kpi-label">Pool Disponible</span>
-            <span class="dash-kpi-icon" style="background:rgba(45,232,154,.12);color:#2de89a">💧</span>
-          </div>
-          <div class="dash-kpi-val" id="kpiPool">—</div>
-          <div class="dash-kpi-sub" id="kpiPoolPct">—% de capacidad</div>
-          <div class="dash-kpi-bar-bg"><div class="dash-kpi-bar-fill green" id="kpiPoolBar"></div></div>
-        </div>
-        <div class="dash-kpi-card">
-          <div class="dash-kpi-top">
-            <span class="dash-kpi-label">BNB Recaudado</span>
-            <span class="dash-kpi-icon" style="background:rgba(243,186,47,.12);color:#f3ba2f">⛓</span>
-          </div>
-          <div class="dash-kpi-val" id="kpiBnb">—</div>
-          <div class="dash-kpi-sub">Total histórico</div>
-        </div>
-        <div class="dash-kpi-card">
-          <div class="dash-kpi-top">
-            <span class="dash-kpi-label">Tokens Vendidos</span>
-            <span class="dash-kpi-icon" style="background:rgba(79,141,255,.12);color:#4f8dff">📦</span>
-          </div>
-          <div class="dash-kpi-val" id="kpiSold">—</div>
-          <div class="dash-kpi-sub" id="kpiSoldUsd">—</div>
-        </div>
-        <div class="dash-kpi-card">
-          <div class="dash-kpi-top">
-            <span class="dash-kpi-label">Transacciones</span>
-            <span class="dash-kpi-icon" style="background:rgba(160,102,255,.12);color:#a066ff">🔁</span>
-          </div>
-          <div class="dash-kpi-val" id="kpiTx">—</div>
-          <div class="dash-kpi-sub">Swaps completados</div>
-        </div>
+    <!-- Gráfica: distribución -->
+    <div class="analytics-chart-wrap" style="margin-top:14px">
+      <div class="analytics-chart-title">Distribución del Pool</div>
+      <canvas id="chartPool" height="140"></canvas>
+    </div>
+
+    <!-- Última actualización -->
+    <div class="analytics-updated">Actualizado: <span id="analyticsTime">—</span></div>
+  </div>
+
+  <!-- ③ PRECIO -->
+  <div class="asec">
+    <div class="asec-title"><span class="asec-icon">💱</span> <span data-i18n="price_config">Price Configuration</span> <button class="info-btn" data-info="price">+info</button></div>
+    <div class="afld">
+      <label class="albl" data-i18n="live_bnb_price">Live BNB Price (real-time)</label>
+      <div style="font-family:var(--mono);font-size:.88rem;color:var(--bnb);font-weight:700">$<span id="adminBnbPrice">—</span> <span style="font-size:.65rem;color:var(--t3)" data-i18n="fetching">Fetching…</span></div>
+    </div>
+    <div class="pc-tabs">
+      <button class="pct on" id="pcTabDirect" data-i18n="direct_price">Price per USDT.z</button>
+      <button class="pct" id="pcTabRatio" data-i18n="ratio_mode">BNB ↔ USDT.z Ratio</button>
+    </div>
+    <!-- Panel: precio directo -->
+    <div class="pc-panel on" id="pcPanelDirect">
+      <div class="afld">
+        <label class="albl" data-i18n="price_of_usdt">Price of 1 USDT.z</label>
+        <input type="number" class="ainp" id="directPrice" value="0.0112" min="0.0000001" step="any">
       </div>
-
-      <!-- Charts row -->
-      <div class="dash-charts-row">
-        <!-- Bar chart: tx history -->
-        <div class="dash-chart-card wide">
-          <div class="dash-chart-hdr">
-            <div class="dash-chart-title">Historial de Swaps</div>
-            <div class="dash-chart-sub">USDT.z por transacción</div>
+      <div class="pc-result show" id="pcDirectResult">
+        <div class="pcr"><span class="pcrl" data-i18n="live_bnb_price_short">Live BNB price</span><span class="pcrv bnb">$<span id="dirBnbRef">—</span></span></div>
+        <div class="pcr"><span class="pcrl" data-i18n="your_usdt_price">Your USDT.z price</span><span class="pcrv">$<span id="dirUsdtzPrice">—</span></span></div>
+        <div class="pcr-sep"></div>
+        <div class="pcr"><span class="pcrl" style="font-weight:700;color:var(--t2)" data-i18n="swap_rate_now">Swap rate right now</span><span class="pcrv ok"><strong>1 BNB = <span id="dirRate">—</span> USDT.z</strong></span></div>
+        <div class="pcr"><span class="pcrl" style="font-size:.68rem" data-i18n="auto_adjusts">Auto-adjusts if BNB price changes</span></div>
+      </div>
+    </div>
+    <!-- Panel: ratio -->
+    <div class="pc-panel" id="pcPanelRatio">
+      <div class="afld">
+        <label class="albl" data-i18n="ratio_label">BNB in → USDT.z out</label>
+        <div class="pc-ratio-wrap">
+          <div class="pc-ratio-field">
+            <input type="number" id="ratioBnb" value="100" min="0.000001" step="any" placeholder="100">
+            <span class="pc-ratio-unit">BNB</span>
           </div>
-          <canvas id="chartTxHist" height="200"></canvas>
-        </div>
-        <!-- Doughnut: pool distribution -->
-        <div class="dash-chart-card">
-          <div class="dash-chart-hdr">
-            <div class="dash-chart-title">Distribución del Pool</div>
-            <div class="dash-chart-sub">Disponible vs Vendido</div>
-          </div>
-          <canvas id="chartPool" height="200"></canvas>
-          <div class="dash-donut-legend">
-            <div class="dash-donut-leg-item"><span style="background:#2de89a"></span>Disponible</div>
-            <div class="dash-donut-leg-item"><span style="background:#4f8dff"></span>Vendido</div>
+          <span>→</span>
+          <div class="pc-ratio-field">
+            <input type="number" id="ratioUsdt" value="10" min="0.000001" step="any" placeholder="10">
+            <span class="pc-ratio-unit" id="ratioUsdtUnit">USDT.z</span>
           </div>
         </div>
       </div>
-
-      <!-- Stats table row -->
-      <div class="dash-stats-row">
-        <div class="dash-stats-card">
-          <div class="dash-chart-title" style="margin-bottom:14px">Resumen del Contrato</div>
-          <div class="dash-stat-line"><span>Contrato</span><span id="aContractAddr" style="font-size:.72rem;word-break:break-all">—</span></div>
-          <div class="dash-stat-line"><span>Pool actual</span><span class="ok" id="aPoolBal">—</span></div>
-          <div class="dash-stat-line"><span>BNB recaudado</span><span class="bnb" id="aBnbColl">—</span></div>
-          <div class="dash-stat-line"><span>Total transacciones</span><span id="aTxCount">—</span></div>
-          <div class="dash-stat-line"><span>Tokens vendidos</span><span id="aTokSold">—</span></div>
-        </div>
-        <div class="dash-stats-card">
-          <div class="dash-chart-title" style="margin-bottom:14px">Últimas Transacciones</div>
-          <div id="dashTxList" class="dash-tx-list">
-            <div class="dash-tx-empty">Sin transacciones aún</div>
-          </div>
-        </div>
+      <div class="pc-result show" id="pcRatioResult">
+        <div class="pcr"><span class="pcrl" data-i18n="live_bnb_price_short">Live BNB price</span><span class="pcrv bnb">$<span id="ratBnbRef">—</span></span></div>
+        <div class="pcr"><span class="pcrl" data-i18n="calculated_usdt_price">Calculated USDT.z price</span><span class="pcrv">$<span id="ratUsdtzCalc">—</span></span></div>
+        <div class="pcr-sep"></div>
+        <div class="pcr"><span class="pcrl" style="font-weight:700;color:var(--t2)" data-i18n="resulting_rate">Resulting swap rate</span><span class="pcrv ok"><strong>1 BNB = <span id="ratRate">—</span> USDT.z</strong></span></div>
       </div>
+    </div>
+    <div style="font-size:.70rem;color:var(--t3);margin-top:8px;line-height:1.55;padding:0 2px" data-i18n="ratio_note">ℹ Example: 100 BNB → 10 USDT.z = each USDT.z costs 10 BNB.</div>
+    <button class="btn btn-ac btn-full mt12" style="padding:11px">✓ <span data-i18n="apply_price">Apply Price</span></button>
+  </div>
 
-    </div><!-- /viewOverview -->
-
-    <!-- ════ VIEW: PRECIO ════ -->
-    <div class="dash-view" id="viewPrice">
-      <div class="dash-form-grid">
-        <div class="dash-form-card">
-          <div class="dash-chart-title" style="margin-bottom:6px">Precio BNB en Tiempo Real</div>
-          <div class="dash-bnb-price-display">$<span id="adminBnbPrice">—</span> <span class="dash-live-badge">LIVE</span></div>
-          <div class="dash-form-divider"></div>
-          <div class="dash-chart-title" style="margin-bottom:12px">Modo de Configuración</div>
-          <div class="dash-pc-tabs">
-            <button class="dash-pct active" id="pcTabDirect">Precio Directo</button>
-            <button class="dash-pct" id="pcTabRatio">Ratio BNB/Token</button>
-          </div>
-          <!-- Precio directo -->
-          <div class="dash-pc-panel active" id="pcPanelDirect">
-            <label class="dash-label">Precio de 1 <span id="directPriceUnit">USDT.z</span> (en BNB)</label>
-            <input type="number" class="dash-input" id="directPrice" value="0.0112" min="0.0000001" step="any">
-            <div class="dash-pc-result" id="pcDirectResult">
-              <div class="dash-pcr"><span>Precio BNB</span><span class="bnb">$<span id="dirBnbRef">—</span></span></div>
-              <div class="dash-pcr"><span>Precio USDT.z</span><span>$<span id="dirUsdtzPrice">—</span></span></div>
-              <div class="dash-pcr-sep"></div>
-              <div class="dash-pcr"><span style="font-weight:700">Tasa actual</span><span class="ok"><strong>1 BNB = <span id="dirRate">—</span> USDT.z</strong></span></div>
-            </div>
-          </div>
-          <!-- Ratio -->
-          <div class="dash-pc-panel" id="pcPanelRatio">
-            <label class="dash-label">BNB → USDT.z (ratio de intercambio)</label>
-            <div class="dash-ratio-wrap">
-              <div class="dash-ratio-field">
-                <input type="number" id="ratioBnb" value="100" min="0.000001" step="any" placeholder="100">
-                <span>BNB</span>
-              </div>
-              <span class="dash-ratio-arrow">→</span>
-              <div class="dash-ratio-field">
-                <input type="number" id="ratioUsdt" value="10" min="0.000001" step="any" placeholder="10">
-                <span id="ratioUsdtUnit">USDT.z</span>
-              </div>
-            </div>
-            <div class="dash-pc-result" id="pcRatioResult">
-              <div class="dash-pcr"><span>Precio BNB</span><span class="bnb">$<span id="ratBnbRef">—</span></span></div>
-              <div class="dash-pcr"><span>Precio USDT.z calculado</span><span>$<span id="ratUsdtzCalc">—</span></span></div>
-              <div class="dash-pcr-sep"></div>
-              <div class="dash-pcr"><span style="font-weight:700">Tasa resultante</span><span class="ok"><strong>1 BNB = <span id="ratRate">—</span> USDT.z</strong></span></div>
-            </div>
-          </div>
-          <button class="dash-btn dash-btn-green" style="margin-top:16px">✓ Aplicar Precio</button>
-        </div>
-        <div class="dash-form-card">
-          <div class="dash-chart-title" style="margin-bottom:12px">¿Cómo funciona el precio?</div>
-          <div class="dash-info-block">
-            <p>El precio determina cuántos tokens USDT.z recibirá el usuario por cada BNB que envíe al contrato.</p>
-            <p><strong>Modo Directo:</strong> Defines el precio exacto en BNB de cada USDT.z. La tasa se ajusta automáticamente cuando el precio del BNB cambia.</p>
-            <p><strong>Modo Ratio:</strong> Defines cuántos BNB equivalen a cuántos USDT.z. Útil para pensar en términos de proporción.</p>
-            <div class="dash-info-note">⚠ El cambio de precio requiere firma de tu wallet admin y se aplica en el contrato onchain.</div>
-          </div>
-        </div>
+  <!-- ④ POOL -->
+  <div class="asec">
+    <div class="asec-title"><span class="asec-icon">💧</span> <span data-i18n="pool_management">Pool Management</span> <button class="info-btn" data-info="pool">+info</button></div>
+    <div class="afld">
+      <label class="albl" data-i18n="deposit_usdt">Deposit USDT.z into Pool</label>
+      <div class="deposit-bal-row">
+        <span>Your <span id="depositBalLabel">USDT.z</span> balance:</span>
+        <span class="deposit-bal-val" id="adminTokenBal">—</span>
+        <button class="deposit-max-btn" id="depositMaxBtn">MAX</button>
       </div>
-    </div><!-- /viewPrice -->
-
-    <!-- ════ VIEW: POOL ════ -->
-    <div class="dash-view" id="viewPool">
-      <div class="dash-form-grid">
-        <div class="dash-form-card">
-          <div class="dash-chart-title" style="margin-bottom:6px">Depositar USDT.z al Pool</div>
-          <div class="dash-pool-balance-row">
-            <span>Tu balance de <span id="depositBalLabel">USDT.z</span>:</span>
-            <strong id="adminTokenBal">—</strong>
-            <button class="dash-btn-sm" id="depositMaxBtn">MAX</button>
-          </div>
-          <div class="dash-input-row">
-            <div style="position:relative;flex:1">
-              <input type="number" class="dash-input" id="depositAmt" placeholder="Cantidad a depositar" min="0" step="any" style="padding-right:60px">
-              <span class="dash-input-unit" id="depositUnit">USDT.z</span>
-            </div>
-            <button class="dash-btn dash-btn-green" id="depositBtn" disabled>+ Depositar</button>
-          </div>
-          <div class="dash-hint">Llama a <code>approve()</code> → <code>depositTokens()</code> — dos confirmaciones en tu wallet.</div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;position:relative">
+          <input type="number" class="ainp" id="depositAmt" placeholder="e.g. 100000" min="0" step="any" style="padding-right:52px">
+          <span style="position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:.63rem;font-weight:700;color:var(--t3);font-family:var(--mono);pointer-events:none" id="depositUnit">USDT.z</span>
         </div>
-        <div class="dash-form-card dash-danger-card">
-          <div class="dash-chart-title" style="margin-bottom:6px;color:#ff6b6b">⚠ Retirar Todo del Pool</div>
-          <div class="dash-pool-amount-big" id="wdAmtDisp">0.00 USDT.z disponibles</div>
-          <p style="font-size:.82rem;color:var(--t2);margin-bottom:16px">Transfiere todos los tokens no vendidos del contrato de vuelta a tu wallet. Solo el propietario puede ejecutar esta acción.</p>
-          <button class="dash-btn dash-btn-red">⬇ Retirar Todo a Mi Wallet</button>
-        </div>
+        <button class="btn btn-ac btn-sm" id="depositBtn" disabled>+ <span data-i18n="deposit">Deposit</span></button>
       </div>
-    </div><!-- /viewPool -->
-
-    <!-- ════ VIEW: CONFIGURACIÓN ════ -->
-    <div class="dash-view" id="viewSettings">
-      <div class="dash-form-grid">
-        <div class="dash-form-card">
-          <div class="dash-chart-title" style="margin-bottom:12px">Contrato & Marca</div>
-          <label class="dash-label">Dirección del Smart Contract</label>
-          <input type="text" class="dash-input" id="brandContract" value="0x345Ccc716c6536d97D6Ef65D542303691a4400B6" placeholder="0x…">
-          <div id="contractValidMsg" style="font-size:.72rem;margin-top:4px"></div>
-          <label class="dash-label" style="margin-top:14px">Nombre de la Plataforma</label>
-          <input type="text" class="dash-input" id="brandName" value="MiSwap">
-          <label class="dash-label" style="margin-top:14px">Símbolo del Token</label>
-          <input type="text" class="dash-input" id="brandToken" value="USDT.z">
-          <button class="dash-btn dash-btn-green" style="margin-top:20px">💾 Aplicar Configuración</button>
-        </div>
-        <div class="dash-form-card">
-          <div class="dash-chart-title" style="margin-bottom:12px">Información del Sistema</div>
-          <div class="dash-stat-line"><span>Versión</span><span>MiSwap v8.0</span></div>
-          <div class="dash-stat-line"><span>Red</span><span class="ok">BSC Mainnet</span></div>
-          <div class="dash-stat-line"><span>Wallet Admin</span><span id="ownBanner" class="ok">—</span></div>
-          <div class="dash-stat-line"><span>Capas de Seguridad</span><span>10 activas</span></div>
-          <div class="dash-stat-line"><span>RPCs Disponibles</span><span>5 con fallback</span></div>
-          <div class="dash-info-note" style="margin-top:16px">🔒 Todas las operaciones requieren firma de wallet y son verificadas onchain.</div>
-        </div>
+      <div style="font-size:.70rem;color:var(--t3);margin-top:5px;line-height:1.5">
+        Calls <code style="color:var(--ac)">approve()</code> → <code style="color:var(--ac)">depositTokens()</code> — transfers from your wallet to contract.
       </div>
-    </div><!-- /viewSettings -->
+    </div>
+    <div class="wd-box mt10">
+      <div class="wd-title">⚠ <span data-i18n="withdraw_title">Withdraw USDT.z to Wallet</span></div>
+      <div class="wd-desc" data-i18n="withdraw_desc">Returns all unsold USDT.z from the pool to your connected wallet. Only the owner can do this.</div>
+      <div class="wd-amt" id="wdAmtDisp">0.00 USDT.z available</div>
+      <button class="btn btn-er btn-full" data-i18n="withdraw_all">Withdraw All to My Wallet</button>
+    </div>
+  </div>
 
-  </main>
-</div><!-- /dash-shell -->
+  <!-- ⑤ CONTRATO Y MARCA -->
+  <div class="asec">
+    <div class="asec-title"><span class="asec-icon">⚙</span> <span data-i18n="contract_branding">Contract & Branding</span> <button class="info-btn" data-info="branding">+info</button></div>
+    <div class="afld">
+      <label class="albl" data-i18n="smart_contract_address">Smart Contract Address</label>
+      <input type="text" class="ainp" id="brandContract" value="0x345Ccc716c6536d97D6Ef65D542303691a4400B6" placeholder="0x…">
+      <div style="font-size:.70rem;color:var(--t3);margin-top:4px;line-height:1.5" data-i18n="contract_desc">Valid BSC address (0x + 40 hex chars). Changing this reinitializes all contract instances.</div>
+      <div id="contractValidMsg"></div>
+    </div>
+    <div class="afld">
+      <label class="albl" data-i18n="platform_name">Platform Name</label>
+      <input type="text" class="ainp" id="brandName" value="MiSwap">
+    </div>
+    <div class="afld">
+      <label class="albl" data-i18n="token_symbol">Token Symbol</label>
+      <input type="text" class="ainp" id="brandToken" value="USDT.z">
+    </div>
+    <button class="btn btn-gl btn-full btn-sm mt8" data-i18n="apply_branding">Apply Branding</button>
+  </div>
+</div>
 
 <!-- ════════════════════════════════════════════════════════
      MODAL INFO ADMIN
