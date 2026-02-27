@@ -34,6 +34,7 @@ const ADMIN = {
     if (window.ethereum) this._loadAdminTokenBalance().catch(() => {});
     this.updateStats();
     this.updatePriceCalc();
+    this.updateAnalytics();
   },
 
   close() {
@@ -352,6 +353,116 @@ const ADMIN = {
   closeInfoModal(e) {
     if (!e || e.target === e.currentTarget) {
       document.getElementById('infoModalOverlay').classList.remove('open');
+    }
+  },
+
+  /*
+   * showAdminTrigger(): Muestra el botón ⚙ solo si la wallet es admin.
+   * El botón está hidden por defecto en el HTML.
+   * Se llama desde WALLET.setup() después de verificar isAdmin().
+   */
+  showAdminTrigger(show) {
+    const btn = document.getElementById('admTrigger');
+    if (!btn) return;
+    btn.style.display = show ? '' : 'none';
+  },
+
+  /*
+   * updateAnalytics(): Refresca las KPIs y gráficas del panel analytics.
+   * Usa Chart.js para renderizar. Si los charts ya existen, los destruye
+   * antes de recrearlos para evitar memory leaks.
+   */
+  updateAnalytics() {
+    // KPIs
+    const fmt = (n, dec=2) => n > 0 ? n.toLocaleString('en-US', { maximumFractionDigits: dec }) : '0';
+    const el = id => document.getElementById(id);
+
+    if (el('kpiPool'))    el('kpiPool').textContent    = fmt(STATE.poolBalance) + ' ' + STATE.tokenSymbol;
+    if (el('kpiTx'))      el('kpiTx').textContent      = fmt(STATE.txCount, 0);
+    if (el('kpiBnb'))     el('kpiBnb').textContent     = fmt(STATE.bnbCollected, 4) + ' BNB';
+    if (el('kpiSold'))    el('kpiSold').textContent    = fmt(STATE.tokensSold) + ' ' + STATE.tokenSymbol;
+    if (el('analyticsTime')) el('analyticsTime').textContent = new Date().toLocaleTimeString();
+
+    // Pool health bar
+    const pct = STATE.poolMax > 0 ? Math.min(100, (STATE.poolBalance / STATE.poolMax) * 100) : 0;
+    if (el('kpiPoolPct')) el('kpiPoolPct').textContent = pct.toFixed(1) + '%';
+    if (el('kpiPoolBar')) el('kpiPoolBar').style.width = pct.toFixed(1) + '%';
+
+    // Colores del tema
+    const acColor    = '#2de89a';
+    const blueColor  = '#4f8dff';
+    const gridColor  = 'rgba(255,255,255,0.06)';
+    const textColor  = 'rgba(255,255,255,0.45)';
+
+    // Chart 1: Historial de transacciones
+    const txCanvas = el('chartTxHist');
+    if (txCanvas && typeof Chart !== 'undefined') {
+      if (txCanvas._chartInstance) txCanvas._chartInstance.destroy();
+      const txData = [...STATE.txHistory].reverse();
+      txCanvas._chartInstance = new Chart(txCanvas, {
+        type: 'bar',
+        data: {
+          labels: txData.map((_, i) => `#${i + 1}`),
+          datasets: [{
+            label: STATE.tokenSymbol,
+            data: txData.map(t => t.token || 0),
+            backgroundColor: acColor + 'AA',
+            borderColor: acColor,
+            borderWidth: 1,
+            borderRadius: 4,
+          }],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.parsed.y.toFixed(2)} ${STATE.tokenSymbol} (−${txData[ctx.dataIndex]?.bnb?.toFixed(4) || '?'} BNB)`,
+              },
+            },
+          },
+          scales: {
+            x: { ticks: { color: textColor, font: { size: 9 } }, grid: { color: gridColor } },
+            y: { ticks: { color: textColor, font: { size: 9 } }, grid: { color: gridColor } },
+          },
+        },
+      });
+    }
+
+    // Chart 2: Distribución del pool (dona)
+    const poolCanvas = el('chartPool');
+    if (poolCanvas && typeof Chart !== 'undefined') {
+      if (poolCanvas._chartInstance) poolCanvas._chartInstance.destroy();
+      const sold    = Math.max(0, STATE.tokensSold);
+      const remaining = Math.max(0, STATE.poolBalance);
+      poolCanvas._chartInstance = new Chart(poolCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: ['Disponible en Pool', 'Vendido'],
+          datasets: [{
+            data: [remaining || 0.001, sold || 0.001],
+            backgroundColor: [acColor + 'CC', blueColor + 'CC'],
+            borderColor: ['#111', '#111'],
+            borderWidth: 2,
+          }],
+        },
+        options: {
+          responsive: true,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: textColor, font: { size: 9 }, padding: 10 },
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.label}: ${ctx.parsed.toLocaleString('en-US', { maximumFractionDigits: 2 })} ${STATE.tokenSymbol}`,
+              },
+            },
+          },
+        },
+      });
     }
   },
 
