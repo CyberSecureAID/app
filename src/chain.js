@@ -19,15 +19,59 @@ const CHAIN = {
   },
 
   /*
+   * _RPC_INDEX: Índice del RPC activo en CONFIG.PUBLIC_RPC_LIST.
+   * Empieza en 0 (primer RPC). Si falla, avanza al siguiente.
+   * Se reinicia a 0 cuando llega al final de la lista.
+   */
+  _rpcIndex: 0,
+
+  /*
    * _getReadProvider(): Retorna provider para operaciones de solo lectura.
-   * Prioridad: public JsonRpcProvider para stats (evita depender de la red del usuario)
-   * BrowserProvider solo si el usuario está conectado y en BSC.
-   * Por qué este cambio: Si el user está en otra red, leer via BrowserProvider
-   *   puede dar errores o datos de la red equivocada.
+   * Usa el RPC activo del pool. Si ese RPC falla, _rotateRpc() avanza
+   * al siguiente automáticamente en el próximo intento.
    */
   _getReadProvider() {
-    if (!this._publicProvider) this._publicProvider = new ethers.JsonRpcProvider(CONFIG.PUBLIC_RPC);
+    if (!this._publicProvider) {
+      const rpc = CONFIG.PUBLIC_RPC_LIST[this._rpcIndex];
+      this._publicProvider = new ethers.JsonRpcProvider(rpc);
+    }
     return this._publicProvider;
+  },
+
+  /*
+   * _rotateRpc(): Avanza al siguiente RPC del pool.
+   * Llamado automáticamente cuando una petición falla.
+   * Invalida el provider actual para forzar reconexión al nuevo RPC.
+   * Si ya probó todos, vuelve al primero (round-robin).
+   */
+  _rotateRpc() {
+    const list = CONFIG.PUBLIC_RPC_LIST;
+    this._rpcIndex = (this._rpcIndex + 1) % list.length;
+    this._publicProvider = null;
+    this._contract = null;
+    this._tokenR = null;
+    console.warn(`[CHAIN] RPC rotado → ${list[this._rpcIndex]}`);
+  },
+
+  /*
+   * callWithFallback(fn): Ejecuta fn() con fallback automático de RPC.
+   * Si la llamada falla, rota al siguiente RPC y reintenta una vez.
+   * Patrón: await CHAIN.callWithFallback(() => CHAIN.getReadContract().metodo())
+   */
+  async callWithFallback(fn) {
+    try {
+      return await fn();
+    } catch (e) {
+      console.warn('[CHAIN] RPC falló, rotando al siguiente...', e.message);
+      this._rotateRpc();
+      try {
+        return await fn();
+      } catch (e2) {
+        // Si el segundo intento también falla, rotar una vez más para el próximo
+        this._rotateRpc();
+        throw e2;
+      }
+    }
   },
 
   /*
