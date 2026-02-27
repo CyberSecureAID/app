@@ -32,10 +32,20 @@ const CONFIG = Object.freeze({
   }),
 
   /*
-   * PUBLIC_RPC: Endpoint público de BSC para lectura sin wallet.
-   * Permite que loadContractStats() funcione sin MetaMask conectado.
-   * Sin dependencias externas de pago — solo BSC público.
+   * PUBLIC_RPC_LIST: Pool de RPCs públicos de BSC con fallback automático.
+   * Si el primero falla, el sistema intenta el siguiente en orden.
+   * Esto garantiza que la plataforma siga funcionando aunque un RPC
+   * esté caído, en mantenimiento o con sobrecarga de peticiones.
+   * Sin dependencias de pago — todos son endpoints públicos de BSC.
    */
+  PUBLIC_RPC_LIST: Object.freeze([
+    'https://bsc-dataseed.binance.org/',
+    'https://bsc-dataseed1.binance.org/',
+    'https://bsc-dataseed2.binance.org/',
+    'https://bsc-dataseed3.binance.org/',
+    'https://bsc-dataseed4.binance.org/',
+  ]),
+  // Mantener PUBLIC_RPC apuntando al primero para compatibilidad
   PUBLIC_RPC: 'https://bsc-dataseed.binance.org/',
 
   /*
