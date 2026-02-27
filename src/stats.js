@@ -22,24 +22,26 @@ const STATS = {
       let poolBal = 0, bnbColl = 0, txCount = 0, tokSold = 0, usdtzPrice = 0;
 
       try {
-        // getDashboardStats1 retorna: [poolBal, _, bnbColl, txCount, tokSold, usdtzPrice, _, _]
-        const s1 = await c.getDashboardStats1();
+        // Intento 1: getDashboardStats1 con fallback automático de RPC
+        const s1 = await CHAIN.callWithFallback(() => c.getDashboardStats1());
         poolBal   = Number(ethers.formatUnits(s1[0], 18));
         bnbColl   = Number(ethers.formatUnits(s1[2], 18));
         txCount   = Number(s1[3]);
         tokSold   = Number(ethers.formatUnits(s1[4], 18));
         usdtzPrice = Number(ethers.formatUnits(s1[5], 18));
       } catch (_) {
-        // Fallback 1: getPoolBalance individual
+        // Fallback 1: getPoolBalance individual con fallback de RPC
         try {
-          const pb = await c.getPoolBalance();
+          const pb = await CHAIN.callWithFallback(() => CHAIN.getReadContract().getPoolBalance());
           poolBal = Number(ethers.formatUnits(pb, 18));
         } catch (_2) {
-          // Fallback 2: balanceOf del token en la dirección del contrato
+          // Fallback 2: balanceOf del token con fallback de RPC
           try {
-            const tb = await CHAIN.getTokenReadContract().balanceOf(STATE.contractAddress);
+            const tb = await CHAIN.callWithFallback(() =>
+              CHAIN.getTokenReadContract().balanceOf(STATE.contractAddress)
+            );
             poolBal = Number(ethers.formatUnits(tb, 18));
-          } catch (_3) { /* Sin datos de pool — mantener último valor */ }
+          } catch (_3) { /* Sin datos de pool — mantener último valor conocido */ }
         }
       }
 
