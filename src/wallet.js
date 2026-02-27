@@ -60,6 +60,9 @@ const WALLET = {
     // Verificar permisos admin
     await this._checkAdmin(addr);
 
+    // Mostrar/ocultar botón admin según permisos
+    ADMIN.showAdminTrigger(this.isAdmin());
+
     // Cargar stats y renderizar
     await STATS.load();
     this._renderConnected(addr, type);
@@ -67,7 +70,7 @@ const WALLET = {
 
     if (!silent) {
       UI.notif('ok', 'Wallet Connected', UI.abbr(addr));
-      if (this.isAdmin()) UI.notif('info', 'Admin Detected', 'You have admin access to this platform');
+      if (this.isAdmin()) UI.notif('info', 'Admin Detectado', 'Tienes acceso al panel administrativo');
     }
   },
 
@@ -128,6 +131,8 @@ const WALLET = {
     STATE.walletAddress = null;
     STATE.ownerAddress = null;
     STATE.bnbBalance = 0;
+    // Ocultar botón admin al desconectar
+    ADMIN.showAdminTrigger(false);
     STATE.adminTokenBalance = 0;
     STATE.adminTokenBalanceLoaded = false;
     CHAIN.reset();
