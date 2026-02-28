@@ -295,62 +295,7 @@
     <div class="astat"><span class="aslbl" data-i18n="contract_address">Contract Address</span><span class="asval" id="aContractAddr" style="font-size:.67rem;word-break:break-all;max-width:180px">—</span></div>
   </div>
 
-  <!-- ② ANALYTICS -->
-  <div class="asec" id="analyticsSection">
-    <div class="asec-title"><span class="asec-icon">📈</span> <span>Analytics en Tiempo Real</span></div>
-
-    <!-- KPI Cards -->
-    <div class="analytics-kpis">
-      <div class="kpi-card">
-        <div class="kpi-icon">💧</div>
-        <div class="kpi-val" id="kpiPool">—</div>
-        <div class="kpi-lbl">Pool Disponible</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon">⛓</div>
-        <div class="kpi-val" id="kpiTx">—</div>
-        <div class="kpi-lbl">Transacciones</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon">💰</div>
-        <div class="kpi-val" id="kpiBnb">—</div>
-        <div class="kpi-lbl">BNB Recaudado</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon">📦</div>
-        <div class="kpi-val" id="kpiSold">—</div>
-        <div class="kpi-lbl">Tokens Vendidos</div>
-      </div>
-    </div>
-
-    <!-- Pool health bar -->
-    <div class="analytics-pool-wrap">
-      <div class="analytics-pool-label">
-        <span>Salud del Pool</span>
-        <span id="kpiPoolPct">—%</span>
-      </div>
-      <div class="analytics-pool-bar-bg">
-        <div class="analytics-pool-bar-fill" id="kpiPoolBar"></div>
-      </div>
-    </div>
-
-    <!-- Gráfica: historial de swaps -->
-    <div class="analytics-chart-wrap">
-      <div class="analytics-chart-title">Últimas Transacciones (USDT.z)</div>
-      <canvas id="chartTxHist" height="140"></canvas>
-    </div>
-
-    <!-- Gráfica: distribución -->
-    <div class="analytics-chart-wrap" style="margin-top:14px">
-      <div class="analytics-chart-title">Distribución del Pool</div>
-      <canvas id="chartPool" height="140"></canvas>
-    </div>
-
-    <!-- Última actualización -->
-    <div class="analytics-updated">Actualizado: <span id="analyticsTime">—</span></div>
-  </div>
-
-  <!-- ③ PRECIO -->
+  <!-- ② PRECIO -->
   <div class="asec">
     <div class="asec-title"><span class="asec-icon">💱</span> <span data-i18n="price_config">Price Configuration</span> <button class="info-btn" data-info="price">+info</button></div>
     <div class="afld">
@@ -402,7 +347,7 @@
     <button class="btn btn-ac btn-full mt12" style="padding:11px">✓ <span data-i18n="apply_price">Apply Price</span></button>
   </div>
 
-  <!-- ④ POOL -->
+  <!-- ③ POOL -->
   <div class="asec">
     <div class="asec-title"><span class="asec-icon">💧</span> <span data-i18n="pool_management">Pool Management</span> <button class="info-btn" data-info="pool">+info</button></div>
     <div class="afld">
@@ -431,7 +376,7 @@
     </div>
   </div>
 
-  <!-- ⑤ CONTRATO Y MARCA -->
+  <!-- ④ CONTRATO Y MARCA -->
   <div class="asec">
     <div class="asec-title"><span class="asec-icon">⚙</span> <span data-i18n="contract_branding">Contract & Branding</span> <button class="info-btn" data-info="branding">+info</button></div>
     <div class="afld">
@@ -471,7 +416,6 @@
 <!-- ════════════════════════════════════════════════════════
      DEPENDENCIAS EXTERNAS
 ════════════════════════════════════════════════════════ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js" integrity="sha512-bLwLr3lzJN1cvtbClBMhKDyaD0uocWmphiqO8v0w3/z/XqUwzkM00gZq7BV3dQS9mQu0rarZMTsxlcnIHszElA==" crossorigin="anonymous"></script>
 
 <!-- ════════════════════════════════════════════════════════
