@@ -40,7 +40,7 @@ function bindEvents() {
 
   // ── ADMIN TRIGGER ──
   document.getElementById('admTrigger')
-    .addEventListener('click', () => ADMIN.open());
+    .addEventListener('click', () => window.open('./admin.html', '_blank'));
 
   // ── WALLET OVERLAY ──
   document.getElementById('walOverlay')
