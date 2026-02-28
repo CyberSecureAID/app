@@ -4,518 +4,351 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MiSwap — Admin Console</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"
   integrity="sha512-bLwLr3lzJN1cvtbClBMhKDyaD0uocWmphiqO8v0w3/z/XqUwzkM00gZq7BV3dQS9mQu0rarZMTsxlcnIHszElA=="
   crossorigin="anonymous"></script>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#070910;--surface:#0c0e15;--card:#111420;--card2:#161926;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --ac:#00f5a0;--ac2:#00d4ff;--bnb:#f3ba2f;--blue:#4f8dff;
+  --purple:#a066ff;--red:#ff5c5c;
+  --t1:#ffffff;--t2:rgba(255,255,255,.75);--t3:rgba(255,255,255,.45);--t4:rgba(255,255,255,.2);
+  --mono:'JetBrains Mono',monospace;--font:'Space Grotesk',sans-serif;
+  --sidebar:230px;--topbar:56px;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:var(--font)}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 600px 400px at 15% 50%,rgba(0,245,160,.05) 0%,transparent 70%),
+    radial-gradient(ellipse 500px 300px at 85% 20%,rgba(0,212,255,.04) 0%,transparent 70%),
+    radial-gradient(ellipse 400px 400px at 60% 85%,rgba(160,102,255,.03) 0%,transparent 70%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(0,245,160,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,160,.025) 1px,transparent 1px);
+  background-size:40px 40px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);
+}
+#lockScreen,#shell{position:relative;z-index:1}
 
-:root {
-  --bg:       #080a0f;
-  --surface:  #0e1117;
-  --card:     #12151d;
-  --border:   rgba(255,255,255,.07);
-  --ac:       #2de89a;
-  --bnb:      #f3ba2f;
-  --blue:     #4f8dff;
-  --purple:   #a066ff;
-  --red:      #ff6b6b;
-  --t1:       #ffffff;
-  --t2:       rgba(255,255,255,.7);
-  --t3:       rgba(255,255,255,.4);
-  --t4:       rgba(255,255,255,.2);
-  --mono:     'JetBrains Mono', monospace;
-  --font:     'Space Grotesk', sans-serif;
-  --sidebar:  240px;
-  --topbar:   58px;
-}
+/* LOCK */
+#lockScreen{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.lock-ring{width:88px;height:88px;border-radius:50%;border:2px solid rgba(0,245,160,.15);display:flex;align-items:center;justify-content:center;font-size:2.2rem;position:relative}
+.lock-ring::before{content:'';position:absolute;inset:-7px;border-radius:50%;border:1.5px solid transparent;border-top-color:var(--ac);border-right-color:var(--ac2);animation:spin 3s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lock-title{font-size:1.7rem;font-weight:800;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.lock-sub{font-size:.83rem;color:var(--t3);letter-spacing:.04em}
+.lock-div{width:160px;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,160,.3),transparent)}
+.lock-btn{padding:12px 38px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#000;font-family:var(--font);font-size:.93rem;font-weight:800;letter-spacing:.03em;transition:all .2s}
+.lock-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,245,160,.3)}
+.lock-err{font-size:.78rem;color:var(--red);min-height:16px;text-align:center}
+.lock-addr{font-size:.73rem;color:var(--ac);font-family:var(--mono);background:rgba(0,245,160,.07);padding:6px 14px;border-radius:6px;border:1px solid rgba(0,245,160,.15)}
 
-html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--t1); font-family: var(--font); }
+/* SHELL */
+#shell{display:none;height:100vh}
+#shell.visible{display:flex}
 
-/* ── LOCK SCREEN ── */
-#lockScreen {
-  position: fixed; inset: 0; z-index: 999;
-  background: var(--bg);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 24px;
-}
-.lock-logo { font-size: 3rem; }
-.lock-title { font-size: 1.6rem; font-weight: 800; color: var(--t1); }
-.lock-sub { font-size: .9rem; color: var(--t3); margin-top: -16px; }
-.lock-btn {
-  padding: 13px 36px; border-radius: 10px; border: none; cursor: pointer;
-  background: var(--ac); color: #000; font-family: var(--font); font-size: .95rem;
-  font-weight: 700; transition: all .2s; letter-spacing: .02em;
-}
-.lock-btn:hover { background: #1fcf84; transform: translateY(-1px); }
-.lock-err { font-size: .82rem; color: var(--red); min-height: 18px; }
-.lock-addr { font-size: .78rem; color: var(--ac); font-family: var(--mono); background: rgba(45,232,154,.08); padding: 6px 14px; border-radius: 6px; }
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--ac),transparent)}
+.sb-logo{padding:19px 17px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
+.sb-logo-ico{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,rgba(0,245,160,.2),rgba(0,212,255,.1));border:1px solid rgba(0,245,160,.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.sb-logo-name{font-size:.95rem;font-weight:800;color:var(--t1)}
+.sb-logo-sub{font-size:.58rem;color:var(--ac);text-transform:uppercase;letter-spacing:.1em;margin-top:1px}
+.sb-nav{flex:1;padding:8px 9px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.sb-sec{font-size:.57rem;font-weight:700;letter-spacing:.12em;color:var(--t4);text-transform:uppercase;padding:11px 9px 4px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;background:none;border:none;cursor:pointer;width:100%;color:var(--t3);font-family:var(--font);font-size:.82rem;font-weight:500;transition:all .15s;text-align:left;position:relative}
+.sb-item:hover{background:rgba(255,255,255,.05);color:var(--t2)}
+.sb-item.active{background:rgba(0,245,160,.08);color:var(--ac)}
+.sb-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:2px;background:var(--ac);border-radius:0 2px 2px 0}
+.sb-ico{font-size:.88rem;width:18px;text-align:center;flex-shrink:0}
+.sb-badge{margin-left:auto;font-size:.57rem;font-weight:700;background:rgba(0,245,160,.14);color:var(--ac);padding:2px 7px;border-radius:99px}
+.sb-div{height:1px;background:var(--border);margin:5px 9px}
+.sb-footer{padding:11px 13px;border-top:1px solid var(--border)}
+.sb-wallet{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:7px;background:rgba(0,245,160,.05);border:1px solid rgba(0,245,160,.12);margin-bottom:7px}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:var(--ac);box-shadow:0 0 7px var(--ac);flex-shrink:0;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 4px var(--ac)}50%{box-shadow:0 0 11px var(--ac)}}
+.sb-addr{font-size:.67rem;color:var(--ac);font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-logout{width:100%;padding:7px;border-radius:7px;background:rgba(255,92,92,.05);border:1px solid rgba(255,92,92,.14);color:#ff8888;font-family:var(--font);font-size:.77rem;cursor:pointer;transition:all .15s}
+.sb-logout:hover{background:rgba(255,92,92,.14)}
 
-/* ── SHELL ── */
-#shell { display: none; height: 100vh; }
-#shell.visible { display: flex; }
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:var(--topbar);min-height:var(--topbar);display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--surface);border-bottom:1px solid var(--border);position:relative}
+.topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,160,.18),transparent)}
+.tb-title{font-size:.98rem;font-weight:700;color:var(--t1)}
+.tb-right{display:flex;align-items:center;gap:13px}
+.tb-live{font-size:.65rem;font-weight:800;letter-spacing:.08em;color:var(--ac);background:rgba(0,245,160,.08);padding:3px 11px;border-radius:99px;border:1px solid rgba(0,245,160,.18);animation:liveBlink 2.5s ease-in-out infinite}
+@keyframes liveBlink{0%,100%{opacity:1;border-color:rgba(0,245,160,.18)}50%{opacity:.55;border-color:rgba(0,245,160,.4)}}
+.tb-bnb{font-size:.83rem;font-weight:700;color:var(--bnb);font-family:var(--mono)}
+.tb-time{font-size:.7rem;color:var(--t4);font-family:var(--mono)}
+.tb-btn{width:27px;height:27px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--t3);cursor:pointer;font-size:.83rem;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.tb-btn:hover{background:rgba(0,245,160,.08);color:var(--ac);border-color:rgba(0,245,160,.2)}
+.tb-btn.spinning{animation:spin .6s linear}
 
-/* ── SIDEBAR ── */
-.sidebar {
-  width: var(--sidebar); min-width: var(--sidebar);
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  overflow: hidden;
-}
-.sb-logo {
-  padding: 22px 20px 18px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 12px;
-}
-.sb-logo-icon { font-size: 1.7rem; }
-.sb-logo-name { font-size: 1rem; font-weight: 800; color: var(--t1); }
-.sb-logo-sub { font-size: .62rem; color: var(--ac); text-transform: uppercase; letter-spacing: .1em; margin-top: 1px; }
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:20px 24px}
+.view{display:none}.view.active{display:block}
 
-.sb-section-label {
-  font-size: .6rem; font-weight: 700; letter-spacing: .12em;
-  color: var(--t4); text-transform: uppercase;
-  padding: 18px 20px 6px;
-}
-.sb-nav { flex: 1; padding: 8px 12px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
-.sb-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 12px; border-radius: 8px;
-  background: none; border: none; cursor: pointer; width: 100%;
-  color: var(--t3); font-family: var(--font); font-size: .85rem; font-weight: 500;
-  transition: all .15s; text-align: left;
-}
-.sb-item:hover { background: rgba(255,255,255,.05); color: var(--t2); }
-.sb-item.active { background: rgba(45,232,154,.1); color: var(--ac); }
-.sb-item .sb-icon { font-size: .95rem; width: 20px; text-align: center; flex-shrink: 0; }
-.sb-divider { height: 1px; background: var(--border); margin: 8px 12px; }
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:17px 19px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;cursor:default}
+.kpi:hover{transform:translateY(-2px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:13px 13px 0 0}
+.kpi.green::before{background:linear-gradient(90deg,var(--ac),var(--ac2))}.kpi.green:hover{border-color:rgba(0,245,160,.22)}
+.kpi.gold::before{background:linear-gradient(90deg,var(--bnb),#e8a800)}.kpi.gold:hover{border-color:rgba(243,186,47,.22)}
+.kpi.blue::before{background:linear-gradient(90deg,var(--blue),#2d6bff)}.kpi.blue:hover{border-color:rgba(79,141,255,.22)}
+.kpi.purple::before{background:linear-gradient(90deg,var(--purple),#7840d4)}.kpi.purple:hover{border-color:rgba(160,102,255,.22)}
+.kpi-glow{position:absolute;top:0;right:0;width:70px;height:70px;border-radius:50%;opacity:.12;filter:blur(18px);pointer-events:none}
+.kpi.green .kpi-glow{background:var(--ac)}.kpi.gold .kpi-glow{background:var(--bnb)}.kpi.blue .kpi-glow{background:var(--blue)}.kpi.purple .kpi-glow{background:var(--purple)}
+.kpi-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px}
+.kpi-lbl{font-size:.66rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.kpi-ico{font-size:1.05rem}
+.kpi-val{font-size:1.35rem;font-weight:800;color:var(--t1);line-height:1.1;margin-bottom:3px;font-family:var(--mono)}
+.kpi-sub{font-size:.64rem;color:var(--t4);margin-bottom:9px}
+.kpi-bar-bg{height:3px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden}
+.kpi-bar{height:100%;border-radius:99px;transition:width 1s ease}
+.kpi.green .kpi-bar{background:linear-gradient(90deg,var(--ac),var(--ac2))}.kpi.gold .kpi-bar{background:linear-gradient(90deg,var(--bnb),#e8a800)}.kpi.blue .kpi-bar{background:linear-gradient(90deg,var(--blue),#2d6bff)}.kpi.purple .kpi-bar{background:linear-gradient(90deg,var(--purple),#7840d4)}
 
-.sb-footer {
-  padding: 14px 16px;
-  border-top: 1px solid var(--border);
-}
-.sb-wallet {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 12px; border-radius: 8px;
-  background: rgba(45,232,154,.06);
-  margin-bottom: 10px;
-}
-.sb-wallet-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ac); box-shadow: 0 0 8px var(--ac); flex-shrink: 0; }
-.sb-wallet-addr { font-size: .7rem; color: var(--ac); font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sb-logout {
-  width: 100%; padding: 8px; border-radius: 7px;
-  background: rgba(255,100,100,.06); border: 1px solid rgba(255,100,100,.15);
-  color: #ff8888; font-family: var(--font); font-size: .8rem; cursor: pointer;
-  transition: all .15s;
-}
-.sb-logout:hover { background: rgba(255,100,100,.15); }
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:19px 21px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;border-radius:13px;background:linear-gradient(135deg,rgba(0,245,160,.015) 0%,transparent 60%);pointer-events:none}
+.card-title{font-size:.81rem;font-weight:700;color:var(--t2)}
+.card-sub{font-size:.65rem;color:var(--t4);margin-top:2px}
+.card-badge{font-size:.64rem;color:var(--t3);background:rgba(255,255,255,.05);padding:3px 9px;border-radius:6px;border:1px solid var(--border)}
+.card-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px}
 
-/* ── MAIN ── */
-.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+/* CHARTS */
+.charts-row{display:grid;grid-template-columns:1fr 295px;gap:13px;margin-bottom:16px}
+.donut-legend{display:flex;gap:13px;justify-content:center;margin-top:11px}
+.dl-item{display:flex;align-items:center;gap:6px;font-size:.68rem;color:var(--t3)}
+.dl-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
-.topbar {
-  height: var(--topbar); min-height: var(--topbar);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 28px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
-.topbar-title { font-size: 1.05rem; font-weight: 700; color: var(--t1); }
-.topbar-right { display: flex; align-items: center; gap: 16px; }
-.live-pill {
-  font-size: .68rem; font-weight: 700; letter-spacing: .07em;
-  color: var(--ac); background: rgba(45,232,154,.1);
-  padding: 4px 12px; border-radius: 99px;
-  border: 1px solid rgba(45,232,154,.2);
-  animation: blink 2.5s ease-in-out infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.5} }
-.topbar-bnb { font-size: .82rem; font-weight: 700; color: var(--bnb); font-family: var(--mono); }
-.topbar-time { font-size: .72rem; color: var(--t4); }
+/* STATS */
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:16px}
+.stat-line{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.79rem}
+.stat-line:last-child{border-bottom:none}
+.sl-lbl{color:var(--t3)}.sl-val{color:var(--t1);font-weight:600;font-family:var(--mono);font-size:.74rem}
+.sl-val.green{color:var(--ac)!important}.sl-val.gold{color:var(--bnb)!important}
 
-/* ── CONTENT ── */
-.content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+/* TX TABLE */
+.tx-table{width:100%;border-collapse:collapse;font-size:.77rem}
+.tx-table th{font-size:.6rem;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:.07em;padding:6px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.tx-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.tx-table tr:last-child td{border-bottom:none}
+.tx-table tr:hover td{background:rgba(255,255,255,.02)}
+.tx-tok{font-weight:700;color:var(--ac);font-family:var(--mono)}
+.tx-bnb{color:var(--bnb);font-family:var(--mono)}
+.tx-addr{color:var(--blue);font-family:var(--mono);font-size:.7rem}
+.tx-link{color:var(--blue);text-decoration:none;font-size:.7rem;font-family:var(--mono)}
+.tx-link:hover{text-decoration:underline}
+.tx-empty{padding:28px;text-align:center;color:var(--t4);font-size:.8rem}
+.tx-loading{padding:22px;text-align:center;color:var(--t3);font-size:.8rem}
+.tx-loading::after{content:'';display:inline-block;width:13px;height:13px;border:2px solid rgba(0,245,160,.2);border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite;margin-left:7px;vertical-align:middle}
 
-.view { display: none; }
-.view.active { display: block; }
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-title{font-size:.82rem;font-weight:700;color:var(--t2);margin-bottom:15px}
+.form-lbl{display:block;font-size:.64rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;margin-top:13px;font-weight:600}
+.form-lbl:first-of-type{margin-top:0}
+.form-inp{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--t1);font-family:var(--font);font-size:.86rem;padding:10px 13px;outline:none;transition:border .15s,background .15s}
+.form-inp:focus{border-color:var(--ac);background:rgba(0,245,160,.04)}
+.inp-wrap{position:relative}
+.inp-unit{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:.6rem;font-weight:700;color:var(--t4);pointer-events:none;font-family:var(--mono)}
+.inp-row{display:flex;gap:9px;margin-top:9px;align-items:flex-start}
+.divider{height:1px;background:var(--border);margin:15px 0}
+.btn{padding:9px 20px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);font-size:.82rem;font-weight:700;transition:all .15s}
+.btn-green{background:rgba(0,245,160,.11);color:var(--ac);border:1px solid rgba(0,245,160,.2)}
+.btn-green:hover{background:rgba(0,245,160,.2);box-shadow:0 3px 14px rgba(0,245,160,.1)}
+.btn-green:disabled{opacity:.35;cursor:not-allowed}
+.btn-red{background:rgba(255,92,92,.09);color:#ff7070;border:1px solid rgba(255,92,92,.2)}
+.btn-red:hover{background:rgba(255,92,92,.18)}
+.btn-blue{background:rgba(79,141,255,.09);color:var(--blue);border:1px solid rgba(79,141,255,.2)}
+.btn-blue:hover{background:rgba(79,141,255,.18)}
+.btn-full{width:100%;margin-top:15px}
+.btn-sm{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--t2);font-family:var(--font);font-size:.71rem;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-sm:hover{background:rgba(255,255,255,.08)}
+.pc-tabs{display:flex;gap:7px;margin-bottom:15px}
+.pc-tab{padding:7px 15px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--t3);font-family:var(--font);font-size:.77rem;cursor:pointer;transition:all .15s}
+.pc-tab.active{background:rgba(0,245,160,.09);color:var(--ac);border-color:rgba(0,245,160,.2)}
+.pc-panel{display:none}.pc-panel.active{display:block}
+.pc-result{margin-top:11px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:11px 13px}
+.pc-row{display:flex;justify-content:space-between;font-size:.78rem;padding:3px 0}
+.pc-lbl{color:var(--t3)}.pc-val{font-weight:600;font-family:var(--mono);font-size:.76rem}
+.pc-val.green{color:var(--ac)}.pc-val.gold{color:var(--bnb)}
+.pc-sep{height:1px;background:rgba(255,255,255,.07);margin:6px 0}
+.ratio-wrap{display:flex;align-items:center;gap:9px}
+.ratio-field{flex:1;position:relative}
+.ratio-field input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--t1);font-family:var(--font);font-size:.86rem;padding:10px 48px 10px 13px;outline:none;transition:border .15s}
+.ratio-field input:focus{border-color:var(--ac)}
+.ratio-field span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:.62rem;color:var(--t4);pointer-events:none}
+.ratio-arrow{font-size:1rem;color:var(--t4);flex-shrink:0}
+.bnb-big{font-size:1.9rem;font-weight:800;color:var(--bnb);font-family:var(--mono);margin:6px 0 17px}
+.pool-bal-row{display:flex;align-items:center;gap:9px;font-size:.78rem;color:var(--t3);margin-bottom:11px;flex-wrap:wrap}
+.pool-bal-row strong{color:var(--ac);margin-left:auto;font-family:var(--mono)}
+.pool-big{font-size:1.7rem;font-weight:800;color:var(--red);font-family:var(--mono);margin-bottom:9px}
+.hint{font-size:.67rem;color:var(--t4);margin-top:6px;line-height:1.6}
+.hint code{color:var(--ac)}
+.info-note{background:rgba(255,200,0,.05);border:1px solid rgba(255,200,0,.15);border-radius:7px;padding:9px 13px;color:rgba(255,200,0,.7);font-size:.72rem;line-height:1.6;margin-top:13px}
+.info-block{font-size:.8rem;color:var(--t3);line-height:1.75}
+.info-block p{margin-bottom:11px}
+.info-block strong{color:var(--t2)}
+.valid-msg{font-size:.68rem;margin-top:4px;min-height:15px}
+.valid-msg.ok{color:var(--ac)}.valid-msg.err{color:var(--red)}
+.danger-card{border-color:rgba(255,92,92,.17)!important}
+.sys-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.79rem}
+.sys-row:last-child{border-bottom:none}
+.sys-lbl{color:var(--t3)}.sys-val{color:var(--t1);font-weight:600;font-family:var(--mono);font-size:.74rem}
+.sys-val.green{color:var(--ac)}.sys-val.red{color:var(--red)}
+.sec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.sec-title{font-size:.93rem;font-weight:700;color:var(--t1)}
+.sec-sub{font-size:.7rem;color:var(--t3);margin-top:2px}
 
-/* ── KPI GRID ── */
-.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px; }
-.kpi-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-  padding: 20px 22px; position: relative; overflow: hidden;
-  transition: border-color .2s;
-}
-.kpi-card:hover { border-color: rgba(255,255,255,.14); }
-.kpi-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  border-radius: 14px 14px 0 0;
-}
-.kpi-card.green::before { background: var(--ac); }
-.kpi-card.gold::before  { background: var(--bnb); }
-.kpi-card.blue::before  { background: var(--blue); }
-.kpi-card.purple::before { background: var(--purple); }
-.kpi-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
-.kpi-label { font-size: .7rem; color: var(--t3); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
-.kpi-badge { font-size: 1.2rem; }
-.kpi-val { font-size: 1.5rem; font-weight: 800; color: var(--t1); line-height: 1.1; margin-bottom: 5px; font-family: var(--mono); }
-.kpi-sub { font-size: .68rem; color: var(--t4); }
-.kpi-bar-bg { height: 3px; background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden; margin-top: 12px; }
-.kpi-bar { height: 100%; border-radius: 99px; transition: width .8s ease; }
-.kpi-bar.green  { background: linear-gradient(90deg, var(--ac), #1fcf84); }
-.kpi-bar.gold   { background: linear-gradient(90deg, var(--bnb), #e8a800); }
-.kpi-bar.blue   { background: linear-gradient(90deg, var(--blue), #2d6bff); }
-.kpi-bar.purple { background: linear-gradient(90deg, var(--purple), #7840d4); }
+/* TOAST */
+#toastStack{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column-reverse;gap:8px}
+.toast{display:flex;align-items:flex-start;gap:10px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:11px 14px;box-shadow:0 8px 28px rgba(0,0,0,.5);animation:slideIn .2s ease;min-width:240px;max-width:320px}
+@keyframes slideIn{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+.toast.ok{border-left:3px solid var(--ac)}.toast.err{border-left:3px solid var(--red)}.toast.info{border-left:3px solid var(--blue)}
+.t-ico{font-size:.92rem;flex-shrink:0;margin-top:1px}
+.t-title{font-size:.79rem;font-weight:700;color:var(--t1)}
+.t-msg{font-size:.71rem;color:var(--t3);margin-top:2px}
 
-/* ── CHARTS ── */
-.charts-row { display: grid; grid-template-columns: 1fr 320px; gap: 16px; margin-bottom: 22px; }
-.chart-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-  padding: 22px 24px;
-}
-.chart-hdr { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
-.chart-title { font-size: .85rem; font-weight: 700; color: var(--t2); }
-.chart-sub { font-size: .68rem; color: var(--t4); margin-top: 3px; }
-.donut-legend { display: flex; gap: 18px; justify-content: center; margin-top: 14px; }
-.donut-leg { display: flex; align-items: center; gap: 7px; font-size: .72rem; color: var(--t3); }
-.donut-leg-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:99px}
 
-/* ── STATS ROW ── */
-.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 22px; }
-.stats-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-  padding: 22px 24px;
-}
-.stats-title { font-size: .82rem; font-weight: 700; color: var(--t2); margin-bottom: 16px; }
-.stat-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.04);
-  font-size: .8rem;
-}
-.stat-row:last-child { border-bottom: none; }
-.stat-lbl { color: var(--t3); }
-.stat-val { color: var(--t1); font-weight: 600; font-family: var(--mono); font-size: .75rem; }
-.stat-val.green { color: var(--ac) !important; }
-.stat-val.gold  { color: var(--bnb) !important; }
+@media(max-width:1100px){.kpi-grid{grid-template-columns:1fr 1fr}.charts-row{grid-template-columns:1fr}}
+@media(max-width:768px){:root{--sidebar:52px}.sb-logo-name,.sb-logo-sub,.sb-item span:not(.sb-ico),.sb-sec,.sb-addr,.sb-logout span{display:none}.sb-item{justify-content:center;padding:11px}.sb-wallet{justify-content:center}.stats-row,.form-grid{grid-template-columns:1fr}.content{padding:13px}.topbar{padding:0 13px}}
 
-.tx-list { display: flex; flex-direction: column; gap: 7px; }
-.tx-empty { font-size: .78rem; color: var(--t4); padding: 8px 0; }
-.tx-item {
-  display: flex; justify-content: space-between; align-items: center;
-  background: rgba(255,255,255,.03); border: 1px solid var(--border);
-  border-radius: 8px; padding: 9px 13px;
-}
-.tx-tok { font-size: .82rem; font-weight: 700; color: var(--ac); }
-.tx-bnb { font-size: .72rem; color: var(--bnb); font-family: var(--mono); }
-.tx-time { font-size: .66rem; color: var(--t4); }
-.tx-hash a { font-size: .66rem; color: var(--blue); text-decoration: none; }
-.tx-hash a:hover { text-decoration: underline; }
-
-/* ── FORM VIEWS ── */
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.form-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-  padding: 24px 26px;
-}
-.form-card.danger { border-color: rgba(255,100,100,.2); }
-.form-title { font-size: .85rem; font-weight: 700; color: var(--t2); margin-bottom: 18px; }
-.form-label { display: block; font-size: .68rem; color: var(--t3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 7px; margin-top: 14px; font-weight: 600; }
-.form-label:first-of-type { margin-top: 0; }
-.form-input {
-  width: 100%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
-  border-radius: 9px; color: var(--t1); font-family: var(--font); font-size: .88rem;
-  padding: 11px 14px; outline: none; transition: border .15s;
-}
-.form-input:focus { border-color: var(--ac); background: rgba(45,232,154,.04); }
-.input-wrap { position: relative; }
-.input-unit {
-  position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
-  font-size: .62rem; font-weight: 700; color: var(--t4); pointer-events: none;
-  font-family: var(--mono);
-}
-.input-row { display: flex; gap: 10px; margin-top: 10px; }
-
-.form-btn {
-  padding: 11px 22px; border-radius: 9px; border: none; cursor: pointer;
-  font-family: var(--font); font-size: .85rem; font-weight: 700; transition: all .15s;
-}
-.btn-green { background: rgba(45,232,154,.14); color: var(--ac); border: 1px solid rgba(45,232,154,.25); }
-.btn-green:hover { background: rgba(45,232,154,.24); }
-.btn-green:disabled { opacity: .4; cursor: not-allowed; }
-.btn-red { background: rgba(255,100,100,.1); color: #ff7070; border: 1px solid rgba(255,100,100,.25); }
-.btn-red:hover { background: rgba(255,100,100,.2); }
-.btn-sm {
-  padding: 6px 14px; border-radius: 7px; border: 1px solid var(--border);
-  background: rgba(255,255,255,.04); color: var(--t2); font-family: var(--font);
-  font-size: .74rem; cursor: pointer; transition: all .15s; white-space: nowrap;
-}
-.btn-sm:hover { background: rgba(255,255,255,.08); }
-.btn-full { width: 100%; margin-top: 18px; }
-
-.pc-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
-.pc-tab {
-  padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border);
-  background: rgba(255,255,255,.03); color: var(--t3); font-family: var(--font);
-  font-size: .8rem; cursor: pointer; transition: all .15s;
-}
-.pc-tab.active { background: rgba(45,232,154,.1); color: var(--ac); border-color: rgba(45,232,154,.25); }
-.pc-panel { display: none; }
-.pc-panel.active { display: block; }
-.pc-result {
-  margin-top: 14px; background: rgba(0,0,0,.25);
-  border: 1px solid rgba(255,255,255,.06); border-radius: 9px; padding: 14px 16px;
-}
-.pc-row { display: flex; justify-content: space-between; font-size: .8rem; padding: 4px 0; }
-.pc-row .lbl { color: var(--t3); }
-.pc-row .val { font-weight: 600; font-family: var(--mono); font-size: .78rem; }
-.pc-row .val.green { color: var(--ac); }
-.pc-row .val.gold  { color: var(--bnb); }
-.pc-sep { height: 1px; background: rgba(255,255,255,.07); margin: 8px 0; }
-
-.ratio-wrap { display: flex; align-items: center; gap: 10px; }
-.ratio-field { flex: 1; position: relative; }
-.ratio-field input { width: 100%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); border-radius: 9px; color: var(--t1); font-family: var(--font); font-size: .88rem; padding: 11px 50px 11px 14px; outline: none; transition: border .15s; }
-.ratio-field input:focus { border-color: var(--ac); }
-.ratio-field span { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: .65rem; color: var(--t4); pointer-events: none; }
-.ratio-arrow { font-size: 1.1rem; color: var(--t4); flex-shrink: 0; }
-
-.bnb-big { font-size: 2.2rem; font-weight: 800; color: var(--bnb); font-family: var(--mono); margin: 8px 0 20px; }
-.pool-bal-row { display: flex; align-items: center; gap: 10px; font-size: .8rem; color: var(--t3); margin-bottom: 14px; flex-wrap: wrap; }
-.pool-bal-row strong { color: var(--ac); margin-left: auto; font-family: var(--mono); }
-.pool-big { font-size: 2rem; font-weight: 800; color: var(--red); font-family: var(--mono); margin-bottom: 12px; }
-.hint { font-size: .7rem; color: var(--t4); margin-top: 8px; line-height: 1.6; }
-.hint code { color: var(--ac); }
-.divider { height: 1px; background: var(--border); margin: 20px 0; }
-.info-note {
-  background: rgba(255,200,0,.06); border: 1px solid rgba(255,200,0,.18);
-  border-radius: 8px; padding: 11px 14px; color: rgba(255,200,0,.75);
-  font-size: .76rem; line-height: 1.6; margin-top: 16px;
-}
-.info-block { font-size: .82rem; color: var(--t3); line-height: 1.75; }
-.info-block p { margin-bottom: 13px; }
-.info-block strong { color: var(--t2); }
-.sys-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.04); font-size: .82rem; }
-.sys-row:last-child { border-bottom: none; }
-.sys-lbl { color: var(--t3); }
-.sys-val { color: var(--t1); font-weight: 600; font-family: var(--mono); font-size: .78rem; }
-.sys-val.green { color: var(--ac); }
-
-.valid-msg { font-size: .72rem; margin-top: 5px; min-height: 16px; }
-.valid-msg.ok { color: var(--ac); }
-.valid-msg.err { color: var(--red); }
-
-/* ── TOAST ── */
-#toastStack { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column-reverse; gap: 10px; }
-.toast {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 11px; padding: 13px 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,.4);
-  animation: slideIn .25s ease; min-width: 260px; max-width: 340px;
-}
-@keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
-.toast.ok    { border-left: 3px solid var(--ac); }
-.toast.err   { border-left: 3px solid var(--red); }
-.toast.info  { border-left: 3px solid var(--blue); }
-.toast-icon  { font-size: 1rem; margin-top: 1px; flex-shrink: 0; }
-.toast-title { font-size: .82rem; font-weight: 700; color: var(--t1); }
-.toast-msg   { font-size: .74rem; color: var(--t3); margin-top: 2px; }
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 99px; }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 1100px) {
-  .kpi-grid { grid-template-columns: 1fr 1fr; }
-  .charts-row { grid-template-columns: 1fr; }
-}
-@media (max-width: 768px) {
-  :root { --sidebar: 56px; }
-  .sb-logo-name, .sb-logo-sub, .sb-item span:not(.sb-icon), .sb-section-label, .sb-wallet-addr, .sb-footer .sb-logout span { display: none; }
-  .sb-item { justify-content: center; padding: 12px; }
-  .sb-wallet { justify-content: center; }
-  .stats-row, .form-grid { grid-template-columns: 1fr; }
-  .content { padding: 16px; }
-  .topbar { padding: 0 16px; }
-}
+/* ACCORDION */
+.acc{border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:10px}
+.acc-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;background:rgba(255,255,255,.03);transition:background .15s;user-select:none}
+.acc-hdr:hover{background:rgba(255,255,255,.06)}
+.acc-hdr.open{background:rgba(0,245,160,.06);border-bottom:1px solid var(--border)}
+.acc-title{font-size:.83rem;font-weight:700;color:var(--t2);display:flex;align-items:center;gap:9px}
+.acc-arrow{font-size:.7rem;color:var(--t3);transition:transform .25s}
+.acc-hdr.open .acc-arrow{transform:rotate(180deg)}
+.acc-body{display:none;padding:16px}
+.acc-body.open{display:block}
+.fn-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.fn-tag{font-size:.68rem;font-family:var(--mono);color:var(--ac);background:rgba(0,245,160,.07);border:1px solid rgba(0,245,160,.15);border-radius:6px;padding:5px 9px;word-break:break-all}
+.fn-tag.optional{color:var(--blue);background:rgba(79,141,255,.07);border-color:rgba(79,141,255,.15)}
+.fn-tag.event{color:var(--purple);background:rgba(160,102,255,.07);border-color:rgba(160,102,255,.15)}
+.fn-legend{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+.fn-leg{display:flex;align-items:center;gap:5px;font-size:.65rem;color:var(--t4)}
+.fn-leg-dot{width:7px;height:7px;border-radius:2px}
+.verify-result{margin-top:12px;border-radius:8px;padding:11px 14px;font-size:.78rem;display:none}
+.verify-result.ok{display:block;background:rgba(0,245,160,.07);border:1px solid rgba(0,245,160,.2);color:var(--ac)}
+.verify-result.err{display:block;background:rgba(255,92,92,.07);border:1px solid rgba(255,92,92,.2);color:var(--red)}
+.verify-result.warn{display:block;background:rgba(255,200,0,.07);border:1px solid rgba(255,200,0,.2);color:rgba(255,200,0,.8)}
+.abi-textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--ac);font-family:var(--mono);font-size:.68rem;padding:10px 13px;outline:none;resize:vertical;min-height:120px;transition:border .15s;line-height:1.5}
+.abi-textarea:focus{border-color:var(--ac)}
+.abi-textarea::placeholder{color:var(--t4)}
+.auth-shield{display:flex;align-items:center;gap:8px;background:rgba(0,245,160,.05);border:1px solid rgba(0,245,160,.15);border-radius:8px;padding:9px 13px;margin-bottom:14px;font-size:.75rem;color:var(--ac)}
+.auth-shield-icon{font-size:1rem;flex-shrink:0}
 </style>
 </head>
 <body>
 
-<!-- ══════════ LOCK SCREEN ══════════ -->
 <div id="lockScreen">
-  <div class="lock-logo">🏦</div>
+  <div class="lock-ring">⚙️</div>
   <div class="lock-title">MiSwap Admin Console</div>
-  <div class="lock-sub">Acceso restringido — Solo wallets autorizadas</div>
+  <div class="lock-sub">Acceso restringido — Wallets autorizadas únicamente</div>
+  <div class="lock-div"></div>
   <div id="lockAddr" class="lock-addr" style="display:none">—</div>
-  <button class="lock-btn" id="lockBtn">Conectar Wallet</button>
+  <button class="lock-btn" id="lockBtn">🔗 Conectar Wallet Admin</button>
   <div class="lock-err" id="lockErr"></div>
 </div>
 
-<!-- ══════════ SHELL ══════════ -->
 <div id="shell">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sb-logo">
-      <div class="sb-logo-icon">🏦</div>
-      <div>
-        <div class="sb-logo-name">MiSwap</div>
-        <div class="sb-logo-sub">Admin Console</div>
-      </div>
+      <div class="sb-logo-ico">⚙️</div>
+      <div><div class="sb-logo-name">MiSwap</div><div class="sb-logo-sub">Admin Console</div></div>
     </div>
-
     <nav class="sb-nav">
-      <div class="sb-section-label">Principal</div>
-      <button class="sb-item active" data-view="dashboard">
-        <span class="sb-icon">📊</span><span>Dashboard</span>
-      </button>
-      <button class="sb-item" data-view="transactions">
-        <span class="sb-icon">🔁</span><span>Transacciones</span>
-      </button>
-      <div class="sb-divider"></div>
-      <div class="sb-section-label">Gestión</div>
-      <button class="sb-item" data-view="price">
-        <span class="sb-icon">💱</span><span>Precio</span>
-      </button>
-      <button class="sb-item" data-view="pool">
-        <span class="sb-icon">💧</span><span>Pool</span>
-      </button>
-      <div class="sb-divider"></div>
-      <div class="sb-section-label">Sistema</div>
-      <button class="sb-item" data-view="settings">
-        <span class="sb-icon">⚙</span><span>Configuración</span>
-      </button>
+      <div class="sb-sec">Principal</div>
+      <button class="sb-item active" data-view="dashboard"><span class="sb-ico">📊</span><span>Dashboard</span></button>
+      <button class="sb-item" data-view="transactions"><span class="sb-ico">🔁</span><span>Transacciones</span><span class="sb-badge" id="sbTxBadge">—</span></button>
+      <div class="sb-div"></div>
+      <div class="sb-sec">Gestión</div>
+      <button class="sb-item" data-view="price"><span class="sb-ico">💱</span><span>Precio</span></button>
+      <button class="sb-item" data-view="pool"><span class="sb-ico">💧</span><span>Pool</span></button>
+      <div class="sb-div"></div>
+      <div class="sb-sec">Sistema</div>
+      <button class="sb-item" data-view="settings"><span class="sb-ico">⚙</span><span>Configuración</span></button>
     </nav>
-
     <div class="sb-footer">
-      <div class="sb-wallet">
-        <div class="sb-wallet-dot"></div>
-        <div class="sb-wallet-addr" id="sbWalletAddr">—</div>
-      </div>
+      <div class="sb-wallet"><div class="sb-dot"></div><div class="sb-addr" id="sbAddr">—</div></div>
       <button class="sb-logout" id="logoutBtn">✕ Desconectar</button>
     </div>
   </aside>
 
-  <!-- MAIN -->
   <div class="main">
-
-    <!-- TOPBAR -->
     <div class="topbar">
-      <div class="topbar-title" id="topbarTitle">Dashboard</div>
-      <div class="topbar-right">
-        <div class="live-pill">● LIVE</div>
-        <div class="topbar-bnb">BNB $<span id="topBnbPrice">—</span></div>
-        <div class="topbar-time" id="topbarTime">—</div>
+      <div class="tb-title" id="topTitle">Dashboard</div>
+      <div class="tb-right">
+        <div class="tb-live">● LIVE</div>
+        <div class="tb-bnb">BNB $<span id="topBnb">—</span></div>
+        <div class="tb-time" id="topTime">—</div>
+        <button class="tb-btn" id="refreshBtn" title="Actualizar">↻</button>
       </div>
     </div>
 
-    <!-- CONTENT -->
     <div class="content">
 
-      <!-- ════ DASHBOARD ════ -->
+      <!-- DASHBOARD -->
       <div class="view active" id="viewDashboard">
-
         <div class="kpi-grid">
-          <div class="kpi-card green">
-            <div class="kpi-top">
-              <div class="kpi-label">Pool Disponible</div>
-              <div class="kpi-badge">💧</div>
-            </div>
-            <div class="kpi-val" id="kpiPool">—</div>
-            <div class="kpi-sub" id="kpiPoolSub">USDT.z en el contrato</div>
-            <div class="kpi-bar-bg"><div class="kpi-bar green" id="kpiPoolBar" style="width:0%"></div></div>
-          </div>
-          <div class="kpi-card gold">
-            <div class="kpi-top">
-              <div class="kpi-label">BNB Recaudado</div>
-              <div class="kpi-badge">⛓</div>
-            </div>
-            <div class="kpi-val" id="kpiBnb">—</div>
-            <div class="kpi-sub" id="kpiBnbUsd">Total histórico</div>
-            <div class="kpi-bar-bg"><div class="kpi-bar gold" id="kpiBnbBar" style="width:0%"></div></div>
-          </div>
-          <div class="kpi-card blue">
-            <div class="kpi-top">
-              <div class="kpi-label">Tokens Vendidos</div>
-              <div class="kpi-badge">📦</div>
-            </div>
-            <div class="kpi-val" id="kpiSold">—</div>
-            <div class="kpi-sub" id="kpiSoldUsd">—</div>
-            <div class="kpi-bar-bg"><div class="kpi-bar blue" id="kpiSoldBar" style="width:0%"></div></div>
-          </div>
-          <div class="kpi-card purple">
-            <div class="kpi-top">
-              <div class="kpi-label">Transacciones</div>
-              <div class="kpi-badge">🔁</div>
-            </div>
-            <div class="kpi-val" id="kpiTx">—</div>
-            <div class="kpi-sub">Swaps completados</div>
-            <div class="kpi-bar-bg"><div class="kpi-bar purple" id="kpiTxBar" style="width:0%"></div></div>
-          </div>
+          <div class="kpi green"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-lbl">Pool Disponible</div><div class="kpi-ico">💧</div></div><div class="kpi-val" id="kpiPool">—</div><div class="kpi-sub" id="kpiPoolSub">USDT.z en contrato</div><div class="kpi-bar-bg"><div class="kpi-bar" id="kpiPoolBar" style="width:0%"></div></div></div>
+          <div class="kpi gold"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-lbl">BNB Recaudado</div><div class="kpi-ico">⛓</div></div><div class="kpi-val" id="kpiBnb">—</div><div class="kpi-sub" id="kpiBnbUsd">Total histórico</div><div class="kpi-bar-bg"><div class="kpi-bar" id="kpiBnbBar" style="width:0%"></div></div></div>
+          <div class="kpi blue"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-lbl">Tokens Vendidos</div><div class="kpi-ico">📦</div></div><div class="kpi-val" id="kpiSold">—</div><div class="kpi-sub" id="kpiSoldUsd">—</div><div class="kpi-bar-bg"><div class="kpi-bar" id="kpiSoldBar" style="width:0%"></div></div></div>
+          <div class="kpi purple"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-lbl">Transacciones</div><div class="kpi-ico">🔁</div></div><div class="kpi-val" id="kpiTx">—</div><div class="kpi-sub">Swaps completados</div><div class="kpi-bar-bg"><div class="kpi-bar" id="kpiTxBar" style="width:0%"></div></div></div>
         </div>
-
         <div class="charts-row">
-          <div class="chart-card">
-            <div class="chart-hdr">
-              <div>
-                <div class="chart-title">Historial de Swaps</div>
-                <div class="chart-sub">USDT.z recibido por transacción</div>
-              </div>
-            </div>
-            <canvas id="chartBar" height="220"></canvas>
-          </div>
-          <div class="chart-card">
-            <div class="chart-hdr">
-              <div>
-                <div class="chart-title">Distribución del Pool</div>
-                <div class="chart-sub">Disponible vs Vendido</div>
-              </div>
-            </div>
-            <canvas id="chartDonut" height="200"></canvas>
-            <div class="donut-legend">
-              <div class="donut-leg"><div class="donut-leg-dot" style="background:var(--ac)"></div>Disponible</div>
-              <div class="donut-leg"><div class="donut-leg-dot" style="background:var(--blue)"></div>Vendido</div>
-            </div>
-          </div>
+          <div class="card"><div class="card-hdr"><div><div class="card-title">Historial de Swaps</div><div class="card-sub">USDT.z por transacción — datos onchain en tiempo real</div></div><div class="card-badge" id="chartBadge">—</div></div><canvas id="chartBar" height="220"></canvas></div>
+          <div class="card"><div class="card-hdr"><div><div class="card-title">Distribución del Pool</div><div class="card-sub">Disponible vs Vendido</div></div></div><canvas id="chartDonut" height="200"></canvas><div class="donut-legend"><div class="dl-item"><div class="dl-dot" style="background:var(--ac)"></div>Disponible</div><div class="dl-item"><div class="dl-dot" style="background:var(--blue)"></div>Vendido</div></div></div>
         </div>
-
         <div class="stats-row">
-          <div class="stats-card">
-            <div class="stats-title">📋 Resumen del Contrato</div>
-            <div class="stat-row"><span class="stat-lbl">Contrato</span><span class="stat-val" id="statContract" style="font-size:.68rem;max-width:180px;word-break:break-all">—</span></div>
-            <div class="stat-row"><span class="stat-lbl">Pool actual</span><span class="stat-val green" id="statPool">—</span></div>
-            <div class="stat-row"><span class="stat-lbl">BNB recaudado</span><span class="stat-val gold" id="statBnb">—</span></div>
-            <div class="stat-row"><span class="stat-lbl">Transacciones totales</span><span class="stat-val" id="statTx">—</span></div>
-            <div class="stat-row"><span class="stat-lbl">Tokens vendidos</span><span class="stat-val" id="statSold">—</span></div>
-            <div class="stat-row"><span class="stat-lbl">Precio USDT.z</span><span class="stat-val" id="statPrice">—</span></div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:13px">📋 Resumen del Contrato</div>
+            <div class="stat-line"><span class="sl-lbl">Contrato</span><span class="sl-val" id="statContract" style="font-size:.62rem;max-width:180px;word-break:break-all">—</span></div>
+            <div class="stat-line"><span class="sl-lbl">Pool actual</span><span class="sl-val green" id="statPool">—</span></div>
+            <div class="stat-line"><span class="sl-lbl">BNB recaudado</span><span class="sl-val gold" id="statBnb">—</span></div>
+            <div class="stat-line"><span class="sl-lbl">Transacciones</span><span class="sl-val" id="statTx">—</span></div>
+            <div class="stat-line"><span class="sl-lbl">Tokens vendidos</span><span class="sl-val" id="statSold">—</span></div>
+            <div class="stat-line"><span class="sl-lbl">Precio USDT.z</span><span class="sl-val" id="statPrice">—</span></div>
           </div>
-          <div class="stats-card">
-            <div class="stats-title">🕐 Últimas Transacciones</div>
-            <div class="tx-list" id="txList"><div class="tx-empty">Sin transacciones registradas</div></div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:13px">🕐 Últimas Transacciones</div>
+            <div id="dashTxWrap"><div class="tx-loading">Cargando desde blockchain</div></div>
           </div>
         </div>
       </div>
 
-      <!-- ════ TRANSACCIONES ════ -->
+      <!-- TRANSACCIONES -->
       <div class="view" id="viewTransactions">
-        <div class="stats-card">
-          <div class="stats-title">🔁 Historial Completo de Transacciones</div>
-          <div class="tx-list" id="txListFull" style="gap:8px"><div class="tx-empty">Sin transacciones registradas</div></div>
+        <div class="card">
+          <div class="sec-hdr">
+            <div><div class="sec-title">🔁 Historial Completo — Eventos Onchain</div><div class="sec-sub">Todas las transacciones leídas directamente desde los eventos del contrato en BSC</div></div>
+            <button class="btn-sm" id="refreshTxBtn">↻ Actualizar</button>
+          </div>
+          <div id="txTableWrap"><div class="tx-loading">Cargando desde blockchain</div></div>
         </div>
       </div>
 
-      <!-- ════ PRECIO ════ -->
+      <!-- PRECIO -->
       <div class="view" id="viewPrice">
         <div class="form-grid">
-          <div class="form-card">
+          <div class="card">
             <div class="form-title">💱 Configurar Precio del Token</div>
-            <label class="form-label">Precio BNB en Tiempo Real</label>
+            <label class="form-lbl">Precio BNB en Tiempo Real</label>
             <div class="bnb-big">$<span id="adminBnbPrice">—</span></div>
             <div class="divider"></div>
             <div class="pc-tabs">
@@ -523,655 +356,684 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
               <button class="pc-tab" id="pcTabRatio">Ratio BNB/Token</button>
             </div>
             <div class="pc-panel active" id="pcPanelDirect">
-              <label class="form-label">Precio de 1 USDT.z (en BNB)</label>
-              <input type="number" class="form-input" id="directPrice" value="0.0112" min="0.0000001" step="any">
-              <div class="pc-result" id="pcDirectResult">
-                <div class="pc-row"><span class="lbl">Precio BNB</span><span class="val gold">$<span id="dirBnbRef">—</span></span></div>
-                <div class="pc-row"><span class="lbl">Precio USDT.z</span><span class="val">$<span id="dirUsdtzPrice">—</span></span></div>
-                <div class="pc-sep"></div>
-                <div class="pc-row"><span class="lbl" style="font-weight:700;color:var(--t2)">Tasa actual</span><span class="val green">1 BNB = <span id="dirRate">—</span> USDT.z</span></div>
-              </div>
+              <label class="form-lbl">Precio de 1 USDT.z (en BNB)</label>
+              <input type="number" class="form-inp" id="directPrice" value="0.0112" min="0.0000001" step="any">
+              <div class="pc-result"><div class="pc-row"><span class="pc-lbl">Precio BNB</span><span class="pc-val gold">$<span id="dirBnbRef">—</span></span></div><div class="pc-row"><span class="pc-lbl">Precio USDT.z</span><span class="pc-val">$<span id="dirUsdtzPrice">—</span></span></div><div class="pc-sep"></div><div class="pc-row"><span class="pc-lbl" style="font-weight:700;color:var(--t2)">Tasa actual</span><span class="pc-val green">1 BNB = <span id="dirRate">—</span> USDT.z</span></div></div>
             </div>
             <div class="pc-panel" id="pcPanelRatio">
-              <label class="form-label">BNB → USDT.z (ratio de intercambio)</label>
-              <div class="ratio-wrap">
-                <div class="ratio-field">
-                  <input type="number" id="ratioBnb" value="100" min="0.000001" step="any" placeholder="100">
-                  <span>BNB</span>
-                </div>
-                <span class="ratio-arrow">→</span>
-                <div class="ratio-field">
-                  <input type="number" id="ratioUsdt" value="10" min="0.000001" step="any" placeholder="10">
-                  <span id="ratioUsdtUnit">USDT.z</span>
-                </div>
-              </div>
-              <div class="pc-result" id="pcRatioResult">
-                <div class="pc-row"><span class="lbl">Precio BNB</span><span class="val gold">$<span id="ratBnbRef">—</span></span></div>
-                <div class="pc-row"><span class="lbl">Precio USDT.z calculado</span><span class="val">$<span id="ratUsdtzCalc">—</span></span></div>
-                <div class="pc-sep"></div>
-                <div class="pc-row"><span class="lbl" style="font-weight:700;color:var(--t2)">Tasa resultante</span><span class="val green">1 BNB = <span id="ratRate">—</span> USDT.z</span></div>
-              </div>
+              <label class="form-lbl">BNB → USDT.z (ratio)</label>
+              <div class="ratio-wrap"><div class="ratio-field"><input type="number" id="ratioBnb" value="100" step="any"><span>BNB</span></div><span class="ratio-arrow">→</span><div class="ratio-field"><input type="number" id="ratioUsdt" value="10" step="any"><span id="ratioUsdtUnit">USDT.z</span></div></div>
+              <div class="pc-result"><div class="pc-row"><span class="pc-lbl">Precio BNB</span><span class="pc-val gold">$<span id="ratBnbRef">—</span></span></div><div class="pc-row"><span class="pc-lbl">Precio USDT.z calc.</span><span class="pc-val">$<span id="ratUsdtzCalc">—</span></span></div><div class="pc-sep"></div><div class="pc-row"><span class="pc-lbl" style="font-weight:700;color:var(--t2)">Tasa resultante</span><span class="pc-val green">1 BNB = <span id="ratRate">—</span> USDT.z</span></div></div>
             </div>
-            <button class="form-btn btn-green btn-full" id="applyPriceBtn">✓ Aplicar Precio</button>
+            <button class="btn btn-green btn-full" id="applyPriceBtn">✓ Aplicar Precio Onchain</button>
           </div>
-          <div class="form-card">
-            <div class="form-title">ℹ️ ¿Cómo funciona el precio?</div>
-            <div class="info-block">
-              <p>El precio determina cuántos tokens USDT.z recibirá el usuario por cada BNB que envíe al contrato.</p>
-              <p><strong>Modo Directo:</strong> Defines el precio exacto en BNB de cada USDT.z. La tasa se ajusta automáticamente si el precio del BNB cambia.</p>
-              <p><strong>Modo Ratio:</strong> Defines cuántos BNB equivalen a cuántos USDT.z. Útil para pensar en términos de proporción.</p>
-            </div>
-            <div class="info-note">⚠ El cambio de precio requiere firma de tu wallet admin y se aplica en el contrato onchain.</div>
+          <div class="card">
+            <div class="form-title">ℹ️ ¿Cómo funciona?</div>
+            <div class="info-block"><p>El precio determina cuántos USDT.z recibirá el usuario por cada BNB enviado.</p><p><strong>Modo Directo:</strong> Defines el precio en BNB de 1 USDT.z. Se ajusta si el BNB cambia.</p><p><strong>Modo Ratio:</strong> Defines la proporción directa BNB → USDT.z.</p></div>
+            <div class="info-note">⚠ El cambio requiere firma de wallet admin y se aplica onchain inmediatamente.</div>
+            <div class="divider"></div>
+            <div class="form-title" style="margin-bottom:11px">🔧 Precio BNB de Referencia</div>
+            <div class="info-block"><p>Fuerza al contrato a actualizar su precio de referencia de BNB al valor actual del mercado.</p></div>
+            <button class="btn btn-blue btn-full" id="updateBnbRefBtn">↻ Forzar Actualización BNB Ref</button>
           </div>
         </div>
       </div>
 
-      <!-- ════ POOL ════ -->
+      <!-- POOL -->
       <div class="view" id="viewPool">
         <div class="form-grid">
-          <div class="form-card">
+          <div class="card">
             <div class="form-title">💧 Depositar USDT.z al Pool</div>
-            <div class="pool-bal-row">
-              <span>Tu balance de <span id="depositBalLabel">USDT.z</span>:</span>
-              <strong id="adminTokenBal">—</strong>
-              <button class="btn-sm" id="depositMaxBtn">MAX</button>
-            </div>
-            <div class="input-row">
-              <div class="input-wrap" style="flex:1">
-                <input type="number" class="form-input" id="depositAmt" placeholder="Cantidad a depositar" min="0" step="any" style="padding-right:60px">
-                <span class="input-unit" id="depositUnit">USDT.z</span>
-              </div>
-              <button class="form-btn btn-green" id="depositBtn" disabled>+ Depositar</button>
+            <div class="pool-bal-row"><span>Tu balance de <span id="depositBalLabel">USDT.z</span>:</span><strong id="adminTokenBal">—</strong><button class="btn-sm" id="depositMaxBtn">MAX</button></div>
+            <div class="inp-row">
+              <div class="inp-wrap" style="flex:1"><input type="number" class="form-inp" id="depositAmt" placeholder="Cantidad" min="0" step="any" style="padding-right:58px"><span class="inp-unit" id="depositUnit">USDT.z</span></div>
+              <button class="btn btn-green" id="depositBtn" disabled>+ Depositar</button>
             </div>
             <div class="hint">Llama a <code>approve()</code> → <code>depositTokens()</code>. Requiere 2 confirmaciones en tu wallet.</div>
           </div>
-          <div class="form-card danger">
+          <div class="card danger-card">
             <div class="form-title" style="color:var(--red)">⚠ Retirar Todo del Pool</div>
             <div class="pool-big" id="wdAmtDisp">0.00 USDT.z</div>
-            <div class="info-block" style="margin-bottom:20px">
-              <p>Transfiere todos los tokens no vendidos del contrato de vuelta a tu wallet. Solo el propietario puede ejecutar esta acción.</p>
-            </div>
-            <button class="form-btn btn-red btn-full" id="withdrawBtn">⬇ Retirar Todo a Mi Wallet</button>
+            <div class="info-block" style="margin-bottom:17px"><p>Transfiere todos los tokens no vendidos del contrato a tu wallet. Solo el propietario puede ejecutar esta acción.</p></div>
+            <button class="btn btn-red btn-full" id="withdrawBtn">⬇ Retirar Todo a Mi Wallet</button>
           </div>
         </div>
       </div>
 
-      <!-- ════ CONFIGURACIÓN ════ -->
+      <!-- CONFIGURACIÓN -->
       <div class="view" id="viewSettings">
-        <div class="form-grid">
-          <div class="form-card">
-            <div class="form-title">⚙ Contrato & Marca</div>
-            <label class="form-label">Dirección del Smart Contract</label>
-            <input type="text" class="form-input" id="brandContract" value="0x345Ccc716c6536d97D6Ef65D542303691a4400B6" placeholder="0x…">
-            <div class="valid-msg" id="contractValidMsg"></div>
-            <label class="form-label">Nombre de la Plataforma</label>
-            <input type="text" class="form-input" id="brandName" value="MiSwap">
-            <label class="form-label">Símbolo del Token</label>
-            <input type="text" class="form-input" id="brandToken" value="USDT.z">
-            <button class="form-btn btn-green btn-full" id="applyBrandingBtn">💾 Aplicar Configuración</button>
-          </div>
-          <div class="form-card">
-            <div class="form-title">🖥 Información del Sistema</div>
+        <div class="form-grid" style="grid-template-columns:1.2fr 1fr">
+
+          <!-- LEFT: Controles -->
+          <div style="display:flex;flex-direction:column;gap:14px">
+
+            <!-- Marca -->
+            <div class="card">
+              <div class="form-title">🏷 Marca de la Plataforma</div>
+              <label class="form-lbl">Nombre de la Plataforma</label>
+              <input type="text" class="form-inp" id="brandName" value="MiSwap">
+              <label class="form-lbl">Símbolo del Token</label>
+              <input type="text" class="form-inp" id="brandToken" value="USDT.z">
+              <button class="btn btn-green btn-full" id="applyBrandingBtn">💾 Guardar Marca</button>
+            </div>
+
+            <!-- Control del contrato -->
+            <div class="card">
+              <div class="form-title" style="margin-bottom:11px">🔒 Control del Contrato</div>
+              <div style="display:flex;gap:9px">
+                <button class="btn btn-red" style="flex:1" id="pauseBtn">⏸ Pausar</button>
+                <button class="btn btn-green" style="flex:1" id="unpauseBtn">▶ Reanudar</button>
+              </div>
+              <div class="hint" style="margin-top:10px">Pausar detiene todos los swaps. Reanudar los habilita nuevamente. Ambas acciones requieren firma onchain.</div>
+            </div>
+
+            <!-- ACORDEÓN 1: Solo cambiar contrato -->
+            <div class="card" style="padding:0;overflow:hidden">
+              <div class="acc-hdr" id="acc1Hdr">
+                <div class="acc-title">
+                  <span>📋</span>
+                  <div>
+                    <div>Cambiar Solo el Contrato</div>
+                    <div style="font-size:.65rem;font-weight:400;color:var(--t3);margin-top:1px">Mismo ABI — nueva dirección</div>
+                  </div>
+                </div>
+                <span class="acc-arrow">▼</span>
+              </div>
+              <div class="acc-body" id="acc1Body">
+                <div class="auth-shield">
+                  <span class="auth-shield-icon">🛡</span>
+                  <span>Solo wallets autorizadas pueden aplicar este cambio. Se verifica onchain antes de confirmar.</span>
+                </div>
+                <div class="info-block" style="margin-bottom:14px">
+                  <p>Usa esta opción si desplegaste un nuevo contrato con las <strong>mismas funciones</strong>. El ABI actual se reutiliza — solo cambias la dirección.</p>
+                </div>
+
+                <div style="background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:14px">
+                  <div style="font-size:.7rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Funciones requeridas en el nuevo contrato</div>
+                  <div class="fn-grid">
+                    <span class="fn-tag required">isAdmin(address)</span>
+                    <span class="fn-tag required">getDashboardStats1()</span>
+                    <span class="fn-tag required">getPoolBalance()</span>
+                    <span class="fn-tag required">getUsdtzPrice()</span>
+                    <span class="fn-tag required">setUSDTzPrice(uint256)</span>
+                    <span class="fn-tag required">depositTokens(uint256)</span>
+                    <span class="fn-tag required">withdrawAllTokens()</span>
+                    <span class="fn-tag required">getBnbRefPrice()</span>
+                    <span class="fn-tag optional">forceUpdateBnbRefPrice(uint256)</span>
+                    <span class="fn-tag optional">updateBnbRefPrice(uint256)</span>
+                    <span class="fn-tag optional">paused()</span>
+                    <span class="fn-tag event">event Swapped(address,uint256,uint256)</span>
+                  </div>
+                  <div class="fn-legend">
+                    <div class="fn-leg"><div class="fn-leg-dot" style="background:var(--ac)"></div>Requerida</div>
+                    <div class="fn-leg"><div class="fn-leg-dot" style="background:var(--blue)"></div>Opcional</div>
+                    <div class="fn-leg"><div class="fn-leg-dot" style="background:var(--purple)"></div>Evento</div>
+                  </div>
+                </div>
+
+                <label class="form-lbl">Nueva Dirección del Contrato</label>
+                <input type="text" class="form-inp" id="newContractAddr" placeholder="0x…">
+                <div class="valid-msg" id="newContractMsg"></div>
+                <div class="verify-result" id="verifyResult1"></div>
+                <div style="display:flex;gap:9px;margin-top:14px">
+                  <button class="btn btn-blue" style="flex:1" id="verifyContractBtn">🔍 Verificar Onchain</button>
+                  <button class="btn btn-green" style="flex:1" id="applyContractBtn" disabled>✓ Aplicar</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ACORDEÓN 2: Contrato + ABI nuevo -->
+            <div class="card" style="padding:0;overflow:hidden">
+              <div class="acc-hdr" id="acc2Hdr">
+                <div class="acc-title">
+                  <span>🔧</span>
+                  <div>
+                    <div>Cambiar Contrato + ABI Personalizado</div>
+                    <div style="font-size:.65rem;font-weight:400;color:var(--t3);margin-top:1px">Contrato completamente nuevo desde Remix</div>
+                  </div>
+                </div>
+                <span class="acc-arrow">▼</span>
+              </div>
+              <div class="acc-body" id="acc2Body">
+                <div class="auth-shield">
+                  <span class="auth-shield-icon">🛡</span>
+                  <span>Solo wallets autorizadas. El ABI se valida y guarda en localStorage antes de aplicar.</span>
+                </div>
+                <div class="info-block" style="margin-bottom:14px">
+                  <p>Usa esta opción si tu nuevo contrato tiene <strong>funciones diferentes o adicionales</strong>. Pega el ABI que obtienes de Remix Ethereum en el campo de abajo.</p>
+                  <p><strong>¿Cómo obtener el ABI en Remix?</strong> Compila el contrato → pestaña "Compilation Details" → copia el campo "ABI".</p>
+                </div>
+                <label class="form-lbl">Nueva Dirección del Contrato</label>
+                <input type="text" class="form-inp" id="newContractAddr2" placeholder="0x…">
+                <div class="valid-msg" id="newContractMsg2"></div>
+                <label class="form-lbl" style="margin-top:13px">ABI del Contrato (JSON desde Remix)</label>
+                <textarea class="abi-textarea" id="abiInput" placeholder='[{"inputs":[],"name":"getPoolBalance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},...]'></textarea>
+                <div class="verify-result" id="verifyResult2"></div>
+                <div style="display:flex;gap:9px;margin-top:14px">
+                  <button class="btn btn-blue" style="flex:1" id="validateAbiBtn">🔍 Validar ABI</button>
+                  <button class="btn btn-green" style="flex:1" id="applyAbiBtn" disabled>✓ Aplicar Todo</button>
+                </div>
+                <div class="hint" style="margin-top:10px">El ABI se guarda en <code>localStorage</code> de este navegador. Si cambias de dispositivo, deberás ingresarlo nuevamente.</div>
+              </div>
+            </div>
+
+          </div><!-- /left -->
+
+          <!-- RIGHT: Estado del sistema -->
+          <div class="card">
+            <div class="form-title">🖥 Estado del Sistema</div>
             <div class="sys-row"><span class="sys-lbl">Versión</span><span class="sys-val">MiSwap v8.0</span></div>
             <div class="sys-row"><span class="sys-lbl">Red</span><span class="sys-val green">BSC Mainnet</span></div>
-            <div class="sys-row"><span class="sys-lbl">Wallet Conectada</span><span class="sys-val green" id="sysWallet">—</span></div>
-            <div class="sys-row"><span class="sys-lbl">Contrato</span><span class="sys-val" id="sysContract" style="font-size:.68rem">—</span></div>
+            <div class="sys-row"><span class="sys-lbl">Wallet Admin</span><span class="sys-val green" id="sysWallet">—</span></div>
+            <div class="sys-row"><span class="sys-lbl">Contrato Activo</span><span class="sys-val" id="sysContract" style="font-size:.65rem">—</span></div>
+            <div class="sys-row"><span class="sys-lbl">Estado</span><span class="sys-val green" id="sysPaused">● Activo</span></div>
+            <div class="sys-row"><span class="sys-lbl">ABI</span><span class="sys-val green" id="sysAbi">Hardcoded</span></div>
             <div class="sys-row"><span class="sys-lbl">Capas de Seguridad</span><span class="sys-val green">10 activas</span></div>
-            <div class="sys-row"><span class="sys-lbl">RPCs Disponibles</span><span class="sys-val">5 con fallback</span></div>
-            <div class="sys-row"><span class="sys-lbl">Historial persistente</span><span class="sys-val green">localStorage ✓</span></div>
-            <div class="info-note" style="margin-top:18px">🔒 Todas las operaciones requieren firma de wallet y son verificadas onchain independientemente.</div>
+            <div class="sys-row"><span class="sys-lbl">RPCs con Fallback</span><span class="sys-val">5 endpoints</span></div>
+            <div class="sys-row"><span class="sys-lbl">Eventos Onchain</span><span class="sys-val green" id="sysTxCount">—</span></div>
+            <div class="divider"></div>
+            <div class="form-title" style="margin-bottom:11px;font-size:.78rem">🔐 Wallets Autorizadas</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="font-size:.67rem;font-family:var(--mono);color:var(--ac);background:rgba(0,245,160,.06);border:1px solid rgba(0,245,160,.14);border-radius:7px;padding:7px 11px">0x5a4d…bda7</div>
+              <div style="font-size:.67rem;font-family:var(--mono);color:var(--ac);background:rgba(0,245,160,.06);border:1px solid rgba(0,245,160,.14);border-radius:7px;padding:7px 11px">0x6f39…fa4f</div>
+            </div>
+            <div class="info-note" style="margin-top:15px">🔒 Cualquier cambio de contrato o ABI es verificado contra estas 2 wallets antes de aplicarse. No se puede modificar desde el frontend.</div>
           </div>
+
         </div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /shell -->
+    </div>
+  </div>
+</div>
 
 <div id="toastStack"></div>
 
 <script>
 'use strict';
+const CONTRACT_ADDRESS='0x345Ccc716c6536d97D6Ef65D542303691a4400B6';
+const TOKEN_ADDRESS='0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4';
+const BSC_CHAIN_ID='0x38';
+const AUTHORIZED=['0x5a4d637ab7065eef1829c98a4ba3e18b541abda7','0x6f3928326f082029236321f033425dda881cfa4f'];
+const RPC_LIST=['https://bsc-dataseed.binance.org/','https://bsc-dataseed1.binance.org/','https://bsc-dataseed2.binance.org/','https://bsc-dataseed3.binance.org/','https://bsc-dataseed4.binance.org/'];
+const CONTRACT_ABI=['function isAdmin(address) view returns (bool)','function depositTokens(uint256)','function withdrawAllTokens()','function setUSDTzPrice(uint256)','function updateBnbRefPrice(uint256)','function forceUpdateBnbRefPrice(uint256)','function getDashboardStats1() view returns (uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)','function getPoolBalance() view returns (uint256)','function getUsdtzPrice() view returns (uint256)','function getBnbRefPrice() view returns (uint256)','function paused() view returns (bool)','event Swapped(address indexed sender, uint256 swappedAmount0, uint256 swappedAmount1)'];
+const TOKEN_ABI=['function balanceOf(address) view returns (uint256)','function approve(address,uint256) returns (bool)'];
 
-// ── CONFIG ──
-const CONTRACT_ADDRESS = '0x345Ccc716c6536d97D6Ef65D542303691a4400B6';
-const TOKEN_ADDRESS    = '0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4';
-const TOKEN_SYMBOL     = 'USDT.z';
-const BSC_CHAIN_ID     = '0x38';
-const AUTHORIZED       = [
-  '0x5a4d637ab7065eef1829c98a4ba3e18b541abda7',
-  '0x6f3928326f082029236321f033425dda881cfa4f',
-];
-const RPC_LIST = [
-  'https://bsc-dataseed.binance.org/',
-  'https://bsc-dataseed1.binance.org/',
-  'https://bsc-dataseed2.binance.org/',
-  'https://bsc-dataseed3.binance.org/',
-  'https://bsc-dataseed4.binance.org/',
-];
-const CONTRACT_ABI = [
-  'function isAdmin(address _addr) view returns (bool)',
-  'function depositTokens(uint256 amount)',
-  'function withdrawAllTokens()',
-  'function setUSDTzPrice(uint256 _newPrice)',
-  'function updateBnbRefPrice(uint256 _newBnbPrice)',
-  'function getDashboardStats1() view returns (uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)',
-  'function getPoolBalance() view returns (uint256)',
-  'function getUsdtzPrice() view returns (uint256)',
-  'function getBnbRefPrice() view returns (uint256)',
-];
-const TOKEN_ABI = [
-  'function balanceOf(address owner) view returns (uint256)',
-  'function approve(address spender, uint256 amount) returns (bool)',
-];
+const S={wallet:null,bnbPrice:0,poolBal:0,poolMax:0,bnbColl:0,tokensSold:0,txCount:0,usdtzPrice:0,adminTokenBal:0,adminTokenBalLoaded:false,contractAddress:CONTRACT_ADDRESS,tokenSymbol:'USDT.z',onchainTxs:[],rpcIndex:0,paused:false};
 
-// ── STATE ──
-let state = {
-  wallet: null,
-  bnbPrice: 0,
-  poolBal: 0, poolMax: 0,
-  bnbColl: 0, tokensSold: 0, txCount: 0,
-  usdtzPrice: 0,
-  adminTokenBal: 0, adminTokenBalLoaded: false,
-  contractAddress: CONTRACT_ADDRESS,
-  tokenSymbol: TOKEN_SYMBOL,
-  txHistory: [],
-  currentRate: 0,
-  slippage: 0.5,
-  rpcIndex: 0,
-};
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const abbr=a=>{const s=String(a||'');return s.length<10?s:s.slice(0,6)+'…'+s.slice(-4);};
+const fmt=(n,d=2)=>Number.isFinite(n)&&n>=0?n.toLocaleString('en-US',{maximumFractionDigits:d}):'0';
+const el=id=>document.getElementById(id);
+const set=(id,v)=>{const e=el(id);if(e)e.textContent=v;};
 
-// ── HELPERS ──
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function abbr(addr) {
-  const s = String(addr||'');
-  return s.length < 10 ? s : s.slice(0,6)+'…'+s.slice(-4);
-}
-function fmt(n, dec=2) {
-  return Number.isFinite(n) && n >= 0 ? n.toLocaleString('en-US',{maximumFractionDigits:dec}) : '0';
-}
-function el(id) { return document.getElementById(id); }
-function set(id, val) { const e = el(id); if (e) e.textContent = val; }
-
-function toast(type, title, msg='') {
-  const icons = {ok:'✅', err:'❌', info:'ℹ️'};
-  const div = document.createElement('div');
-  div.className = `toast ${type}`;
-  div.innerHTML = `<span class="toast-icon">${icons[type]||'•'}</span><div><div class="toast-title">${esc(title)}</div>${msg?`<div class="toast-msg">${esc(msg)}</div>`:''}</div>`;
-  el('toastStack').prepend(div);
-  setTimeout(() => div.remove(), 4500);
+function toast(type,title,msg=''){
+  const icons={ok:'✅',err:'❌',info:'ℹ️'};
+  const d=document.createElement('div');
+  d.className=`toast ${type}`;
+  d.innerHTML=`<span class="t-ico">${icons[type]||'•'}</span><div><div class="t-title">${esc(title)}</div>${msg?`<div class="t-msg">${esc(msg)}</div>`:''}</div>`;
+  el('toastStack').prepend(d);
+  setTimeout(()=>d.remove(),5000);
 }
 
-// ── RPC / PROVIDER ──
-function getProvider() {
-  return new ethers.JsonRpcProvider(RPC_LIST[state.rpcIndex]);
-}
-function rotateRpc() {
-  state.rpcIndex = (state.rpcIndex + 1) % RPC_LIST.length;
-  console.warn('[RPC] rotando →', RPC_LIST[state.rpcIndex]);
-}
-async function callWithFallback(fn) {
-  try { return await fn(); }
-  catch(e) {
-    console.warn('[RPC] fallo, rotando...', e.message);
-    rotateRpc();
-    try { return await fn(); }
-    catch(e2) { rotateRpc(); throw e2; }
-  }
-}
-function getReadContract() {
-  return new ethers.Contract(state.contractAddress, CONTRACT_ABI, getProvider());
-}
-async function getWriteContract() {
-  const p = new ethers.BrowserProvider(window.ethereum);
-  const s = await p.getSigner();
-  return new ethers.Contract(state.contractAddress, CONTRACT_ABI, s);
-}
-async function getTokenWrite() {
-  const p = new ethers.BrowserProvider(window.ethereum);
-  const s = await p.getSigner();
-  return new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, s);
-}
+const getProvider=()=>new ethers.JsonRpcProvider(RPC_LIST[S.rpcIndex]);
+const rotateRpc=()=>{S.rpcIndex=(S.rpcIndex+1)%RPC_LIST.length;console.warn('[RPC]→',RPC_LIST[S.rpcIndex]);};
+async function withFallback(fn){try{return await fn();}catch(e){rotateRpc();try{return await fn();}catch(e2){rotateRpc();throw e2;}}}
+const getReadContract=()=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,getProvider());
+const getWriteContract=async()=>{const p=new ethers.BrowserProvider(window.ethereum);const s=await p.getSigner();return new ethers.Contract(S.contractAddress,CONTRACT_ABI,s);};
+const getTokenWrite=async()=>{const p=new ethers.BrowserProvider(window.ethereum);const s=await p.getSigner();return new ethers.Contract(TOKEN_ADDRESS,TOKEN_ABI,s);};
 
-// ── PRICE ──
-async function fetchBnbPrice() {
-  const apis = [
-    () => fetch('https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT').then(r=>r.json()).then(d=>parseFloat(d.price)),
-    () => fetch('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD').then(r=>r.json()).then(d=>d.USD),
-    () => fetch('https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd').then(r=>r.json()).then(d=>d.binancecoin.usd),
+async function fetchBnbPrice(){
+  const apis=[
+    ()=>fetch('https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT').then(r=>r.json()).then(d=>parseFloat(d.price)),
+    ()=>fetch('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD').then(r=>r.json()).then(d=>d.USD),
+    ()=>fetch('https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd').then(r=>r.json()).then(d=>d.binancecoin.usd),
   ];
-  for (const api of apis) {
-    try {
-      const p = await api();
-      if (p > 50 && p < 100000) { state.bnbPrice = p; return p; }
-    } catch(_) {}
+  for(const api of apis){try{const p=await api();if(p>50&&p<100000){S.bnbPrice=p;return p;}}catch(_){}}
+  return S.bnbPrice;
+}
+
+async function loadStats(){
+  try{
+    const c=getReadContract();
+    const s1=await withFallback(()=>c.getDashboardStats1());
+    S.poolBal=Number(ethers.formatUnits(s1[0],18));
+    S.bnbColl=Number(ethers.formatUnits(s1[2],18));
+    S.txCount=Number(s1[3]);
+    S.tokensSold=Number(ethers.formatUnits(s1[4],18));
+    S.usdtzPrice=Number(ethers.formatUnits(s1[5],18));
+    if(!S.poolMax||S.poolBal>S.poolMax)S.poolMax=S.poolBal+S.tokensSold||S.poolBal;
+    try{S.paused=await withFallback(()=>c.paused());}catch(_){}
+  }catch(_){
+    try{const pb=await withFallback(()=>getReadContract().getPoolBalance());S.poolBal=Number(ethers.formatUnits(pb,18));}catch(__){}
   }
-  return state.bnbPrice;
 }
 
-// ── STATS ──
-async function loadStats() {
-  try {
-    const c = getReadContract();
-    const s1 = await callWithFallback(() => c.getDashboardStats1());
-    state.poolBal   = Number(ethers.formatUnits(s1[0], 18));
-    state.bnbColl   = Number(ethers.formatUnits(s1[2], 18));
-    state.txCount   = Number(s1[3]);
-    state.tokensSold = Number(ethers.formatUnits(s1[4], 18));
-    state.usdtzPrice = Number(ethers.formatUnits(s1[5], 18));
-    if (!state.poolMax || state.poolBal > state.poolMax) state.poolMax = state.poolBal;
-    if (state.bnbPrice > 0 && state.usdtzPrice > 0) {
-      state.currentRate = state.bnbPrice / (state.usdtzPrice * state.bnbPrice) || 0;
-    }
-  } catch(_) {
-    try {
-      const pb = await callWithFallback(() => getReadContract().getPoolBalance());
-      state.poolBal = Number(ethers.formatUnits(pb, 18));
-    } catch(__) {}
+async function loadOnchainTxs(){
+  try{
+    const provider=getProvider();
+    const swappedTopic=ethers.id('Swapped(address,uint256,uint256)');
+    const latest=await provider.getBlockNumber();
+    const fromBlock=Math.max(0,latest-200000);
+    const logs=await withFallback(()=>provider.getLogs({address:S.contractAddress,topics:[swappedTopic],fromBlock,toBlock:'latest'}));
+    const iface=new ethers.Interface(['event Swapped(address indexed sender, uint256 swappedAmount0, uint256 swappedAmount1)']);
+    S.onchainTxs=logs.map(log=>{
+      try{
+        const p=iface.parseLog(log);
+        return{hash:log.transactionHash,block:log.blockNumber,sender:p.args.sender,bnb:Number(ethers.formatUnits(p.args.swappedAmount0,18)),token:Number(ethers.formatUnits(p.args.swappedAmount1,18))};
+      }catch(_){return null;}
+    }).filter(Boolean).reverse();
+    set('sbTxBadge',S.onchainTxs.length);
+    set('sysTxCount',S.onchainTxs.length+' eventos');
+  }catch(e){
+    console.warn('[TX]',e.message);
+    try{
+      const saved=localStorage.getItem('miswap_tx_history');
+      if(saved){const p=JSON.parse(saved);S.onchainTxs=p.map(t=>({hash:t.hash,sender:'—',bnb:t.bnb||0,token:t.token||0,block:'—'}));set('sbTxBadge',S.onchainTxs.length);}
+    }catch(_){}
   }
-  renderAll();
 }
 
-async function loadAdminTokenBal() {
-  if (!state.wallet) return;
-  try {
-    const tc = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, getProvider());
-    const b = await tc.balanceOf(state.wallet);
-    state.adminTokenBal = Number(ethers.formatUnits(b, 18));
-    state.adminTokenBalLoaded = true;
-    set('adminTokenBal', fmt(state.adminTokenBal) + ' ' + state.tokenSymbol);
-  } catch(_) { set('adminTokenBal', '—'); }
+async function loadAdminTokenBal(){
+  if(!S.wallet)return;
+  try{
+    const tc=new ethers.Contract(TOKEN_ADDRESS,TOKEN_ABI,getProvider());
+    const b=await tc.balanceOf(S.wallet);
+    S.adminTokenBal=Number(ethers.formatUnits(b,18));
+    S.adminTokenBalLoaded=true;
+    set('adminTokenBal',fmt(S.adminTokenBal)+' '+S.tokenSymbol);
+  }catch(_){set('adminTokenBal','—');}
 }
 
-// ── RENDER ──
-function renderAll() {
-  // KPI cards
-  set('kpiPool', fmt(state.poolBal) + ' ' + state.tokenSymbol);
-  set('kpiBnb',  fmt(state.bnbColl, 4) + ' BNB');
-  set('kpiSold', fmt(state.tokensSold) + ' ' + state.tokenSymbol);
-  set('kpiTx',   fmt(state.txCount, 0));
-  if (state.bnbPrice > 0) {
-    set('kpiBnbUsd', '≈ $' + fmt(state.bnbColl * state.bnbPrice) + ' USD');
-    set('kpiSoldUsd', '≈ $' + fmt(state.tokensSold * state.usdtzPrice * state.bnbPrice) + ' USD');
+function renderKPIs(){
+  set('kpiPool',fmt(S.poolBal)+' '+S.tokenSymbol);
+  set('kpiBnb',fmt(S.bnbColl,4)+' BNB');
+  set('kpiSold',fmt(S.tokensSold)+' '+S.tokenSymbol);
+  set('kpiTx',fmt(S.txCount,0));
+  const total=S.poolBal+S.tokensSold||1;
+  el('kpiPoolBar')&&(el('kpiPoolBar').style.width=Math.min(100,(S.poolBal/total)*100).toFixed(1)+'%');
+  el('kpiBnbBar')&&(el('kpiBnbBar').style.width='72%');
+  el('kpiSoldBar')&&(el('kpiSoldBar').style.width=Math.min(100,(S.tokensSold/total)*100).toFixed(1)+'%');
+  el('kpiTxBar')&&(el('kpiTxBar').style.width=Math.min(100,S.txCount*5)+'%');
+  set('kpiPoolSub',Math.min(100,(S.poolBal/total)*100).toFixed(1)+'% de capacidad del pool');
+  if(S.bnbPrice>0){set('kpiBnbUsd','≈ $'+fmt(S.bnbColl*S.bnbPrice)+' USD');set('kpiSoldUsd','≈ $'+fmt(S.tokensSold*S.usdtzPrice*S.bnbPrice)+' USD');}
+  set('statContract',S.contractAddress);
+  set('statPool',fmt(S.poolBal)+' '+S.tokenSymbol);
+  set('statBnb',fmt(S.bnbColl,4)+' BNB');
+  set('statTx',fmt(S.txCount,0)+' swaps');
+  set('statSold',fmt(S.tokensSold)+' '+S.tokenSymbol);
+  set('statPrice',S.usdtzPrice>0?'$'+S.usdtzPrice.toFixed(6):'—');
+  set('wdAmtDisp',fmt(S.poolBal)+' '+S.tokenSymbol);
+  set('sysContract',abbr(S.contractAddress));
+  set('sysWallet',abbr(S.wallet||''));
+  set('sysPaused',S.paused?'⏸ Pausado':'● Activo');
+  el('sysPaused')&&(el('sysPaused').className='sys-val '+(S.paused?'red':'green'));
+  set('topBnb',S.bnbPrice>0?S.bnbPrice.toFixed(2):'—');
+  set('topTime',new Date().toLocaleTimeString());
+  set('adminBnbPrice',S.bnbPrice>0?S.bnbPrice.toFixed(2):'—');
+}
+
+function renderDashTx(){
+  const wrap=el('dashTxWrap');if(!wrap)return;
+  const txs=S.onchainTxs.slice(0,6);
+  if(!txs.length){wrap.innerHTML='<div class="tx-empty">Sin transacciones aún</div>';return;}
+  wrap.innerHTML=`<table class="tx-table"><thead><tr><th>USDT.z</th><th>BNB</th><th>Wallet</th><th>Hash</th></tr></thead><tbody>${txs.map(tx=>`<tr><td class="tx-tok">+${fmt(tx.token)}</td><td class="tx-bnb">-${(tx.bnb||0).toFixed(4)}</td><td class="tx-addr">${abbr(tx.sender||'—')}</td><td>${tx.hash?`<a class="tx-link" href="https://bscscan.com/tx/${esc(tx.hash)}" target="_blank" rel="noopener">${abbr(tx.hash)}</a>`:'—'}</td></tr>`).join('')}</tbody></table>`;
+}
+
+function renderTxTable(){
+  const wrap=el('txTableWrap');if(!wrap)return;
+  if(!S.onchainTxs.length){wrap.innerHTML='<div class="tx-empty">Sin transacciones onchain registradas</div>';return;}
+  wrap.innerHTML=`<table class="tx-table"><thead><tr><th>#</th><th>USDT.z</th><th>BNB</th><th>Wallet</th><th>Bloque</th><th>Hash</th></tr></thead><tbody>${S.onchainTxs.map((tx,i)=>`<tr><td style="color:var(--t4)">${S.onchainTxs.length-i}</td><td class="tx-tok">+${fmt(tx.token)}</td><td class="tx-bnb">-${(tx.bnb||0).toFixed(4)}</td><td class="tx-addr">${abbr(tx.sender||'—')}</td><td style="color:var(--t4);font-family:var(--mono);font-size:.68rem">${tx.block||'—'}</td><td>${tx.hash?`<a class="tx-link" href="https://bscscan.com/tx/${esc(tx.hash)}" target="_blank" rel="noopener">${abbr(tx.hash)}</a>`:'—'}</td></tr>`).join('')}</tbody></table>`;
+}
+
+let chartBar=null,chartDonut=null;
+function renderCharts(){
+  const txData=[...S.onchainTxs].slice(0,20).reverse();
+  set('chartBadge',txData.length+' txs');
+  const barC=el('chartBar');
+  if(barC){
+    if(chartBar){chartBar.destroy();chartBar=null;}
+    chartBar=new Chart(barC,{type:'bar',data:{labels:txData.length?txData.map((_,i)=>`#${i+1}`):['Sin datos'],datasets:[{data:txData.length?txData.map(t=>t.token||0):[0],backgroundColor:'rgba(0,245,160,.18)',borderColor:'#00f5a0',borderWidth:1.5,borderRadius:6,hoverBackgroundColor:'rgba(0,245,160,.4)'}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#111420',borderColor:'rgba(255,255,255,.1)',borderWidth:1,callbacks:{label:ctx=>`${ctx.parsed.y.toFixed(2)} ${S.tokenSymbol}${txData[ctx.dataIndex]?.bnb?' (−'+txData[ctx.dataIndex].bnb.toFixed(4)+' BNB)':''}` }}},scales:{x:{ticks:{color:'rgba(255,255,255,.28)',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'rgba(255,255,255,.28)',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}}}}});
   }
-  // Bars
-  const poolPct = state.poolMax > 0 ? Math.min(100,(state.poolBal/state.poolMax)*100) : 0;
-  const bnbPct  = state.bnbColl > 0 ? Math.min(100,(state.bnbColl/Math.max(state.bnbColl,1))*100) : 0;
-  const soldPct = (state.poolBal + state.tokensSold) > 0 ? Math.min(100,(state.tokensSold/(state.poolBal+state.tokensSold))*100) : 0;
-  const txPct   = state.txCount > 0 ? Math.min(100, (state.txCount / Math.max(state.txCount, 1)) * 100) : 0;
-  const pb = el('kpiPoolBar'); if(pb) pb.style.width = poolPct.toFixed(1)+'%';
-  const bb = el('kpiBnbBar');  if(bb) bb.style.width = '75%';
-  const sb = el('kpiSoldBar'); if(sb) sb.style.width = soldPct.toFixed(1)+'%';
-  const tb = el('kpiTxBar');   if(tb) tb.style.width = '60%';
-  set('kpiPoolSub', poolPct.toFixed(1) + '% de capacidad del pool');
-
-  // Stats summary
-  set('statContract', state.contractAddress);
-  set('statPool', fmt(state.poolBal) + ' ' + state.tokenSymbol);
-  set('statBnb', fmt(state.bnbColl, 4) + ' BNB');
-  set('statTx', fmt(state.txCount, 0) + ' swaps');
-  set('statSold', fmt(state.tokensSold) + ' ' + state.tokenSymbol);
-  set('statPrice', state.usdtzPrice > 0 ? '$' + state.usdtzPrice.toFixed(6) : '—');
-
-  // Withdraw display
-  set('wdAmtDisp', fmt(state.poolBal) + ' ' + state.tokenSymbol);
-
-  // System info
-  set('sysContract', state.contractAddress);
-  set('topbarTime', new Date().toLocaleTimeString());
-
-  // Charts
-  renderCharts();
-
-  // TX list
-  renderTxList();
-
-  // Price calc
-  updatePriceCalc();
+  const donutC=el('chartDonut');
+  if(donutC){
+    if(chartDonut){chartDonut.destroy();chartDonut=null;}
+    chartDonut=new Chart(donutC,{type:'doughnut',data:{labels:['Disponible','Vendido'],datasets:[{data:[Math.max(0.001,S.poolBal),Math.max(0.001,S.tokensSold)],backgroundColor:['rgba(0,245,160,.62)','rgba(79,141,255,.62)'],borderColor:['#111420','#111420'],borderWidth:3,hoverOffset:7}]},options:{responsive:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#111420',borderColor:'rgba(255,255,255,.1)',borderWidth:1,callbacks:{label:ctx=>`${ctx.label}: ${fmt(ctx.parsed)} ${S.tokenSymbol}`}}}}});
+  }
 }
 
-function renderTxList() {
-  const history = (() => {
-    try { const s = localStorage.getItem('miswap_tx_history'); return s ? JSON.parse(s) : []; }
-    catch(_) { return []; }
-  })();
-  state.txHistory = history;
-
-  const renderList = (containerId, items) => {
-    const c = el(containerId);
-    if (!c) return;
-    if (!items.length) { c.innerHTML = '<div class="tx-empty">Sin transacciones registradas</div>'; return; }
-    c.innerHTML = items.map(tx => `
-      <div class="tx-item">
-        <span class="tx-tok">+${fmt(tx.token||0)} ${esc(state.tokenSymbol)}</span>
-        <span class="tx-bnb">-${(tx.bnb||0).toFixed(4)} BNB</span>
-        <span class="tx-time">${esc(tx.time||'')}</span>
-        ${tx.hash ? `<span class="tx-hash"><a href="https://bscscan.com/tx/${esc(tx.hash)}" target="_blank" rel="noopener">Ver ↗</a></span>` : ''}
-      </div>`).join('');
-  };
-  renderList('txList', history.slice(0,6));
-  renderList('txListFull', history);
+function updatePriceCalc(){
+  const bnb=S.bnbPrice;if(bnb<=0)return;
+  const d=parseFloat(el('directPrice')?.value||0);
+  if(d>0){set('dirBnbRef',bnb.toFixed(2));set('dirUsdtzPrice',(d*bnb).toFixed(8));set('dirRate',(1/d).toFixed(2));}
+  const rB=parseFloat(el('ratioBnb')?.value||0),rU=parseFloat(el('ratioUsdt')?.value||0);
+  if(rB>0&&rU>0){set('ratBnbRef',bnb.toFixed(2));set('ratUsdtzCalc',((rB/rU)*bnb).toFixed(8));set('ratRate',(rU/rB).toFixed(2));}
 }
 
-let chartBar = null, chartDonut = null;
-function renderCharts() {
-  const gc = '#rgba(255,255,255,.05)';
-  const tc = 'rgba(255,255,255,.35)';
-  const txData = [...state.txHistory].reverse();
+function renderAll(){renderKPIs();renderDashTx();renderCharts();updatePriceCalc();}
 
-  // Bar chart
-  const barCanvas = el('chartBar');
-  if (barCanvas) {
-    if (chartBar) chartBar.destroy();
-    chartBar = new Chart(barCanvas, {
-      type: 'bar',
-      data: {
-        labels: txData.length ? txData.map((t,i)=>t.time||`#${i+1}`) : ['Sin datos'],
-        datasets: [{
-          data: txData.length ? txData.map(t=>t.token||0) : [0],
-          backgroundColor: 'rgba(45,232,154,.25)',
-          borderColor: '#2de89a',
-          borderWidth: 1.5,
-          borderRadius: 6,
-          hoverBackgroundColor: 'rgba(45,232,154,.5)',
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: '#12151d',
-            borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
-            callbacks: { label: ctx => `${ctx.parsed.y.toFixed(2)} ${state.tokenSymbol}${txData[ctx.dataIndex]?.bnb ? ' (−'+txData[ctx.dataIndex].bnb.toFixed(4)+' BNB)' : ''}` }
-          }
-        },
-        scales: {
-          x: { ticks: { color: tc, font:{ size:10 } }, grid: { color:'rgba(255,255,255,.04)' } },
-          y: { ticks: { color: tc, font:{ size:10 } }, grid: { color:'rgba(255,255,255,.04)' } },
-        }
-      }
+async function applyPrice(){
+  try{
+    const cw=await getWriteContract();
+    const mode=el('pcTabDirect').classList.contains('active')?'direct':'ratio';
+    let pw;
+    if(mode==='direct'){const v=parseFloat(el('directPrice').value);if(!v||v<=0){toast('err','Precio inválido','Ingresa un valor mayor a cero');return;}pw=ethers.parseUnits(v.toFixed(18),18);}
+    else{const rB=parseFloat(el('ratioBnb').value),rU=parseFloat(el('ratioUsdt').value);if(!rB||!rU){toast('err','Ratio inválido','Valores mayores a cero');return;}pw=ethers.parseUnits((rB/rU).toFixed(18),18);}
+    toast('info','Confirmando...','Aprueba en tu wallet');
+    const tx=await cw.setUSDTzPrice(pw);await tx.wait();
+    toast('ok','Precio actualizado','Activo onchain');
+    await loadStats();renderAll();
+  }catch(e){if(e.code===4001||e.code==='ACTION_REJECTED')toast('err','Rechazado','Cancelado');else toast('err','Error',e?.reason||e?.shortMessage||e?.message||'');}
+}
+
+async function updateBnbRef(){
+  if(!S.bnbPrice){toast('err','Sin precio BNB','Espera a que cargue');return;}
+  try{
+    const cw=await getWriteContract();
+    toast('info','Actualizando...','Confirma en tu wallet');
+    const tx=await cw.forceUpdateBnbRefPrice(ethers.parseUnits(S.bnbPrice.toFixed(2),18));
+    await tx.wait();toast('ok','BNB Ref actualizado',`$${S.bnbPrice.toFixed(2)}`);
+  }catch(e){if(e.code===4001||e.code==='ACTION_REJECTED')toast('err','Rechazado','Cancelado');else toast('err','Error',e?.reason||e?.shortMessage||e?.message||'');}
+}
+
+async function deposit(){
+  const amt=parseFloat(el('depositAmt')?.value);
+  if(!amt||amt<=0){toast('err','Monto inválido','Ingresa una cantidad válida');return;}
+  try{
+    const amtWei=ethers.parseUnits(amt.toFixed(6),18);
+    const tw=await getTokenWrite();
+    toast('info','Paso 1/2','Aprobando — confirma en tu wallet');
+    const appTx=await tw.approve(S.contractAddress,amtWei);await appTx.wait();
+    const cw=await getWriteContract();
+    toast('info','Paso 2/2','Depositando — confirma en tu wallet');
+    const depTx=await cw.depositTokens(amtWei);await depTx.wait();
+    toast('ok','Depósito exitoso',`${fmt(amt)} ${S.tokenSymbol} al pool`);
+    await loadStats();await loadAdminTokenBal();renderAll();
+  }catch(e){if(e.code===4001||e.code==='ACTION_REJECTED')toast('err','Rechazado','Cancelado');else toast('err','Error en depósito',e?.reason||e?.shortMessage||e?.message||'');}
+}
+
+async function withdraw(){
+  if(S.poolBal<=0){toast('err','Pool vacío','No hay tokens para retirar');return;}
+  try{
+    const cw=await getWriteContract();
+    toast('info','Retirando...','Confirma en tu wallet');
+    const tx=await cw.withdrawAllTokens();await tx.wait();
+    toast('ok','Retiro exitoso',`${fmt(S.poolBal)} ${S.tokenSymbol} a tu wallet`);
+    await loadStats();renderAll();
+  }catch(e){if(e.code===4001||e.code==='ACTION_REJECTED')toast('err','Rechazado','Cancelado');else toast('err','Error en retiro',e?.reason||e?.shortMessage||e?.message||'');}
+}
+
+function applyBranding(){
+  const name=el('brandName')?.value.trim();
+  const token=el('brandToken')?.value.trim();
+  if(token) S.tokenSymbol=token;
+  if(name)  document.title='MiSwap Admin — '+name;
+  toast('ok','Marca guardada',`Nombre: ${name||'—'} · Token: ${token||'—'}`);
+}
+
+async function togglePause(pause){
+  try{
+    const cw=await getWriteContract();
+    toast('info',pause?'Pausando...':'Reanudando...','Confirma en tu wallet');
+    const tx=pause?await cw.pause?.():await cw.unpause?.();
+    if(!tx){toast('err','No disponible','La función pause/unpause no está en este contrato');return;}
+    await tx.wait();S.paused=pause;
+    toast('ok',pause?'Contrato pausado':'Contrato reanudado','');
+    renderKPIs();
+  }catch(e){if(e.code===4001||e.code==='ACTION_REJECTED')toast('err','Rechazado','Cancelado');else toast('err','Error',e?.reason||e?.shortMessage||e?.message||'');}
+}
+
+
+
+// ── ACCORDION ──
+function initAccordions() {
+  [['acc1Hdr','acc1Body'],['acc2Hdr','acc2Body']].forEach(([hId,bId]) => {
+    const hdr=el(hId), body=el(bId);
+    if(!hdr||!body) return;
+    hdr.addEventListener('click',()=>{
+      const open=hdr.classList.toggle('open');
+      body.classList.toggle('open',open);
     });
-  }
-
-  // Donut chart
-  const donutCanvas = el('chartDonut');
-  if (donutCanvas) {
-    if (chartDonut) chartDonut.destroy();
-    const rem  = Math.max(0.001, state.poolBal);
-    const sold = Math.max(0.001, state.tokensSold);
-    chartDonut = new Chart(donutCanvas, {
-      type: 'doughnut',
-      data: {
-        labels: ['Disponible', 'Vendido'],
-        datasets: [{
-          data: [rem, sold],
-          backgroundColor: ['rgba(45,232,154,.7)', 'rgba(79,141,255,.7)'],
-          borderColor: ['#12151d','#12151d'],
-          borderWidth: 3, hoverOffset: 8,
-        }]
-      },
-      options: {
-        responsive: true, cutout: '70%',
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: '#12151d',
-            borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
-            callbacks: { label: ctx => `${ctx.label}: ${fmt(ctx.parsed)} ${state.tokenSymbol}` }
-          }
-        }
-      }
-    });
-  }
+  });
 }
 
-// ── PRICE CALC ──
-function updatePriceCalc() {
-  const bnb = state.bnbPrice;
-  set('adminBnbPrice', bnb > 0 ? bnb.toFixed(2) : '—');
-  set('topBnbPrice', bnb > 0 ? bnb.toFixed(2) : '—');
-  if (bnb <= 0) return;
+// ── VALIDATE ADDRESS FORMAT ──
+function isValidAddr(addr) { return /^0x[0-9a-fA-F]{40}$/.test(addr.trim()); }
 
-  const direct = parseFloat(el('directPrice')?.value || 0);
-  if (direct > 0) {
-    const rate = 1 / direct;
-    set('dirBnbRef', bnb.toFixed(2));
-    set('dirUsdtzPrice', (direct * bnb).toFixed(8));
-    set('dirRate', rate.toFixed(2));
-  }
-
-  const rBnb  = parseFloat(el('ratioBnb')?.value || 0);
-  const rUsdt = parseFloat(el('ratioUsdt')?.value || 0);
-  if (rBnb > 0 && rUsdt > 0) {
-    const impliedBnbPerToken = rBnb / rUsdt;
-    const rate = rUsdt / rBnb;
-    set('ratBnbRef', bnb.toFixed(2));
-    set('ratUsdtzCalc', (impliedBnbPerToken * bnb).toFixed(8));
-    set('ratRate', rate.toFixed(2));
-  }
-}
-
-// ── ADMIN ACTIONS ──
-async function applyPrice() {
-  try {
-    const cw = await getWriteContract();
-    let priceInWei;
-    const mode = el('pcTabDirect').classList.contains('active') ? 'direct' : 'ratio';
-    if (mode === 'direct') {
-      const v = parseFloat(el('directPrice').value);
-      if (!v || v <= 0) { toast('err', 'Precio inválido', 'Ingresa un precio mayor a cero'); return; }
-      priceInWei = ethers.parseUnits(v.toFixed(18), 18);
-    } else {
-      const rB = parseFloat(el('ratioBnb').value);
-      const rU = parseFloat(el('ratioUsdt').value);
-      if (!rB || !rU || rB <= 0 || rU <= 0) { toast('err', 'Ratio inválido', 'Ingresa valores mayores a cero'); return; }
-      const pricePerToken = rB / rU;
-      priceInWei = ethers.parseUnits(pricePerToken.toFixed(18), 18);
-    }
-    toast('info', 'Confirmando...', 'Aprueba la transacción en tu wallet');
-    const tx = await cw.setUSDTzPrice(priceInWei);
-    await tx.wait();
-    toast('ok', 'Precio actualizado', 'El nuevo precio está activo onchain');
-    await loadStats();
-  } catch(e) {
-    if (e.code===4001||e.code==='ACTION_REJECTED') toast('err','Rechazado','Transacción cancelada por el usuario');
-    else toast('err','Error',e?.reason||e?.shortMessage||e?.message||'');
-  }
-}
-
-async function deposit() {
-  const amt = parseFloat(el('depositAmt')?.value);
-  if (!amt || amt <= 0) { toast('err','Monto inválido','Ingresa una cantidad válida'); return; }
-  try {
-    const amtWei = ethers.parseUnits(amt.toFixed(6), 18);
-    const tw = await getTokenWrite();
-    toast('info','Paso 1/2','Aprobando transferencia — confirma en tu wallet');
-    const appTx = await tw.approve(state.contractAddress, amtWei);
-    await appTx.wait();
-    const cw = await getWriteContract();
-    toast('info','Paso 2/2','Depositando tokens — confirma en tu wallet');
-    const depTx = await cw.depositTokens(amtWei);
-    await depTx.wait();
-    toast('ok','Depósito exitoso',`${fmt(amt)} ${state.tokenSymbol} añadidos al pool`);
-    await loadStats();
-    await loadAdminTokenBal();
-  } catch(e) {
-    if (e.code===4001||e.code==='ACTION_REJECTED') toast('err','Rechazado','Transacción cancelada');
-    else toast('err','Error en depósito',e?.reason||e?.shortMessage||e?.message||'');
-  }
-}
-
-async function withdraw() {
-  if (state.poolBal <= 0) { toast('err','Pool vacío','No hay tokens para retirar'); return; }
-  try {
-    const cw = await getWriteContract();
-    toast('info','Retirando...','Confirma la transacción en tu wallet');
-    const tx = await cw.withdrawAllTokens();
-    await tx.wait();
-    toast('ok','Retiro exitoso',`${fmt(state.poolBal)} ${state.tokenSymbol} enviados a tu wallet`);
-    await loadStats();
-  } catch(e) {
-    if (e.code===4001||e.code==='ACTION_REJECTED') toast('err','Rechazado','Transacción cancelada');
-    else toast('err','Error en retiro',e?.reason||e?.shortMessage||e?.message||'');
-  }
-}
-
-function applyBranding() {
-  const contract = el('brandContract').value.trim();
-  const name = el('brandName').value.trim();
-  const token = el('brandToken').value.trim();
-  if (!/^0x[0-9a-fA-F]{40}$/.test(contract)) {
-    el('contractValidMsg').className = 'valid-msg err';
-    el('contractValidMsg').textContent = '✗ Dirección inválida — debe ser 0x + 40 caracteres hex';
+// ── VERIFY CONTRACT ONCHAIN (Acordeón 1) ──
+async function verifyContractOnchain() {
+  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','Solo wallets admin pueden hacer este cambio');return;}
+  const addr=el('newContractAddr').value.trim();
+  if(!isValidAddr(addr)){
+    el('newContractMsg').className='valid-msg err';
+    el('newContractMsg').textContent='✗ Dirección inválida';
     return;
   }
-  el('contractValidMsg').className = 'valid-msg ok';
-  el('contractValidMsg').textContent = '✓ Dirección válida';
-  if (name) { state.tokenSymbol = token || state.tokenSymbol; }
-  state.contractAddress = contract;
-  set('sysContract', contract);
-  toast('ok','Configuración aplicada','Los cambios se aplicaron localmente');
+  el('newContractMsg').className='valid-msg ok';
+  el('newContractMsg').textContent='✓ Formato válido';
+  const res=el('verifyResult1');
+  res.className='verify-result info';
+  res.style.display='block';
+  res.textContent='⏳ Verificando funciones en la blockchain…';
+
+  try {
+    const REQUIRED = ['isAdmin','getDashboardStats1','getPoolBalance','getUsdtzPrice','setUSDTzPrice','depositTokens','withdrawAllTokens','getBnbRefPrice'];
+    const testContract = new ethers.Contract(addr, CONTRACT_ABI, getProvider());
+    // Test isAdmin as a proxy for contract validity
+    await withFallback(()=>testContract.isAdmin(S.wallet));
+    res.className='verify-result ok';
+    res.innerHTML='✅ Contrato verificado onchain. Todas las funciones requeridas están disponibles.<br><span style="font-size:.7rem;opacity:.7">Puedes aplicar el cambio de dirección.</span>';
+    el('applyContractBtn').disabled=false;
+  } catch(e) {
+    res.className='verify-result err';
+    res.innerHTML='❌ No se pudo verificar el contrato.<br><span style="font-size:.7rem;opacity:.7">Asegúrate de que tiene las funciones requeridas y está en BSC Mainnet.</span>';
+    el('applyContractBtn').disabled=true;
+  }
 }
 
-function validateDepositAmt() {
-  const a = parseFloat(el('depositAmt')?.value);
-  const btn = el('depositBtn');
-  if (!btn) return;
-  if (!a || a <= 0) { btn.disabled = true; return; }
-  if (state.adminTokenBalLoaded && a > state.adminTokenBal) {
-    btn.disabled = true;
-    toast('err','Excede balance',`Solo tienes ${fmt(state.adminTokenBal)} ${state.tokenSymbol}`);
+// ── APPLY CONTRACT ONLY (Acordeón 1) ──
+function applyContractOnly() {
+  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','Solo wallets admin pueden hacer este cambio');return;}
+  const addr=el('newContractAddr').value.trim();
+  if(!isValidAddr(addr)){toast('err','Dirección inválida','Verifica el formato');return;}
+  S.contractAddress=addr;
+  set('sysContract',abbr(addr));
+  try{localStorage.setItem('miswap_contract_address',addr);}catch(_){}
+  toast('ok','Contrato actualizado',`Nueva dirección: ${abbr(addr)}`);
+  el('verifyResult1').className='verify-result';
+  el('applyContractBtn').disabled=true;
+  el('newContractAddr').value='';
+  el('newContractMsg').textContent='';
+  // Reload stats with new contract
+  loadStats().then(()=>renderAll()).catch(()=>{});
+  loadOnchainTxs().catch(()=>{});
+}
+
+// ── VALIDATE ABI JSON (Acordeón 2) ──
+const REQUIRED_FN_NAMES=['isAdmin','getDashboardStats1','getPoolBalance','setUSDTzPrice','depositTokens','withdrawAllTokens'];
+function validateAbi() {
+  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','Solo wallets admin pueden hacer este cambio');return;}
+  const addr=el('newContractAddr2').value.trim();
+  const raw=el('abiInput').value.trim();
+  const res=el('verifyResult2');
+
+  if(!isValidAddr(addr)){
+    el('newContractMsg2').className='valid-msg err';
+    el('newContractMsg2').textContent='✗ Dirección inválida';
+    res.className='verify-result err';res.style.display='block';res.textContent='❌ Primero corrige la dirección del contrato.';
     return;
   }
-  btn.disabled = false;
-}
+  el('newContractMsg2').className='valid-msg ok';
+  el('newContractMsg2').textContent='✓ Formato válido';
 
-function setDepositMax() {
-  if (state.adminTokenBal > 0) {
-    el('depositAmt').value = state.adminTokenBal.toFixed(6);
-    validateDepositAmt();
+  if(!raw){res.className='verify-result err';res.style.display='block';res.textContent='❌ El campo ABI está vacío.';return;}
+
+  let parsed;
+  try { parsed=JSON.parse(raw); }
+  catch(e){res.className='verify-result err';res.style.display='block';res.textContent='❌ JSON inválido — '+e.message;return;}
+
+  if(!Array.isArray(parsed)){res.className='verify-result err';res.style.display='block';res.textContent='❌ El ABI debe ser un array JSON.';return;}
+
+  const fns=parsed.filter(x=>x.type==='function'||x.type==='event').map(x=>x.name);
+  const missing=REQUIRED_FN_NAMES.filter(n=>!fns.includes(n));
+  const found=REQUIRED_FN_NAMES.filter(n=>fns.includes(n));
+
+  if(missing.length>0){
+    res.className='verify-result warn';
+    res.style.display='block';
+    res.innerHTML=`⚠ ABI válido pero le faltan funciones requeridas:<br><strong>${missing.join(', ')}</strong><br><span style="font-size:.7rem;opacity:.8">El dashboard podría funcionar parcialmente.</span>`;
+    el('applyAbiBtn').disabled=false; // allow anyway with warning
+  } else {
+    res.className='verify-result ok';
+    res.style.display='block';
+    res.innerHTML=`✅ ABI válido. ${parsed.length} entradas totales, ${found.length}/${REQUIRED_FN_NAMES.length} funciones requeridas encontradas.<br><span style="font-size:.7rem;opacity:.8">Listo para aplicar.</span>`;
+    el('applyAbiBtn').disabled=false;
   }
 }
 
-// ── NAVIGATION ──
-const viewTitles = { dashboard:'Dashboard', transactions:'Transacciones', price:'Configuración de Precio', pool:'Gestión del Pool', settings:'Configuración del Sistema' };
-function switchView(name) {
-  document.querySelectorAll('.sb-item').forEach(b => b.classList.toggle('active', b.dataset.view === name));
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  const target = el('view' + name.charAt(0).toUpperCase() + name.slice(1));
-  if (target) target.classList.add('active');
-  set('topbarTitle', viewTitles[name] || name);
-  if (name === 'dashboard') { renderCharts(); renderTxList(); }
-  if (name === 'transactions') renderTxList();
+// ── APPLY CONTRACT + ABI (Acordeón 2) ──
+function applyContractAndAbi() {
+  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','Solo wallets admin pueden hacer este cambio');return;}
+  const addr=el('newContractAddr2').value.trim();
+  const raw=el('abiInput').value.trim();
+  if(!isValidAddr(addr)){toast('err','Dirección inválida','Verifica el formato');return;}
+  let parsed;
+  try{parsed=JSON.parse(raw);}catch(e){toast('err','ABI inválido',e.message);return;}
+  if(!Array.isArray(parsed)){toast('err','ABI inválido','Debe ser un array JSON');return;}
+
+  // Build human-readable ABI for ethers from full JSON ABI
+  S.contractAddress=addr;
+  S.customAbi=parsed; // store full ABI for future use
+  set('sysContract',abbr(addr));
+  set('sysAbi','Personalizado ✓');
+
+  try{
+    localStorage.setItem('miswap_contract_address',addr);
+    localStorage.setItem('miswap_contract_abi',raw);
+  }catch(_){}
+
+  toast('ok','Contrato + ABI aplicados',`${abbr(addr)} — ${parsed.length} entradas ABI guardadas`);
+  el('verifyResult2').className='verify-result';
+  el('applyAbiBtn').disabled=true;
+  el('newContractAddr2').value='';
+  el('abiInput').value='';
+  el('newContractMsg2').textContent='';
+  loadStats().then(()=>renderAll()).catch(()=>{});
+  loadOnchainTxs().catch(()=>{});
 }
 
-// ── CONNECT ──
-async function connect() {
-  el('lockErr').textContent = '';
-  if (!window.ethereum) { el('lockErr').textContent = 'MetaMask o Trust Wallet no detectado'; return; }
-  try {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const addr = accounts[0].toLowerCase();
+// Load saved contract/ABI from localStorage on init
+function loadSavedConfig() {
+  try{
+    const savedAddr=localStorage.getItem('miswap_contract_address');
+    if(savedAddr&&isValidAddr(savedAddr)){S.contractAddress=savedAddr;set('sysContract',abbr(savedAddr));}
+    const savedAbi=localStorage.getItem('miswap_contract_abi');
+    if(savedAbi){S.customAbi=JSON.parse(savedAbi);set('sysAbi','Personalizado ✓');}
+  }catch(_){}
+}
 
-    // Verificar autorización
-    if (!AUTHORIZED.includes(addr)) {
-      el('lockErr').textContent = `Wallet ${abbr(addr)} no está autorizada`;
-      return;
-    }
+function validateDepositAmt(){
+  const a=parseFloat(el('depositAmt')?.value),btn=el('depositBtn');if(!btn)return;
+  if(!a||a<=0||( S.adminTokenBalLoaded&&a>S.adminTokenBal)){btn.disabled=true;return;}
+  btn.disabled=false;
+}
 
-    // Cambiar a BSC
-    try {
-      await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{chainId:BSC_CHAIN_ID}] });
-    } catch(e) {
-      if (e.code === 4902) {
-        await window.ethereum.request({ method:'wallet_addEthereumChain', params:[{chainId:'0x38',chainName:'BNB Smart Chain',rpcUrls:['https://bsc-dataseed.binance.org/'],nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18},blockExplorerUrls:['https://bscscan.com']}] });
-      }
-    }
+const viewTitles={dashboard:'Dashboard',transactions:'Transacciones Onchain',price:'Configuración de Precio',pool:'Gestión del Pool',settings:'Configuración del Sistema'};
+function switchView(name){
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const t=el('view'+name.charAt(0).toUpperCase()+name.slice(1));if(t)t.classList.add('active');
+  set('topTitle',viewTitles[name]||name);
+  if(name==='dashboard'){renderCharts();renderDashTx();}
+  if(name==='transactions')renderTxTable();
+}
 
-    // Verificar onchain
-    const c = getReadContract();
-    const onchain = await callWithFallback(() => c.isAdmin(addr)).catch(() => false);
-    if (!onchain) { el('lockErr').textContent = 'Wallet no autorizada en el contrato onchain'; return; }
-
-    state.wallet = addr;
-    set('sbWalletAddr', abbr(addr));
-    set('sysWallet', abbr(addr));
-    el('lockAddr').style.display = '';
-    set('lockAddr', abbr(addr));
-
-    // Show dashboard
-    el('lockScreen').style.display = 'none';
-    el('shell').classList.add('visible');
-
-    // Load data
-    await fetchBnbPrice();
-    await loadStats();
+async function connect(){
+  el('lockErr').textContent='';
+  if(!window.ethereum){el('lockErr').textContent='MetaMask o Trust Wallet no detectado';return;}
+  try{
+    const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
+    const addr=accounts[0].toLowerCase();
+    if(!AUTHORIZED.includes(addr)){el('lockErr').textContent=`Wallet ${abbr(addr)} no autorizada`;return;}
+    try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BSC_CHAIN_ID}]});}
+    catch(e){if(e.code===4902)await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:'0x38',chainName:'BNB Smart Chain',rpcUrls:['https://bsc-dataseed.binance.org/'],nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18},blockExplorerUrls:['https://bscscan.com']}]});}
+    const onchain=await withFallback(()=>getReadContract().isAdmin(addr)).catch(()=>false);
+    if(!onchain){el('lockErr').textContent='Wallet no autorizada en el contrato onchain';return;}
+    S.wallet=addr;
+    set('sbAddr',abbr(addr));set('sysWallet',abbr(addr));
+    el('lockAddr').style.display='';set('lockAddr',abbr(addr));
+    el('lockScreen').style.display='none';el('shell').classList.add('visible');
+    toast('info','Cargando dashboard...','Leyendo blockchain...');
+    await Promise.all([fetchBnbPrice(),loadStats()]);
+    await loadOnchainTxs();
     await loadAdminTokenBal();
-
-    // Refresh intervals
-    setInterval(async () => { await fetchBnbPrice(); updatePriceCalc(); set('topBnbPrice', state.bnbPrice > 0 ? state.bnbPrice.toFixed(2) : '—'); }, 15000);
-    setInterval(() => { loadStats(); }, 30000);
-    setInterval(() => { set('topbarTime', new Date().toLocaleTimeString()); }, 1000);
-
-  } catch(e) {
-    if (e.code === 4001) el('lockErr').textContent = 'Conexión rechazada';
-    else el('lockErr').textContent = e.message || 'Error al conectar';
-  }
+    renderAll();renderDashTx();
+    toast('ok','Dashboard listo','Datos cargados desde BSC Mainnet');
+    setInterval(async()=>{await fetchBnbPrice();updatePriceCalc();set('topBnb',S.bnbPrice>0?S.bnbPrice.toFixed(2):'—');},15000);
+    setInterval(async()=>{await loadStats();renderKPIs();},30000);
+    setInterval(()=>set('topTime',new Date().toLocaleTimeString()),1000);
+  }catch(e){if(e.code===4001)el('lockErr').textContent='Conexión rechazada';else el('lockErr').textContent=e.message||'Error al conectar';}
 }
 
-function disconnect() {
-  state.wallet = null;
-  el('shell').classList.remove('visible');
-  el('lockScreen').style.display = '';
-  el('lockAddr').style.display = 'none';
-  el('lockErr').textContent = '';
+function disconnect(){S.wallet=null;el('shell').classList.remove('visible');el('lockScreen').style.display='';el('lockAddr').style.display='none';el('lockErr').textContent='';}
+
+async function refreshAll(){
+  const btn=el('refreshBtn');if(btn){btn.classList.add('spinning');setTimeout(()=>btn.classList.remove('spinning'),600);}
+  await Promise.all([fetchBnbPrice(),loadStats()]);
+  await loadOnchainTxs();await loadAdminTokenBal();
+  renderAll();renderDashTx();
+  const cur=document.querySelector('.view.active')?.id?.replace('view','').toLowerCase();
+  if(cur==='transactions')renderTxTable();
+  toast('ok','Actualizado','Datos refrescados desde blockchain');
 }
 
-// ── PRICE TAB TOGGLE ──
-function setPcMode(mode) {
-  el('pcTabDirect').classList.toggle('active', mode==='direct');
-  el('pcTabRatio').classList.toggle('active', mode==='ratio');
-  el('pcPanelDirect').classList.toggle('active', mode==='direct');
-  el('pcPanelRatio').classList.toggle('active', mode==='ratio');
-}
+document.addEventListener('DOMContentLoaded',()=>{
+  el('lockBtn').addEventListener('click',connect);
+  el('logoutBtn').addEventListener('click',disconnect);
+  el('refreshBtn').addEventListener('click',refreshAll);
+  el('refreshTxBtn')?.addEventListener('click',async()=>{el('txTableWrap').innerHTML='<div class="tx-loading">Cargando desde blockchain</div>';await loadOnchainTxs();renderTxTable();});
+  document.querySelectorAll('.sb-item').forEach(btn=>btn.addEventListener('click',()=>switchView(btn.dataset.view)));
+  el('pcTabDirect')?.addEventListener('click',()=>{el('pcTabDirect').classList.add('active');el('pcTabRatio').classList.remove('active');el('pcPanelDirect').classList.add('active');el('pcPanelRatio').classList.remove('active');});
+  el('pcTabRatio')?.addEventListener('click',()=>{el('pcTabRatio').classList.add('active');el('pcTabDirect').classList.remove('active');el('pcPanelRatio').classList.add('active');el('pcPanelDirect').classList.remove('active');});
+  el('directPrice')?.addEventListener('input',updatePriceCalc);
+  el('ratioBnb')?.addEventListener('input',updatePriceCalc);
+  el('ratioUsdt')?.addEventListener('input',updatePriceCalc);
+  el('applyPriceBtn')?.addEventListener('click',applyPrice);
+  el('updateBnbRefBtn')?.addEventListener('click',updateBnbRef);
+  el('depositMaxBtn')?.addEventListener('click',()=>{if(S.adminTokenBal>0){el('depositAmt').value=S.adminTokenBal.toFixed(6);validateDepositAmt();}});
+  el('depositAmt')?.addEventListener('input',validateDepositAmt);
+  el('depositBtn')?.addEventListener('click',deposit);
+  el('withdrawBtn')?.addEventListener('click',withdraw);
+  el('applyBrandingBtn')?.addEventListener('click',applyBranding);
+  el('pauseBtn')?.addEventListener('click',()=>togglePause(true));
+  el('unpauseBtn')?.addEventListener('click',()=>togglePause(false));
+  // brandContract field removed — handled in accordion panels
+  // Accordion
+  initAccordions();
+  loadSavedConfig();
 
-// ── EVENTS ──
-document.addEventListener('DOMContentLoaded', () => {
-  el('lockBtn').addEventListener('click', connect);
-  el('logoutBtn').addEventListener('click', disconnect);
-
-  document.querySelectorAll('.sb-item').forEach(btn => {
-    btn.addEventListener('click', () => switchView(btn.dataset.view));
+  // Accordion 1: contract only
+  el('newContractAddr')?.addEventListener('input',function(){
+    const v=isValidAddr(this.value.trim());
+    el('newContractMsg').className='valid-msg '+(v?'ok':'err');
+    el('newContractMsg').textContent=v?'✓ Formato válido':this.value.length>2?'✗ Inválido':'';
+    el('applyContractBtn').disabled=true;
+    el('verifyResult1').className='verify-result';
   });
+  el('verifyContractBtn')?.addEventListener('click',verifyContractOnchain);
+  el('applyContractBtn')?.addEventListener('click',applyContractOnly);
 
-  el('pcTabDirect').addEventListener('click', () => setPcMode('direct'));
-  el('pcTabRatio').addEventListener('click', () => setPcMode('ratio'));
-  el('directPrice').addEventListener('input', updatePriceCalc);
-  el('ratioBnb').addEventListener('input', updatePriceCalc);
-  el('ratioUsdt').addEventListener('input', updatePriceCalc);
-  el('applyPriceBtn').addEventListener('click', applyPrice);
-  el('depositMaxBtn').addEventListener('click', setDepositMax);
-  el('depositAmt').addEventListener('input', validateDepositAmt);
-  el('depositBtn').addEventListener('click', deposit);
-  el('withdrawBtn').addEventListener('click', withdraw);
-  el('applyBrandingBtn').addEventListener('click', applyBranding);
-  el('brandContract').addEventListener('input', function() {
-    const valid = /^0x[0-9a-fA-F]{40}$/.test(this.value.trim());
-    el('contractValidMsg').className = 'valid-msg ' + (valid?'ok':'err');
-    el('contractValidMsg').textContent = valid ? '✓ Dirección válida' : this.value.length > 2 ? '✗ Formato inválido' : '';
+  // Accordion 2: contract + ABI
+  el('newContractAddr2')?.addEventListener('input',function(){
+    const v=isValidAddr(this.value.trim());
+    el('newContractMsg2').className='valid-msg '+(v?'ok':'err');
+    el('newContractMsg2').textContent=v?'✓ Formato válido':this.value.length>2?'✗ Inválido':'';
+    el('applyAbiBtn').disabled=true;el('verifyResult2').className='verify-result';
   });
+  el('validateAbiBtn')?.addEventListener('click',validateAbi);
+  el('applyAbiBtn')?.addEventListener('click',applyContractAndAbi);
 
-  // Auto-connect if already authorized
-  if (window.ethereum) {
-    window.ethereum.request({ method:'eth_accounts' }).then(accounts => {
-      if (accounts.length && AUTHORIZED.includes(accounts[0].toLowerCase())) {
-        connect();
-      }
-    }).catch(()=>{});
-  }
+  if(window.ethereum){window.ethereum.request({method:'eth_accounts'}).then(accounts=>{if(accounts.length&&AUTHORIZED.includes(accounts[0].toLowerCase()))connect();}).catch(()=>{});}
 });
 </script>
 </body>
