@@ -24,7 +24,7 @@
   ║  src/app.js      → Inicialización y orquestación                               ║
   ╚══════════════════════════════════════════════════════════════════════════════════╝
 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; connect-src https://api.binance.com https://min-api.cryptocompare.com https://api.coingecko.com https://bsc-dataseed.binance.org https://bsc-dataseed1.binance.org https://bsc-dataseed2.binance.org wss: https:; img-src 'self' data: https:; frame-ancestors 'none'; form-action 'none'; base-uri 'self'; upgrade-insecure-requests;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; connect-src https://api.binance.com https://min-api.cryptocompare.com https://api.coingecko.com https://bsc-dataseed.binance.org https://bsc-dataseed1.binance.org https://bsc-dataseed2.binance.org https://relay.walletconnect.com https://relay.walletconnect.org wss://relay.walletconnect.com wss://relay.walletconnect.org wss: https:; img-src 'self' data: https:; frame-ancestors 'none'; form-action 'none'; base-uri 'self'; upgrade-insecure-requests;">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-Frame-Options" content="DENY">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
@@ -161,6 +161,68 @@
       </button>
     </div>
 
+
+    <!-- SELL CARD — Vender tokens al contrato (requiere buyback activo) -->
+    <div class="sell-card" id="sellCard">
+      <div class="sell-head">
+        <div class="sell-title">Sell</div>
+        <span class="sell-badge-off" id="sellStatusBadge">🔒 Disabled</span>
+      </div>
+
+      <!-- Estado bloqueado (buyback inactivo) -->
+      <div class="sell-locked" id="sellLocked">
+        <div class="sell-locked-ico">🔒</div>
+        <div class="sell-locked-msg">
+          <strong>Token buyback is not active.</strong><br>
+          This feature is enabled by administrators when the contract is ready to buy tokens.
+        </div>
+      </div>
+
+      <!-- Cuerpo activo (buyback activo) -->
+      <div class="sell-body" id="sellBody">
+
+        <!-- INPUT TOKEN -->
+        <div class="tok-box">
+          <div class="tok-top">
+            <span class="tok-lbl">You sell</span>
+            <div class="tok-bal">
+              Balance: <span id="sellTokBalDisp">—</span> <span id="sellTokSymDisp">USDT.z</span>
+              <button class="max-btn" id="sellMaxBtn">MAX</button>
+            </div>
+          </div>
+          <div class="tok-main">
+            <input type="number" class="amt-inp" id="sellAmt" placeholder="0.0" min="0" step="any">
+            <div class="tok-badge"><div class="ticon ticon-usdt">$</div><span id="sellTokBadge">USDT.z</span></div>
+          </div>
+        </div>
+
+        <!-- Flecha -->
+        <div class="arr-wrap"><div class="arr-btn">↓</div></div>
+
+        <!-- OUTPUT BNB (estimado) -->
+        <div class="tok-box">
+          <div class="tok-top"><span class="tok-lbl">You receive (estimated)</span></div>
+          <div class="tok-main">
+            <input type="number" class="amt-inp" id="sellBnbOut" placeholder="0.0" disabled>
+            <div class="tok-badge"><div class="ticon ticon-bnb">B</div>BNB</div>
+          </div>
+        </div>
+
+        <!-- Detalles estimación -->
+        <div class="sell-est-row" id="sellEstRow" style="display:none">
+          <div>Buy price<br><span class="val" id="sellEstPrice">—</span></div>
+          <div style="text-align:center">BNB liquidity<br><span class="val" id="sellEstLiq">—</span></div>
+          <div style="text-align:right">Min. BNB out<br><span class="val" id="sellEstMin">—</span></div>
+        </div>
+
+        <!-- Botón principal -->
+        <button id="sellBtn" disabled>Connect wallet to sell</button>
+        <div class="sell-approve-note" id="sellApproveNote">
+          ⚠️ You need to approve the contract to spend your tokens first. Click Sell to approve.
+        </div>
+      </div>
+    </div>
+
     <!-- BOTÓN TEST TOKEN -->
     <button class="sec-btn" id="secBtn">
       🔐 <span data-i18n="security_verification">Test Token Claim</span>
@@ -186,7 +248,7 @@
     <span class="foot-sep">·</span>
     <span data-i18n="all_rights">All rights reserved</span>
   </div>
-  <button class="adm-trigger" id="admTrigger" style="display:none">⚙</button>
+  <button class="adm-trigger" id="admTrigger">⚙</button>
 </footer>
 
 <!-- ════════════════════════════════════════════════════════
@@ -199,12 +261,46 @@
     <div class="modal-sub" data-i18n="connect_wallet_desc">Choose your preferred wallet to continue</div>
     <div class="wal-opt" id="walOptMetamask">
       <div class="woico">🦊</div>
-      <div><div class="woname">MetaMask</div><div class="wodesc" data-i18n="metamask_desc">Browser extension & mobile</div></div>
+      <div><div class="woname">MetaMask</div><div class="wodesc">Browser extension &amp; mobile</div></div>
     </div>
     <div class="wal-opt" id="walOptTrust">
       <div class="woico">🛡️</div>
-      <div><div class="woname">Trust Wallet</div><div class="wodesc" data-i18n="trust_desc">Mobile & browser extension</div></div>
+      <div><div class="woname">Trust Wallet</div><div class="wodesc">Mobile &amp; browser extension</div></div>
     </div>
+    <div class="wal-opt" id="walOptWC">
+      <div class="woico">🔗</div>
+      <div><div class="woname">WalletConnect</div><div class="wodesc">300+ wallets — scan QR code</div></div>
+    </div>
+    <div class="wal-opt" id="walOptCoinbase">
+      <div class="woico">🔵</div>
+      <div><div class="woname">Coinbase Wallet</div><div class="wodesc">Browser extension &amp; mobile</div></div>
+    </div>
+    <div class="wal-opt" id="walOptOKX">
+      <div class="woico">⬛</div>
+      <div><div class="woname">OKX Wallet</div><div class="wodesc">Browser extension &amp; mobile</div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     OVERLAY: CONFIRMACIÓN DE VENTA
+════════════════════════════════════════════════════════ -->
+<div class="overlay" id="sellOverlay">
+  <div class="modal">
+    <button class="modal-x" id="sellOverlayX">✕</button>
+    <div class="modal-title">Confirm Sale</div>
+    <div class="modal-sub">Review before confirming</div>
+    <div class="pr-list" style="margin:16px 0">
+      <div class="pr"><span class="lbl">You sell</span><span class="val hi" id="cfmSellAmt">—</span></div>
+      <div class="pr"><span class="lbl">You receive</span><span class="val" id="cfmSellBnb">—</span></div>
+      <div class="pr"><span class="lbl">Buy price</span><span class="val" id="cfmSellPrice">—</span></div>
+      <div class="pr"><span class="lbl">Min. BNB (slippage)</span><span class="val" id="cfmSellMin">—</span></div>
+    </div>
+    <button class="btn btn-full btn-lg" id="cfmSellBtn" style="background:linear-gradient(135deg,rgba(255,92,92,.2),rgba(255,60,60,.1));color:var(--red);border:1px solid rgba(255,92,92,.3);border-radius:12px;padding:14px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:var(--font)">
+      Confirm Sale
+    </button>
+    <div class="swap-loading" id="sellLoading" style="display:none">⏳ Waiting for confirmation…</div>
   </div>
 </div>
 
@@ -416,6 +512,8 @@
 <!-- ════════════════════════════════════════════════════════
      DEPENDENCIAS EXTERNAS
 ════════════════════════════════════════════════════════ -->
+<!-- WalletConnect v2 — modal QR + 300+ wallets compatibles con BSC -->
+<script src="https://unpkg.com/@walletconnect/ethereum-provider@2.13.0/dist/umd/index.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js" integrity="sha512-bLwLr3lzJN1cvtbClBMhKDyaD0uocWmphiqO8v0w3/z/XqUwzkM00gZq7BV3dQS9mQu0rarZMTsxlcnIHszElA==" crossorigin="anonymous"></script>
 
 <!-- ════════════════════════════════════════════════════════
@@ -433,6 +531,7 @@
 <script src="./src/stats.js"></script>
 <script src="./src/wallet.js"></script>
 <script src="./src/swap.js"></script>
+<script src="./src/sell.js"></script>
 <script src="./src/testtok.js"></script>
 <script src="./src/admin.js"></script>
 <script src="./src/ui.js"></script>
