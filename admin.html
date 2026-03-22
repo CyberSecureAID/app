@@ -252,6 +252,85 @@ body::after{
 .abi-textarea::placeholder{color:var(--t4)}
 .auth-shield{display:flex;align-items:center;gap:8px;background:rgba(0,245,160,.05);border:1px solid rgba(0,245,160,.15);border-radius:8px;padding:9px 13px;margin-bottom:14px;font-size:.75rem;color:var(--ac)}
 .auth-shield-icon{font-size:1rem;flex-shrink:0}
+
+/* ── ADMIN DUAL CARDS ── */
+.admin-dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+.admin-card{position:relative;border-radius:16px;padding:20px;overflow:hidden;transition:transform .2s,box-shadow .2s;border:1px solid var(--border)}
+.admin-card:hover{transform:translateY(-2px)}
+.admin-card.active-card{background:linear-gradient(135deg,rgba(0,245,160,.07),rgba(0,0,0,.3));border-color:rgba(0,245,160,.2)}
+.admin-card.suspended-card{background:linear-gradient(135deg,rgba(255,92,92,.07),rgba(0,0,0,.3));border-color:rgba(255,92,92,.2)}
+.admin-card-glow{position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;opacity:.1;filter:blur(25px);pointer-events:none}
+.active-card .admin-card-glow{background:var(--ac)}
+.suspended-card .admin-card-glow{background:var(--red)}
+.admin-card-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.admin-avatar{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.active-card .admin-avatar{background:rgba(0,245,160,.1);border:1px solid rgba(0,245,160,.2)}
+.suspended-card .admin-avatar{background:rgba(255,92,92,.1);border:1px solid rgba(255,92,92,.2)}
+.admin-name{font-size:.88rem;font-weight:700;color:var(--t1)}
+.admin-role{font-size:.68rem;color:var(--t3);margin-top:1px}
+.admin-badge{display:inline-flex;align-items:center;gap:4px;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;margin-top:3px}
+.admin-badge.on{background:rgba(0,245,160,.1);color:var(--ac);border:1px solid rgba(0,245,160,.2)}
+.admin-badge.off{background:rgba(255,92,92,.1);color:var(--red);border:1px solid rgba(255,92,92,.2)}
+.admin-dot{width:4px;height:4px;border-radius:50%;background:currentColor}
+.admin-addr{font-family:var(--mono);font-size:.64rem;color:var(--t3);background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;margin-bottom:12px;word-break:break-all;cursor:pointer;transition:border .15s}
+.admin-addr:hover{border-color:rgba(255,255,255,.2);color:var(--t2)}
+.admin-self-tag{position:absolute;top:10px;right:10px;font-size:.58rem;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:20px;background:rgba(79,141,255,.12);color:var(--blue);border:1px solid rgba(79,141,255,.2)}
+.pending-replace-box{display:none;border-radius:14px;padding:16px 18px;border:1px solid rgba(255,200,0,.25);background:rgba(255,200,0,.04);margin-bottom:16px}
+/* ── TOKENS VIEW ── */
+.token-card{border-radius:14px;padding:16px 18px;border:1px solid var(--border);background:rgba(0,0,0,.2);margin-bottom:12px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.token-symbol{font-size:.9rem;font-weight:700;color:var(--t1)}
+.token-addr{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
+.token-stats{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap}
+.token-stat{font-size:.68rem;color:var(--t3)}
+.token-stat strong{color:var(--t2)}
+.token-badge{font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase}
+.token-badge.active{background:rgba(0,245,160,.1);color:var(--ac);border:1px solid rgba(0,245,160,.2)}
+.token-badge.inactive{background:rgba(255,92,92,.1);color:var(--red);border:1px solid rgba(255,92,92,.2)}
+/* ── WITHDRAW LIMIT ── */
+.wl-card{border-radius:14px;padding:18px 20px;border:1px solid var(--border);background:rgba(0,0,0,.2);margin-bottom:14px}
+.wl-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.wl-toggle{position:relative;width:42px;height:22px;flex-shrink:0}
+.wl-toggle input{opacity:0;width:0;height:0}
+.wl-slider{position:absolute;inset:0;border-radius:22px;background:rgba(255,255,255,.1);border:1px solid var(--border);cursor:pointer;transition:all .25s}
+.wl-slider:before{content:'';position:absolute;width:16px;height:16px;left:2px;top:2px;border-radius:50%;background:var(--t3);transition:all .25s}
+.wl-toggle input:checked+.wl-slider{background:rgba(0,245,160,.18);border-color:rgba(0,245,160,.35)}
+.wl-toggle input:checked+.wl-slider:before{transform:translateX(20px);background:var(--ac)}
+.wl-bar-outer{background:rgba(0,0,0,.2);border-radius:6px;height:7px;overflow:hidden;margin:8px 0 4px}
+.wl-bar-inner{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--ac),rgba(0,245,160,.4));transition:width .4s}
+.wl-bar-inner.warn{background:linear-gradient(90deg,rgba(255,200,0,.9),rgba(255,140,0,.5))}
+.wl-bar-inner.danger{background:linear-gradient(90deg,var(--red),rgba(255,92,92,.4))}
+.wl-danger{background:rgba(255,92,92,.06);border:1px solid rgba(255,92,92,.18);border-radius:9px;padding:10px 13px;font-size:.7rem;color:rgba(255,180,180,.8);margin-top:10px;display:none}
+/* ── REPLACE MODAL ── */
+.rp-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);z-index:999;align-items:center;justify-content:center}
+.rp-modal.open{display:flex}
+.rp-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;width:min(420px,90vw);box-shadow:0 20px 50px rgba(0,0,0,.6)}
+@media(max-width:768px){.admin-dual-grid{grid-template-columns:1fr}}
+
+/* ── BUYBACK PANEL ── */
+.bb-status-pill{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase}
+.bb-status-pill.on{background:rgba(0,245,160,.1);color:var(--ac);border:1px solid rgba(0,245,160,.25)}
+.bb-status-pill.off{background:rgba(255,255,255,.05);color:var(--t4);border:1px solid var(--border)}
+.bb-token-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.2);margin-bottom:10px;gap:12px;flex-wrap:wrap}
+.bb-token-sym{font-size:.85rem;font-weight:700;color:var(--t1)}
+.bb-token-addr{font-size:.63rem;font-family:var(--mono);color:var(--t4)}
+.bb-info-box{background:rgba(0,245,160,.04);border:1px solid rgba(0,245,160,.12);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.bb-info-title{font-size:.78rem;font-weight:700;color:var(--ac);margin-bottom:8px}
+.bb-info-text{font-size:.72rem;color:var(--t3);line-height:1.6}
+.bb-info-text strong{color:var(--t2)}
+.bb-warn-box{background:rgba(255,200,0,.04);border:1px solid rgba(255,200,0,.18);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.bb-stat{display:flex;flex-direction:column;gap:2px}
+.bb-stat-val{font-size:.92rem;font-weight:700;color:var(--t1)}
+.bb-stat-lbl{font-size:.65rem;color:var(--t4);text-transform:uppercase;letter-spacing:.05em}
+.bb-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.bb-bnb-bar-outer{background:rgba(0,0,0,.25);border-radius:6px;height:8px;overflow:hidden;margin:8px 0 4px}
+.bb-bnb-bar-inner{height:100%;border-radius:6px;background:linear-gradient(90deg,rgba(79,141,255,.9),rgba(79,141,255,.4));transition:width .4s}
+.bb-toggle-big{position:relative;width:56px;height:30px;flex-shrink:0}
+.bb-toggle-big input{opacity:0;width:0;height:0}
+.bb-toggle-big .bb-sl{position:absolute;inset:0;border-radius:30px;background:rgba(255,255,255,.08);border:1px solid var(--border);cursor:pointer;transition:all .3s}
+.bb-toggle-big .bb-sl:before{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;border-radius:50%;background:var(--t4);transition:all .3s}
+.bb-toggle-big input:checked+.bb-sl{background:rgba(0,245,160,.2);border-color:rgba(0,245,160,.4)}
+.bb-toggle-big input:checked+.bb-sl:before{transform:translateX(26px);background:var(--ac)}
+.bb-curve-info{font-size:.68rem;color:var(--t4);margin-top:6px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -282,6 +361,12 @@ body::after{
       <button class="sb-item" data-view="pool"><span class="sb-ico">💧</span><span>Pool</span></button>
       <div class="sb-div"></div>
       <div class="sb-sec">Sistema</div>
+      <div class="sb-div"></div>
+      <div class="sb-sec">Seguridad</div>
+      <button class="sb-item" data-view="admins"><span class="sb-ico">🛡</span><span>Administradores</span></button>
+      <div class="sb-sec">Avanzado</div>
+      <button class="sb-item" data-view="tokens"><span class="sb-ico">🪙</span><span>Tokens</span></button>
+      <button class="sb-item" data-view="buyback"><span class="sb-ico">🔄</span><span>Recompra</span></button>
       <button class="sb-item" data-view="settings"><span class="sb-ico">⚙</span><span>Configuración</span></button>
     </nav>
     <div class="sb-footer">
@@ -401,11 +486,217 @@ body::after{
       </div>
 
       <!-- CONFIGURACIÓN -->
+
+      <div class="view" id="viewAdmins">
+        <div class="admin-dual-grid" id="adminCardsGrid">
+          <div style="color:var(--t4);font-size:.78rem;padding:20px">Cargando administradores…</div>
+        </div>
+        <div class="pending-replace-box" id="pendingReplaceBox"></div>
+        <div class="card" style="padding:16px 18px">
+          <div class="form-title" style="margin-bottom:10px">📋 Reglas del Sistema Dual</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="info-note" style="margin:0"><strong>Suspender</strong> — Reversible e inmediato. El otro admin puede reactivar en cualquier momento.</div>
+            <div class="info-note" style="margin:0"><strong>Reemplazar</strong> — Permanente. Requiere esperar 48 horas sin cancelación. Protege contra acceso no autorizado.</div>
+            <div class="info-note" style="margin:0"><strong>Auto-reemplazo</strong> — Mueve tu propio rol a una wallet nueva. También requiere timelock 48h.</div>
+            <div class="info-note" style="margin:0"><strong>Cancelar</strong> — Cualquier admin activo puede cancelar un reemplazo durante las 48h de espera.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal reemplazar -->
+      <div class="rp-modal" id="rpModal">
+        <div class="rp-box">
+          <div class="form-title">⚠️ Solicitar Reemplazo</div>
+          <div class="hint" id="rpModalSub" style="margin-bottom:16px">El cambio se aplicará 48 horas después si nadie lo cancela.</div>
+          <label class="form-lbl">Nueva dirección de wallet</label>
+          <input type="text" class="form-inp" id="rpAddrInput" placeholder="0x…">
+          <div class="valid-msg" id="rpAddrMsg"></div>
+          <div style="display:flex;gap:9px;margin-top:14px">
+            <button class="btn" style="flex:1;background:rgba(255,255,255,.05)" id="rpCancelBtn">Cancelar</button>
+            <button class="btn btn-blue" style="flex:1" id="rpConfirmBtn" disabled>Solicitar (48h timelock)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="viewTokens">
+        <!-- Lista de tokens activos -->
+        <div class="card" style="margin-bottom:14px">
+          <div class="form-title" style="margin-bottom:12px">🪙 Tokens Registrados <span id="tokenCountBadge" class="sb-badge" style="margin-left:6px">—</span></div>
+          <div id="tokenListWrap"><div style="color:var(--t4);font-size:.78rem">Cargando tokens…</div></div>
+        </div>
+
+        <!-- Agregar token nuevo -->
+        <div class="card">
+          <div class="form-title" style="margin-bottom:12px">➕ Agregar Nuevo Token</div>
+          <div class="form-grid">
+            <div>
+              <label class="form-lbl">Dirección del Token (ERC-20)</label>
+              <input type="text" class="form-inp" id="newTokenAddr" placeholder="0x…">
+              <label class="form-lbl">Precio Inicial en BNB × 1e18</label>
+              <input type="text" class="form-inp" id="newTokenPrice" placeholder="ej: 11200000000000000 = 0.0112 BNB">
+              <label class="form-lbl">Impacto por compra (BPS, 10-500)</label>
+              <input type="number" class="form-inp" id="newTokenImpact" value="50" min="10" max="500">
+            </div>
+            <div>
+              <label class="form-lbl">Reserva mínima del pool (BPS, 0-5000)</label>
+              <input type="number" class="form-inp" id="newTokenReserve" value="1000" min="0" max="5000">
+              <label class="form-lbl">Fee por swap (BPS, 0-1000)</label>
+              <input type="number" class="form-inp" id="newTokenFee" value="100" min="0" max="1000">
+              <label class="form-lbl">Wallet que recibe el fee</label>
+              <input type="text" class="form-inp" id="newTokenFeeRecipient" placeholder="0x…">
+            </div>
+          </div>
+          <button class="btn btn-green btn-full" style="margin-top:12px" id="addTokenBtn">➕ Registrar Token</button>
+          <div class="hint" style="margin-top:8px">El contrato intentará leer el símbolo automáticamente. Necesitas depositar tokens al pool por separado.</div>
+        </div>
+
+        <!-- Blacklist rápida -->
+        <div class="card" style="margin-top:14px">
+          <div class="form-title" style="margin-bottom:12px">🚫 Blacklist Rápida</div>
+          <label class="form-lbl">Token (dirección)</label>
+          <input type="text" class="form-inp" id="blTokenAddr" placeholder="0x… (dejar vacío para USDT.z)">
+          <label class="form-lbl">Wallet a bloquear</label>
+          <input type="text" class="form-inp" id="blWalletAddr" placeholder="0x…">
+          <div style="display:flex;gap:9px;margin-top:10px">
+            <button class="btn btn-red" style="flex:1" id="blAddBtn">🚫 Bloquear</button>
+            <button class="btn btn-green" style="flex:1" id="blRemoveBtn">✓ Desbloquear</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="viewBuyback">
+
+        <!-- Explicación del módulo -->
+        <div class="bb-info-box" style="margin-bottom:18px">
+          <div class="bb-info-title">🔄 ¿Qué es el Módulo de Recompra?</div>
+          <div class="bb-info-text">
+            Normalmente el contrato <strong>vende</strong> tokens a los usuarios y envía el BNB recibido a la wallet de depósito.<br><br>
+            Cuando activas este módulo para un token:<br>
+            • El BNB de los swaps de compra <strong>se queda en el contrato</strong> como liquidez<br>
+            • Los usuarios pueden <strong>vender</strong> sus tokens al contrato al precio que definas<br>
+            • El contrato verifica que tiene BNB suficiente antes de aceptar cada venta<br>
+            • Si no tiene BNB suficiente, rechaza la transacción con mensaje claro<br><br>
+            <strong>Al desactivarlo</strong> todo vuelve al modo normal: BNB va directo al depósito y el botón de venta se bloquea en el frontend del usuario.
+          </div>
+        </div>
+
+        <!-- Lista de tokens con estado de buyback -->
+        <div class="card" style="margin-bottom:14px">
+          <div class="form-title" style="margin-bottom:14px">Estado por Token</div>
+          <div id="bbTokenList"><div style="color:var(--t4);font-size:.78rem">Cargando tokens…</div></div>
+        </div>
+
+        <!-- Panel de configuración (se muestra al seleccionar token) -->
+        <div class="card" id="bbConfigCard" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+            <div>
+              <div class="form-title" style="margin:0" id="bbConfigTitle">Configurar Recompra</div>
+              <div style="font-size:.7rem;color:var(--t3);margin-top:3px" id="bbConfigAddr"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span id="bbActivePill" class="bb-status-pill off">○ Inactivo</span>
+              <label class="bb-toggle-big">
+                <input type="checkbox" id="bbMainToggle" onchange="onBbToggle(this.checked)">
+                <span class="bb-sl"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Stats cuando está activo -->
+          <div id="bbStatsRow" class="bb-stats-row" style="display:none">
+            <div class="bb-stat"><div class="bb-stat-val" id="bbStatBnb">—</div><div class="bb-stat-lbl">BNB en contrato</div></div>
+            <div class="bb-stat"><div class="bb-stat-val" id="bbStatTokBought">—</div><div class="bb-stat-lbl">Tokens comprados</div></div>
+            <div class="bb-stat"><div class="bb-stat-val" id="bbStatBnbPaid">—</div><div class="bb-stat-lbl">BNB pagado total</div></div>
+          </div>
+
+          <!-- Barra de liquidez BNB -->
+          <div id="bbLiqSection" style="display:none;margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;font-size:.67rem;color:var(--t3);margin-bottom:3px">
+              <span>Liquidez BNB disponible</span>
+              <span id="bbLiqLabel">—</span>
+            </div>
+            <div class="bb-bnb-bar-outer"><div class="bb-bnb-bar-inner" id="bbLiqBar" style="width:60%"></div></div>
+          </div>
+
+          <!-- Precio de compra -->
+          <label class="form-lbl">Precio de compra (BNB por 1 token × 1e18)</label>
+          <input type="text" class="form-inp" id="bbBuyPrice" placeholder="ej: 11000000000000000 ≈ 0.011 BNB por token">
+          <div class="hint" style="margin-bottom:12px">El precio de venta actual del token se muestra como referencia: <strong id="bbSellPriceRef">—</strong></div>
+
+          <!-- Curva inversa -->
+          <div style="background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div style="font-size:.78rem;font-weight:600;color:var(--t2)">📉 Curva Inversa <span style="font-size:.65rem;font-weight:400;color:var(--blue);border:1px solid rgba(79,141,255,.3);border-radius:10px;padding:1px 7px;margin-left:5px">Opcional</span></div>
+                <div class="bb-curve-info">Baja el precio de recompra proporcionalmente al tamaño de la venta.<br>Protege la liquidez BNB contra ventas masivas o arbitraje. Máx. caída: 30%.</div>
+              </div>
+              <label class="wl-toggle" style="margin-left:12px;flex-shrink:0">
+                <input type="checkbox" id="bbInverseCurve">
+                <span class="wl-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Depósito manual de BNB -->
+          <div class="bb-warn-box">
+            <div style="font-size:.76rem;font-weight:700;color:rgba(255,200,0,.9);margin-bottom:8px">💰 Liquidez Inicial (Depósito Manual de BNB)</div>
+            <div style="font-size:.7rem;color:var(--t3);margin-bottom:10px">Deposita BNB directamente al contrato para arrancar el buyback con liquidez inmediata sin esperar acumulación por swaps.</div>
+            <div style="display:flex;gap:8px">
+              <input type="number" class="form-inp" id="bbDepositBnb" placeholder="BNB a depositar" step="0.01" min="0.001" style="flex:1">
+              <button class="btn btn-blue" onclick="bbDepositBNB()">Depositar BNB</button>
+            </div>
+          </div>
+
+          <!-- Botones principales -->
+          <div style="display:flex;gap:9px;margin-top:4px">
+            <button class="btn btn-green btn-full" id="bbApplyBtn" onclick="bbApplyConfig()">💾 Guardar Configuración</button>
+          </div>
+          <div class="valid-msg" id="bbConfigMsg" style="margin-top:8px"></div>
+        </div>
+
+        <!-- Info cuando no hay token seleccionado -->
+        <div class="card" id="bbSelectHint" style="text-align:center;padding:24px;color:var(--t4);font-size:.8rem">
+          👆 Selecciona un token arriba para configurar su recompra
+        </div>
+
+      </div>
       <div class="view" id="viewSettings">
         <div class="form-grid" style="grid-template-columns:1.2fr 1fr">
 
           <!-- LEFT: Controles -->
           <div style="display:flex;flex-direction:column;gap:14px">
+
+
+            <!-- LÍMITE DIARIO DE RETIRO -->
+            <div class="wl-card">
+              <div class="wl-toggle-row">
+                <div>
+                  <div style="font-size:.82rem;font-weight:700;color:var(--t1)">🔒 Límite Diario de Retiro</div>
+                  <div style="font-size:.68rem;color:var(--t3);margin-top:2px">Protege el pool. Activo por defecto al 20%.</div>
+                </div>
+                <label class="wl-toggle">
+                  <input type="checkbox" id="wlToggle" checked onchange="onWlToggle(this.checked)">
+                  <span class="wl-slider"></span>
+                </label>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                <span id="wlBadge" class="admin-badge on">● Activo</span>
+                <span style="font-size:.7rem;color:var(--t3)">Límite: <strong id="wlLimitPct" style="color:var(--t2)">20%</strong>/día</span>
+              </div>
+              <div id="wlBarSection">
+                <div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--t4);margin-bottom:3px">
+                  <span>Retirado hoy (USDT.z)</span><span id="wlBarLabel">—</span>
+                </div>
+                <div class="wl-bar-outer"><div class="wl-bar-inner" id="wlBar" style="width:0%"></div></div>
+                <div style="font-size:.63rem;color:var(--t4)">Reinicio: 00:00 UTC</div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+                <input type="number" class="form-inp" id="wlPctInput" min="1" max="100" value="20" style="max-width:90px">
+                <span style="font-size:.75rem;color:var(--t3)">%</span>
+                <button class="btn" onclick="applyWlConfig()" style="flex:1">Aplicar</button>
+              </div>
+              <div class="wl-danger" id="wlDanger">⚠️ Límite desactivado. Reactívalo al terminar la operación.</div>
+            </div>
 
             <!-- Marca -->
             <div class="card">
@@ -522,7 +813,7 @@ body::after{
           <!-- RIGHT: Estado del sistema -->
           <div class="card">
             <div class="form-title">🖥 Estado del Sistema</div>
-            <div class="sys-row"><span class="sys-lbl">Versión</span><span class="sys-val">MiSwap v8.0</span></div>
+            <div class="sys-row"><span class="sys-lbl">Versión</span><span class="sys-val">MiSwap v8.3</span></div>
             <div class="sys-row"><span class="sys-lbl">Red</span><span class="sys-val green">BSC Mainnet</span></div>
             <div class="sys-row"><span class="sys-lbl">Wallet Admin</span><span class="sys-val green" id="sysWallet">—</span></div>
             <div class="sys-row"><span class="sys-lbl">Contrato Activo</span><span class="sys-val" id="sysContract" style="font-size:.65rem">—</span></div>
@@ -534,8 +825,8 @@ body::after{
             <div class="divider"></div>
             <div class="form-title" style="margin-bottom:11px;font-size:.78rem">🔐 Wallets Autorizadas</div>
             <div style="display:flex;flex-direction:column;gap:6px">
-              <div style="font-size:.67rem;font-family:var(--mono);color:var(--ac);background:rgba(0,245,160,.06);border:1px solid rgba(0,245,160,.14);border-radius:7px;padding:7px 11px">0x5a4d…bda7</div>
-              <div style="font-size:.67rem;font-family:var(--mono);color:var(--ac);background:rgba(0,245,160,.06);border:1px solid rgba(0,245,160,.14);border-radius:7px;padding:7px 11px">0x6f39…fa4f</div>
+              <div style="font-size:.67rem;font-family:var(--mono);color:var(--ac);background:rgba(0,245,160,.06);border:1px solid rgba(0,245,160,.14);border-radius:7px;padding:7px 11px">0x5167…cda (Jesus)</div>
+              <div style="font-size:.67rem;font-family:var(--mono);color:var(--ac);background:rgba(0,245,160,.06);border:1px solid rgba(0,245,160,.14);border-radius:7px;padding:7px 11px">0x6f39…fa4f (Pavel)</div>
             </div>
             <div class="info-note" style="margin-top:15px">🔒 Cualquier cambio de contrato o ABI es verificado contra estas 2 wallets antes de aplicarse. No se puede modificar desde el frontend.</div>
           </div>
@@ -554,12 +845,109 @@ body::after{
 const CONTRACT_ADDRESS='0x345Ccc716c6536d97D6Ef65D542303691a4400B6';
 const TOKEN_ADDRESS='0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4';
 const BSC_CHAIN_ID='0x38';
-const AUTHORIZED=['0x5a4d637ab7065eef1829c98a4ba3e18b541abda7','0x6f3928326f082029236321f033425dda881cfa4f'];
+const AUTHORIZED=['0x5167b4d52ffa149daf81f6b7c22bb8e7e4749cda','0x6f3928326f082029236321f033425dda881cfa4f'];
 const RPC_LIST=['https://bsc-dataseed.binance.org/','https://bsc-dataseed1.binance.org/','https://bsc-dataseed2.binance.org/','https://bsc-dataseed3.binance.org/','https://bsc-dataseed4.binance.org/'];
-const CONTRACT_ABI=['function isAdmin(address) view returns (bool)','function depositTokens(uint256)','function withdrawAllTokens()','function setUSDTzPrice(uint256)','function updateBnbRefPrice(uint256)','function forceUpdateBnbRefPrice(uint256)','function getDashboardStats1() view returns (uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)','function getPoolBalance() view returns (uint256)','function getUsdtzPrice() view returns (uint256)','function getBnbRefPrice() view returns (uint256)','function paused() view returns (bool)','event Swapped(address indexed sender, uint256 swappedAmount0, uint256 swappedAmount1)'];
+const CONTRACT_ABI=[
+  // ── CORE ──
+  'function isAdmin(address) view returns (bool)',
+  'function paused() view returns (bool)',
+  'function totalBnbCollected() view returns (uint256)',
+  'function totalTransactions() view returns (uint256)',
+  'function totalTokensSold() view returns (uint256)',
+  // ── SWAP ──
+  'function swap(uint256 bnbPriceInWei, uint256 minUsdtzOut) payable',
+  'function swapForToken(address t, uint256 bnbPriceInWei, uint256 minOut) payable',
+  'function estimateSwap(uint256 bnbAmount, uint256 bnbPrice) view returns (uint256)',
+  'function isBnbPriceValid(uint256 bnbPrice) view returns (bool valid, uint256 minA, uint256 maxA)',
+  // ── PRECIO BNB ──
+  'function updateBnbRefPrice(uint256 newPrice)',
+  'function forceUpdateBnbRefPrice(uint256 newPrice)',
+  'function getBnbRefPrice() view returns (uint256)',
+  'function secondsUntilNextPriceUpdate() view returns (uint256)',
+  // ── PRECIO TOKEN ──
+  'function setUSDTzPrice(uint256 newPrice)',
+  'function setTokenPrice(address t, uint256 newPrice)',
+  'function getUsdtzPrice() view returns (uint256)',
+  // ── POOL ──
+  'function depositTokens(uint256 amount)',
+  'function depositToken(address t, uint256 amount)',
+  'function withdrawAllTokens()',
+  'function withdrawAllOfToken(address t)',
+  'function withdrawTokens(uint256 amount)',
+  'function withdrawToken(address t, uint256 amount)',
+  'function getPoolBalance() view returns (uint256)',
+  'function getTokenPoolBalance(address t) view returns (uint256)',
+  // ── MULTI-TOKEN ──
+  'function addToken(address tokenAddr, uint256 initialPrice, uint256 impactBps, uint256 poolReserveBps, uint256 feeBps, address feeRecipient)',
+  'function removeToken(address t)',
+  'function reactivateToken(address t)',
+  'function updateTokenConfig(address t, uint256 newImpactBps, uint256 newReserveBps, uint256 newFeeBps, address newFeeRecipient)',
+  'function getTokenInfo(address t) view returns (string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,address,bool,bool)',
+  'function listActiveTokens() view returns (address[],string[],uint256[],uint256[],uint256[])',
+  'function getTokenCount() view returns (uint256)',
+  'function getTokenAt(uint256 i) view returns (address)',
+  // ── WHITELIST / BLACKLIST ──
+  'function addToWhitelist(address t, address wallet)',
+  'function removeFromWhitelist(address t, address wallet)',
+  'function setWhitelistEnabled(address t, bool enabled)',
+  'function addToBlacklist(address t, address wallet)',
+  'function removeFromBlacklist(address t, address wallet)',
+  'function batchBlacklist(address t, address[] wallets)',
+  'function isWalletBlacklisted(address t, address w) view returns (bool)',
+  'function isWalletWhitelisted(address t, address w) view returns (bool)',
+  // ── HISTORIAL WALLET ──
+  'function getWalletStats(address t, address wallet) view returns (uint256,uint256,uint256,uint256)',
+  // ── TEST TOKEN ──
+  'function sendTestToken(address recipient)',
+  'function hasUsedTest(address w) view returns (bool)',
+  // ── DASHBOARD ──
+  'function getDashboardStats1() view returns (uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)',
+  'function getDashboardStats() view returns (uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,bool)',
+  // ── LÍMITE DE RETIRO ──
+  'function withdrawLimitEnabled() view returns (bool)',
+  'function withdrawLimitBps() view returns (uint256)',
+  'function setWithdrawLimit(bool enabled, uint256 limitBps)',
+  'function withdrawnTodayOf(address t) view returns (uint256 withdrawn, uint256 dailyLimit)',
+  // ── ADMINS DUAL ──
+  'function getAdminInfo() view returns (address,string,string,bool,address,string,string,bool,bool,address,address,address,uint256)',
+  'function suspendOtherAdmin()',
+  'function reactivateOtherAdmin()',
+  'function requestReplaceOtherAdmin(address newWallet)',
+  'function requestReplaceSelf(address newWallet)',
+  'function cancelReplaceRequest()',
+  'function executeReplace()',
+  'function secondsUntilReplace() view returns (uint256)',
+  // ── EMERGENCIA ──
+  'function pause()',
+  'function unpause()',
+  'function rescueERC20(address t, uint256 amount)',
+  // ── EVENTOS ──
+  'event SwappedToken(address indexed buyer, address indexed tokenAddr, string symbol, uint256 bnbSent, uint256 tokenReceived, uint256 feeCharged, uint256 priceAtSwap, uint256 newPrice, uint256 timestamp)',
+  'event AdminSuspended(address indexed suspended, address indexed by, uint256 timestamp)',
+  'event AdminReactivated(address indexed reactivated, address indexed by, uint256 timestamp)',
+  'event AdminReplaced(address indexed oldWallet, address indexed newWallet, string adminName, address indexed by, uint256 timestamp)',
+  'event ReplaceRequested(address indexed requestedBy, address indexed target, address indexed newWallet, uint256 executeAfter, uint256 timestamp)',
+  'event ReplaceCancelled(address indexed cancelledBy, address indexed target, address newWallet, uint256 timestamp)',
+  'event WithdrawLimitChanged(bool enabled, uint256 limitBps, address indexed by, uint256 timestamp)',
+  'event TokenAdded(address indexed tokenAddr, string symbol, uint256 initialPrice, uint256 timestamp)',
+  // ── BUYBACK ──
+  'function enableBuyback(address t, uint256 buyPrice, bool inverseCurve)',
+  'function disableBuyback(address t)',
+  'function updateBuybackPrice(address t, uint256 newBuyPrice, bool inverseCurve)',
+  'function depositBNBForBuyback() payable',
+  'function sellTokens(address t, uint256 tokenAmount, uint256 minBnbOut)',
+  'function estimateSell(address t, uint256 tokenAmount) view returns (uint256,uint256,bool)',
+  'function getBuybackInfo(address t) view returns (bool,uint256,bool,uint256,uint256,uint256,uint256)',
+  'event BuybackEnabled(address indexed tokenAddr, uint256 buyPrice, bool inverseCurve, address indexed by, uint256 timestamp)',
+  'event BuybackDisabled(address indexed tokenAddr, address indexed by, uint256 timestamp)',
+  'event TokenSoldToContract(address indexed seller, address indexed tokenAddr, uint256 tokenAmount, uint256 bnbPaid, uint256 priceUsed, uint256 timestamp)',
+  'event BNBDepositedForBuyback(address indexed by, uint256 amount, uint256 timestamp)',
+  'event Paused(address indexed by, uint256 timestamp)',
+  'event Unpaused(address indexed by, uint256 timestamp)',
+];
 const TOKEN_ABI=['function balanceOf(address) view returns (uint256)','function approve(address,uint256) returns (bool)'];
 
-const S={wallet:null,bnbPrice:0,poolBal:0,poolMax:0,bnbColl:0,tokensSold:0,txCount:0,usdtzPrice:0,adminTokenBal:0,adminTokenBalLoaded:false,contractAddress:CONTRACT_ADDRESS,tokenSymbol:'USDT.z',onchainTxs:[],rpcIndex:0,paused:false};
+const S={wallet:null,bnbPrice:0,poolBal:0,poolMax:0,bnbColl:0,tokensSold:0,txCount:0,usdtzPrice:0,adminTokenBal:0,adminTokenBalLoaded:false,contractAddress:CONTRACT_ADDRESS,tokenSymbol:'USDT.z',onchainTxs:[],rpcIndex:0,paused:false,adminA:{wallet:'',name:'Jesus',role:'Blockchain Developer',active:true},adminB:{wallet:'',name:'Pavel',role:'General Administrator',active:true},pendingReplace:{active:false,requestedBy:'',target:'',newWallet:'',executeAfter:0},wlEnabled:true,wlLimitBps:2000};
 
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const abbr=a=>{const s=String(a||'');return s.length<10?s:s.slice(0,6)+'…'+s.slice(-4);};
@@ -580,7 +968,35 @@ const getProvider=()=>new ethers.JsonRpcProvider(RPC_LIST[S.rpcIndex]);
 const rotateRpc=()=>{S.rpcIndex=(S.rpcIndex+1)%RPC_LIST.length;console.warn('[RPC]→',RPC_LIST[S.rpcIndex]);};
 async function withFallback(fn){try{return await fn();}catch(e){rotateRpc();try{return await fn();}catch(e2){rotateRpc();throw e2;}}}
 const getReadContract=()=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,getProvider());
-const getWriteContract=async()=>{const p=new ethers.BrowserProvider(window.ethereum);const s=await p.getSigner();return new ethers.Contract(S.contractAddress,CONTRACT_ABI,s);};
+const getWriteContract=()=>{
+  if(!window.ethereum)throw new Error('No wallet');
+  const p=new ethers.BrowserProvider(window.ethereum);
+  return{
+    async _signer(){return p.getSigner();},
+    _call(fn){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s)[fn](...Array.from(arguments).slice(1)))},
+    // proxy all calls
+    suspendOtherAdmin(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).suspendOtherAdmin())},
+    reactivateOtherAdmin(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).reactivateOtherAdmin())},
+    requestReplaceOtherAdmin(w){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).requestReplaceOtherAdmin(w))},
+    requestReplaceSelf(w){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).requestReplaceSelf(w))},
+    cancelReplaceRequest(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).cancelReplaceRequest())},
+    executeReplace(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).executeReplace())},
+    setWithdrawLimit(e,b){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).setWithdrawLimit(e,b))},
+    setUSDTzPrice(p2){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).setUSDTzPrice(p2))},
+    forceUpdateBnbRefPrice(p2){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).forceUpdateBnbRefPrice(p2))},
+    depositTokens(a){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).depositTokens(a))},
+    withdrawAllTokens(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).withdrawAllTokens())},
+    addToBlacklist(t,w){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).addToBlacklist(t,w))},
+    removeFromBlacklist(t,w){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).removeFromBlacklist(t,w))},
+    addToWhitelist(t,w){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).addToWhitelist(t,w))},
+    batchBlacklist(t,ws){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).batchBlacklist(t,ws))},
+    sendTestToken(r){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).sendTestToken(r))},
+    addToken(a,p2,i,r,f,fr){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).addToken(a,p2,i,r,f,fr))},
+    removeToken(t){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).removeToken(t))},
+    pause(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).pause())},
+    unpause(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).unpause())},
+  };
+};
 const getTokenWrite=async()=>{const p=new ethers.BrowserProvider(window.ethereum);const s=await p.getSigner();return new ethers.Contract(TOKEN_ADDRESS,TOKEN_ABI,s);};
 
 async function fetchBnbPrice(){
@@ -612,15 +1028,15 @@ async function loadStats(){
 async function loadOnchainTxs(){
   try{
     const provider=getProvider();
-    const swappedTopic=ethers.id('Swapped(address,uint256,uint256)');
+    const swappedTopic=ethers.id('SwappedToken(address,address,string,uint256,uint256,uint256,uint256,uint256,uint256)');
     const latest=await provider.getBlockNumber();
     const fromBlock=Math.max(0,latest-200000);
     const logs=await withFallback(()=>provider.getLogs({address:S.contractAddress,topics:[swappedTopic],fromBlock,toBlock:'latest'}));
-    const iface=new ethers.Interface(['event Swapped(address indexed sender, uint256 swappedAmount0, uint256 swappedAmount1)']);
+    const iface=new ethers.Interface(['event SwappedToken(address indexed buyer, address indexed tokenAddr, string symbol, uint256 bnbSent, uint256 tokenReceived, uint256 feeCharged, uint256 priceAtSwap, uint256 newPrice, uint256 timestamp)']);
     S.onchainTxs=logs.map(log=>{
       try{
         const p=iface.parseLog(log);
-        return{hash:log.transactionHash,block:log.blockNumber,sender:p.args.sender,bnb:Number(ethers.formatUnits(p.args.swappedAmount0,18)),token:Number(ethers.formatUnits(p.args.swappedAmount1,18))};
+        return{hash:log.transactionHash,block:log.blockNumber,sender:p.args.buyer,bnb:Number(ethers.formatUnits(p.args.bnbSent,18)),token:Number(ethers.formatUnits(p.args.tokenReceived,18)),symbol:p.args.symbol};
       }catch(_){return null;}
     }).filter(Boolean).reverse();
     set('sbTxBadge',S.onchainTxs.length);
@@ -714,7 +1130,7 @@ function renderAll(){renderKPIs();renderDashTx();renderCharts();updatePriceCalc(
 
 async function applyPrice(){
   try{
-    const cw=await getWriteContract();
+    const cw=getWriteContract();
     const mode=el('pcTabDirect').classList.contains('active')?'direct':'ratio';
     let pw;
     if(mode==='direct'){const v=parseFloat(el('directPrice').value);if(!v||v<=0){toast('err','Precio inválido','Ingresa un valor mayor a cero');return;}pw=ethers.parseUnits(v.toFixed(18),18);}
@@ -729,7 +1145,7 @@ async function applyPrice(){
 async function updateBnbRef(){
   if(!S.bnbPrice){toast('err','Sin precio BNB','Espera a que cargue');return;}
   try{
-    const cw=await getWriteContract();
+    const cw=getWriteContract();
     toast('info','Actualizando...','Confirma en tu wallet');
     const tx=await cw.forceUpdateBnbRefPrice(ethers.parseUnits(S.bnbPrice.toFixed(2),18));
     await tx.wait();toast('ok','BNB Ref actualizado',`$${S.bnbPrice.toFixed(2)}`);
@@ -741,10 +1157,10 @@ async function deposit(){
   if(!amt||amt<=0){toast('err','Monto inválido','Ingresa una cantidad válida');return;}
   try{
     const amtWei=ethers.parseUnits(amt.toFixed(6),18);
-    const tw=await getTokenWrite();
+    const tw=await (async()=>{const p=new ethers.BrowserProvider(window.ethereum);const s=await p.getSigner();return new ethers.Contract(TOKEN_ADDRESS,TOKEN_ABI,s);})();
     toast('info','Paso 1/2','Aprobando — confirma en tu wallet');
     const appTx=await tw.approve(S.contractAddress,amtWei);await appTx.wait();
-    const cw=await getWriteContract();
+    const cw=getWriteContract();
     toast('info','Paso 2/2','Depositando — confirma en tu wallet');
     const depTx=await cw.depositTokens(amtWei);await depTx.wait();
     toast('ok','Depósito exitoso',`${fmt(amt)} ${S.tokenSymbol} al pool`);
@@ -755,7 +1171,7 @@ async function deposit(){
 async function withdraw(){
   if(S.poolBal<=0){toast('err','Pool vacío','No hay tokens para retirar');return;}
   try{
-    const cw=await getWriteContract();
+    const cw=getWriteContract();
     toast('info','Retirando...','Confirma en tu wallet');
     const tx=await cw.withdrawAllTokens();await tx.wait();
     toast('ok','Retiro exitoso',`${fmt(S.poolBal)} ${S.tokenSymbol} a tu wallet`);
@@ -773,7 +1189,7 @@ function applyBranding(){
 
 async function togglePause(pause){
   try{
-    const cw=await getWriteContract();
+    const cw=getWriteContract();
     toast('info',pause?'Pausando...':'Reanudando...','Confirma en tu wallet');
     const tx=pause?await cw.pause?.():await cw.unpause?.();
     if(!tx){toast('err','No disponible','La función pause/unpause no está en este contrato');return;}
@@ -938,7 +1354,7 @@ function validateDepositAmt(){
   btn.disabled=false;
 }
 
-const viewTitles={dashboard:'Dashboard',transactions:'Transacciones Onchain',price:'Configuración de Precio',pool:'Gestión del Pool',settings:'Configuración del Sistema'};
+const viewTitles={dashboard:'Dashboard',transactions:'Transacciones Onchain',price:'Configuración de Precio',pool:'Gestión del Pool',admins:'Administradores',tokens:'Tokens',buyback:'Módulo de Recompra',settings:'Configuración del Sistema'};
 function switchView(name){
   document.querySelectorAll('.sb-item').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -946,6 +1362,10 @@ function switchView(name){
   set('topTitle',viewTitles[name]||name);
   if(name==='dashboard'){renderCharts();renderDashTx();}
   if(name==='transactions')renderTxTable();
+  if(name==='admins')loadAdminInfo().catch(()=>{});
+  if(name==='tokens')loadTokenList().catch(()=>{});
+  if(name==='settings')loadWithdrawLimit().catch(()=>{});
+  if(name==='buyback')loadBuybackPanel().catch(()=>{});
 }
 
 async function connect(){
@@ -1035,6 +1455,445 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   if(window.ethereum){window.ethereum.request({method:'eth_accounts'}).then(accounts=>{if(accounts.length&&AUTHORIZED.includes(accounts[0].toLowerCase()))connect();}).catch(()=>{});}
 });
+
+// ════════════════════════════════════════════════════════
+// BUYBACK MODULE — Admin v8.3
+// ════════════════════════════════════════════════════════
+
+S.bbToken = null; // token seleccionado actualmente
+
+async function loadBuybackPanel() {
+  try {
+    const c = getReadContract();
+    const [addrs, syms, prices] = await withFallback(() => c.listActiveTokens());
+    const wrap = el('bbTokenList'); if (!wrap) return;
+    if (!addrs.length) { wrap.innerHTML = '<div style="color:var(--t4);font-size:.78rem">No hay tokens activos</div>'; return; }
+
+    let html = '';
+    for (let i = 0; i < addrs.length; i++) {
+      let enabled = false, buyPrice = 0;
+      try {
+        const bb = await withFallback(() => c.getBuybackInfo(addrs[i]));
+        enabled  = bb[0];
+        buyPrice = Number(ethers.formatUnits(bb[1], 18));
+      } catch(_) {}
+
+      html += `<div class="bb-token-row">
+        <div>
+          <div class="bb-token-sym">${esc(syms[i])}</div>
+          <div class="bb-token-addr">${esc(addrs[i])}</div>
+          ${enabled ? `<div style="font-size:.68rem;color:var(--t3);margin-top:3px">Precio compra: <strong style="color:var(--ac)">${buyPrice.toFixed(8)} BNB</strong></div>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="bb-status-pill ${enabled ? 'on' : 'off'}">${enabled ? '● Activo' : '○ Inactivo'}</span>
+          <button class="btn" style="font-size:.72rem;padding:6px 14px" onclick="selectBbToken('${addrs[i]}','${syms[i]}',${prices[i]})">Configurar</button>
+        </div>
+      </div>`;
+    }
+    wrap.innerHTML = html;
+  } catch(e) {
+    const w = el('bbTokenList');
+    if(w) w.innerHTML = '<div style="color:var(--red);font-size:.75rem">Error cargando tokens</div>';
+  }
+}
+
+async function selectBbToken(addr, sym, priceWei) {
+  S.bbToken = addr;
+  el('bbConfigCard').style.display = 'block';
+  el('bbSelectHint').style.display = 'none';
+  set('bbConfigTitle', `Recompra — ${sym}`);
+  set('bbConfigAddr', addr);
+
+  // Precio de venta como referencia
+  const sellPrice = Number(ethers.formatUnits(priceWei, 18));
+  set('bbSellPriceRef', sellPrice.toFixed(8) + ' BNB');
+
+  try {
+    const c = getReadContract();
+    const bb = await withFallback(() => c.getBuybackInfo(addr));
+    const enabled     = bb[0];
+    const buyPrice    = bb[1];
+    const inverseCurve= bb[2];
+    const tokBought   = Number(ethers.formatUnits(bb[3], 18));
+    const bnbPaid     = Number(ethers.formatUnits(bb[4], 18));
+    const bnbBal      = Number(ethers.formatUnits(bb[5], 18));
+
+    // Toggle principal
+    const tog = el('bbMainToggle');
+    if(tog) tog.checked = enabled;
+    const pill = el('bbActivePill');
+    if(pill) { pill.className = 'bb-status-pill ' + (enabled ? 'on' : 'off'); pill.textContent = enabled ? '● Activo' : '○ Inactivo'; }
+
+    // Precio y curva
+    if(buyPrice > 0) el('bbBuyPrice').value = buyPrice.toString();
+    const curveChk = el('bbInverseCurve');
+    if(curveChk) curveChk.checked = inverseCurve;
+
+    // Stats
+    if(enabled) {
+      el('bbStatsRow').style.display = 'grid';
+      el('bbLiqSection').style.display = 'block';
+      set('bbStatBnb', bnbBal.toFixed(4) + ' BNB');
+      set('bbStatTokBought', fmt(tokBought));
+      set('bbStatBnbPaid', bnbPaid.toFixed(4) + ' BNB');
+      set('bbLiqLabel', bnbBal.toFixed(4) + ' BNB disponible');
+      // Barra relativa al BNB pagado total
+      const pct = bnbPaid > 0 ? Math.min(100, (bnbBal / (bnbPaid + bnbBal)) * 100) : 80;
+      const bar = el('bbLiqBar'); if(bar) bar.style.width = pct + '%';
+    } else {
+      el('bbStatsRow').style.display = 'none';
+      el('bbLiqSection').style.display = 'none';
+    }
+  } catch(e) { console.warn('[BB]', e.message); }
+}
+
+async function onBbToggle(enabled) {
+  if (!S.wallet) { toast('err','No conectado',''); el('bbMainToggle').checked = !enabled; return; }
+  if (!S.bbToken) { toast('err','Selecciona un token primero',''); el('bbMainToggle').checked = !enabled; return; }
+
+  const pill = el('bbActivePill');
+  if(pill) { pill.className = 'bb-status-pill ' + (enabled ? 'on' : 'off'); pill.textContent = enabled ? '● Activo' : '○ Inactivo'; }
+
+  if (!enabled) {
+    // Desactivar directamente
+    try {
+      const tx = await getWriteContract().disableBuyback(S.bbToken);
+      toast('info','Desactivando…','Confirma en tu wallet');
+      await tx.wait();
+      toast('ok','Buyback desactivado','El BNB sigue en el contrato — retíralo cuando quieras');
+      el('bbStatsRow').style.display = 'none';
+      el('bbLiqSection').style.display = 'none';
+      await loadBuybackPanel();
+    } catch(e) {
+      el('bbMainToggle').checked = true;
+      if(pill){pill.className='bb-status-pill on';pill.textContent='● Activo';}
+      toast('err','Error', e?.reason || e?.message || '');
+    }
+  }
+  // Si enabled=true, usuario debe guardar config con bbApplyConfig
+}
+
+async function bbApplyConfig() {
+  if (!S.wallet) { toast('err','No conectado',''); return; }
+  if (!S.bbToken) { toast('err','Selecciona un token primero',''); return; }
+
+  const priceRaw    = el('bbBuyPrice')?.value.trim();
+  const inverseCurve= el('bbInverseCurve')?.checked || false;
+  const isActive    = el('bbMainToggle')?.checked || false;
+  const msgEl       = el('bbConfigMsg');
+
+  if (!priceRaw || isNaN(priceRaw) || BigInt(priceRaw) <= 0n) {
+    if(msgEl){msgEl.className='valid-msg err';msgEl.textContent='✗ Precio inválido. Ingresa el valor en wei (ej: 11000000000000000)';}
+    return;
+  }
+
+  try {
+    const price = BigInt(priceRaw);
+    let tx;
+    if (isActive) {
+      // Verificar si ya está activo para usar update en lugar de enable
+      const c = getReadContract();
+      const bb = await withFallback(() => c.getBuybackInfo(S.bbToken));
+      if (bb[0]) {
+        tx = await getWriteContract().updateBuybackPrice(S.bbToken, price, inverseCurve);
+        toast('info','Actualizando precio…','Confirma en tu wallet');
+      } else {
+        tx = await getWriteContract().enableBuyback(S.bbToken, price, inverseCurve);
+        toast('info','Activando buyback…','Confirma en tu wallet');
+      }
+    } else {
+      toast('info','Activa el toggle para habilitar el buyback','');
+      return;
+    }
+    await tx.wait();
+    if(msgEl){msgEl.className='valid-msg ok';msgEl.textContent='✓ Configuración guardada onchain';}
+    toast('ok','Buyback configurado','');
+    el('bbStatsRow').style.display = 'grid';
+    el('bbLiqSection').style.display = 'block';
+    await loadBuybackPanel();
+    await selectBbToken(S.bbToken, '', BigInt(priceRaw));
+  } catch(e) {
+    if(msgEl){msgEl.className='valid-msg err';msgEl.textContent='✗ ' + (e?.reason||e?.message||'Error');}
+    toast('err','Error', e?.reason || e?.message || '');
+  }
+}
+
+async function bbDepositBNB() {
+  if (!S.wallet) { toast('err','No conectado',''); return; }
+  const amt = parseFloat(el('bbDepositBnb')?.value);
+  if (!amt || amt <= 0) { toast('err','Monto inválido','Ingresa una cantidad de BNB'); return; }
+  try {
+    const bnbWei = ethers.parseEther(amt.toFixed(6));
+    const p = new ethers.BrowserProvider(window.ethereum);
+    const s = await p.getSigner();
+    const c = new ethers.Contract(S.contractAddress, CONTRACT_ABI, s);
+    toast('info','Depositando BNB…','Confirma en tu wallet');
+    const tx = await c.depositBNBForBuyback({ value: bnbWei });
+    await tx.wait();
+    toast('ok','BNB depositado', `${amt} BNB añadidos como liquidez de recompra`);
+    el('bbDepositBnb').value = '';
+    if(S.bbToken) await selectBbToken(S.bbToken, '', 0n);
+  } catch(e) {
+    toast('err','Error', e?.reason || e?.message || '');
+  }
+}
+
 </script>
 </body>
 </html>
+<script>
+// ════════════════════════════════════════════════════════
+// MiSwap Admin v8.2 — Módulos nuevos
+// ════════════════════════════════════════════════════════
+
+const USDTZ = '0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4';
+
+// ── HELPERS ──────────────────────────────────────────────
+function iAmActive(){
+  if(!S.wallet) return false;
+  const w=S.wallet.toLowerCase();
+  return (S.adminA.wallet.toLowerCase()===w&&S.adminA.active)||(S.adminB.wallet.toLowerCase()===w&&S.adminB.active);
+}
+function isSelfWallet(w){ return S.wallet&&w.toLowerCase()===S.wallet.toLowerCase(); }
+function fmtCountdown(ts){
+  const s=Math.max(0,ts-Math.floor(Date.now()/1000));
+  return `${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m ${s%60}s`;
+}
+
+// ── ADMINS ───────────────────────────────────────────────
+async function loadAdminInfo(){
+  try{
+    const c=getReadContract();
+    const r=await withFallback(()=>c.getAdminInfo());
+    S.adminA={wallet:r[0],name:r[1],role:r[2],active:r[3]};
+    S.adminB={wallet:r[4],name:r[5],role:r[6],active:r[7]};
+    S.pendingReplace={active:r[8],requestedBy:r[9],target:r[10],newWallet:r[11],executeAfter:Number(r[12])};
+  }catch(_){
+    S.adminA.wallet='0x5167b4D52fFa149DAF81F6b7c22BB8e7E4749cda';
+    S.adminB.wallet='0x6F3928326f082029236321f033425Dda881CfA4f';
+  }
+  renderAdminCards();
+  renderPendingReplace();
+}
+
+function renderAdminCards(){
+  const grid=el('adminCardsGrid'); if(!grid) return;
+  const active=iAmActive();
+  const hasReq=S.pendingReplace?.active;
+  const admins=[{...S.adminA,slot:'A',emoji:'👨‍💻'},{...S.adminB,slot:'B',emoji:'👨‍💼'}];
+  grid.innerHTML=admins.map(a=>{
+    const self=isSelfWallet(a.wallet);
+    const cls=a.active?'active-card':'suspended-card';
+    const badge=a.active?'<span class="admin-badge on"><span class="admin-dot"></span>Activo</span>':'<span class="admin-badge off"><span class="admin-dot"></span>Suspendido</span>';
+    const showSusp=active&&!self&&a.active;
+    const showReact=active&&!self&&!a.active;
+    const showRepl=active&&!self&&!hasReq;
+    const showSelf=active&&self&&!hasReq;
+    return `<div class="admin-card ${cls}">
+      <div class="admin-card-glow"></div>
+      ${self?'<div class="admin-self-tag">Tú</div>':''}
+      <div class="admin-card-header">
+        <div class="admin-avatar">${a.emoji}</div>
+        <div><div class="admin-name">${esc(a.name)}</div><div class="admin-role">${esc(a.role)}</div>${badge}</div>
+      </div>
+      <div class="admin-addr" onclick="navigator.clipboard.writeText('${a.wallet}');toast('ok','Copiado','${a.wallet.slice(0,10)}…')">${esc(a.wallet)}</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        ${showSusp?`<button class="btn btn-red" onclick="adminSuspend()">⏸ Suspender</button>`:''}
+        ${showReact?`<button class="btn btn-green" onclick="adminReactivate()">▶ Reactivar</button>`:''}
+        ${showRepl?`<button class="btn btn-blue" onclick="openRpModal('other')">🔄 Solicitar Reemplazo</button>`:''}
+        ${hasReq&&!self&&active?`<button class="btn" style="opacity:.4" disabled>🔄 Solicitud pendiente</button>`:''}
+        ${showSelf?`<button class="btn" style="background:rgba(255,200,0,.1);border:1px solid rgba(255,200,0,.25);color:rgba(255,200,0,.9)" onclick="openRpModal('self')">🔐 Mover mi wallet</button>`:''}
+        ${!active?'<div class="hint" style="text-align:center">Conecta tu wallet para ver acciones</div>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPendingReplace(){
+  const box=el('pendingReplaceBox'); if(!box) return;
+  if(!S.pendingReplace?.active){box.style.display='none';return;}
+  box.style.display='block';
+  const pr=S.pendingReplace;
+  const expired=Math.floor(Date.now()/1000)>=pr.executeAfter;
+  const canAct=iAmActive();
+  box.innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span style="font-size:1.2rem">⏳</span>
+    <div><div style="font-size:.82rem;font-weight:700;color:var(--t1)">Solicitud de Reemplazo Pendiente</div>
+    <div style="font-size:.68rem;color:var(--t3);margin-top:2px">${expired?'✅ Puede ejecutarse ahora':`Ejecutable en: <strong id="rpCountdown" style="color:rgba(255,200,0,.9)">${fmtCountdown(pr.executeAfter)}</strong>`}</div></div></div>
+  <div style="font-size:.68rem;color:var(--t3);margin-bottom:4px">Wallet objetivo:</div>
+  <div class="admin-addr" style="margin-bottom:8px">${esc(pr.target)}</div>
+  <div style="font-size:.68rem;color:var(--t3);margin-bottom:4px">Nueva wallet propuesta:</div>
+  <div class="admin-addr" style="color:var(--ac);margin-bottom:12px">${esc(pr.newWallet)}</div>
+  <div style="display:flex;gap:8px">
+    ${canAct?`<button class="btn btn-red" style="flex:1" onclick="adminCancelReplace()">✕ Cancelar</button>`:''}
+    ${expired&&canAct?`<button class="btn btn-green" style="flex:1" onclick="adminExecuteReplace()">✓ Ejecutar</button>`:''}
+  </div>
+  <div class="hint" style="margin-top:8px">⚠️ Cualquier admin activo puede cancelar durante las 48h.</div>`;
+  if(!expired){clearInterval(window._rpTimer);window._rpTimer=setInterval(()=>{const cd=el('rpCountdown');if(cd)cd.textContent=fmtCountdown(pr.executeAfter);if(Math.floor(Date.now()/1000)>=pr.executeAfter){clearInterval(window._rpTimer);renderPendingReplace();}},1000);}
+}
+
+async function adminSuspend(){if(!S.wallet){toast('err','No conectado','');return;}
+  try{const tx=await getWriteContract().suspendOtherAdmin();toast('info','Enviado','');await tx.wait();toast('ok','Admin suspendido','Reversible en cualquier momento');await loadAdminInfo();}
+  catch(e){toast('err','Error',e?.reason||e?.message||'');}}
+
+async function adminReactivate(){if(!S.wallet){toast('err','No conectado','');return;}
+  try{const tx=await getWriteContract().reactivateOtherAdmin();toast('info','Enviado','');await tx.wait();toast('ok','Admin reactivado','Privilegios restaurados');await loadAdminInfo();}
+  catch(e){toast('err','Error',e?.reason||e?.message||'');}}
+
+async function adminCancelReplace(){if(!S.wallet){toast('err','No conectado','');return;}
+  try{const tx=await getWriteContract().cancelReplaceRequest();toast('info','Enviado','');await tx.wait();toast('ok','Solicitud cancelada','');await loadAdminInfo();}
+  catch(e){toast('err','Error',e?.reason||e?.message||'');}}
+
+async function adminExecuteReplace(){if(!S.wallet){toast('err','No conectado','');return;}
+  try{const tx=await getWriteContract().executeReplace();toast('info','Enviado','');await tx.wait();toast('ok','Reemplazo ejecutado','Wallet actualizada permanentemente');await loadAdminInfo();}
+  catch(e){toast('err','Error',e?.reason||e?.message||'');}}
+
+S.rpTarget=null;
+function openRpModal(target){
+  S.rpTarget=target;
+  el('rpModalSub').textContent=target==='self'?'Moverás tu propio rol. Se aplica en 48h si nadie cancela.':'Reemplazarás al otro admin permanentemente. Se aplica en 48h si nadie cancela.';
+  el('rpAddrInput').value='';el('rpAddrMsg').textContent='';el('rpConfirmBtn').disabled=true;
+  el('rpModal').classList.add('open');
+}
+function closeRpModal(){el('rpModal').classList.remove('open');S.rpTarget=null;}
+el('rpAddrInput')?.addEventListener('input',function(){
+  const v=/^0x[0-9a-fA-F]{40}$/.test(this.value.trim());
+  el('rpAddrMsg').className='valid-msg '+(v?'ok':'err');
+  el('rpAddrMsg').textContent=v?'✓ Válida':this.value.length>2?'✗ Inválida':'';
+  el('rpConfirmBtn').disabled=!v;
+});
+el('rpCancelBtn')?.addEventListener('click',closeRpModal);
+el('rpConfirmBtn')?.addEventListener('click',async function(){
+  const w=el('rpAddrInput').value.trim();if(!w||!S.rpTarget)return;
+  try{
+    const fn=S.rpTarget==='self'?'requestReplaceSelf':'requestReplaceOtherAdmin';
+    const tx=await getWriteContract()[fn](w);
+    closeRpModal();toast('info','Solicitud enviada','Timelock 48h iniciado');
+    await tx.wait();toast('ok','Registrado onchain','Ejecutable en 48h si no se cancela');
+    await loadAdminInfo();
+  }catch(e){toast('err','Error',e?.reason||e?.message||'');}
+});
+
+// ── TOKENS ───────────────────────────────────────────────
+async function loadTokenList(){
+  try{
+    const c=getReadContract();
+    const [addrs,syms,prices,bals,avails]=await withFallback(()=>c.listActiveTokens());
+    const count=addrs.length;
+    set('tokenCountBadge',count);
+    const wrap=el('tokenListWrap');if(!wrap)return;
+    if(!count){wrap.innerHTML='<div style="color:var(--t4);font-size:.78rem">No hay tokens activos</div>';return;}
+    wrap.innerHTML=addrs.map((_,i)=>{
+      const price=Number(ethers.formatUnits(prices[i],18));
+      const bal=Number(ethers.formatUnits(bals[i],18));
+      const avail=Number(ethers.formatUnits(avails[i],18));
+      return `<div class="token-card">
+        <div>
+          <div class="token-symbol">${esc(syms[i])} <span class="token-badge active">Activo</span></div>
+          <div class="token-addr">${esc(addrs[i])}</div>
+          <div class="token-stats">
+            <div class="token-stat">Pool: <strong>${fmt(bal)}</strong></div>
+            <div class="token-stat">Disponible: <strong>${fmt(avail)}</strong></div>
+            <div class="token-stat">Precio: <strong>${price.toFixed(8)} BNB</strong></div>
+          </div>
+        </div>
+        <button class="btn btn-red" style="font-size:.7rem;padding:6px 12px" onclick="removeTokenAction('${addrs[i]}')">Desactivar</button>
+      </div>`;
+    }).join('');
+  }catch(e){const w=el('tokenListWrap');if(w)w.innerHTML='<div style="color:var(--red);font-size:.75rem">Error cargando tokens</div>';}
+}
+
+async function removeTokenAction(addr){
+  if(!confirm('¿Desactivar este token? Los usuarios no podrán comprarlo hasta reactivarlo.'))return;
+  try{const tx=await getWriteContract().removeToken(addr);toast('info','Enviado','');await tx.wait();toast('ok','Token desactivado','');await loadTokenList();}
+  catch(e){toast('err','Error',e?.reason||e?.message||'');}
+}
+
+el('addTokenBtn')?.addEventListener('click',async()=>{
+  const addr=el('newTokenAddr')?.value.trim();
+  const price=el('newTokenPrice')?.value.trim();
+  const impact=el('newTokenImpact')?.value;
+  const reserve=el('newTokenReserve')?.value;
+  const fee=el('newTokenFee')?.value;
+  const feeR=el('newTokenFeeRecipient')?.value.trim();
+  if(!addr||!price||!feeR){toast('err','Campos incompletos','Completa todos los campos requeridos');return;}
+  if(!/^0x[0-9a-fA-F]{40}$/.test(addr)||!/^0x[0-9a-fA-F]{40}$/.test(feeR)){toast('err','Dirección inválida','');return;}
+  try{
+    const tx=await getWriteContract().addToken(addr,BigInt(price),Number(impact),Number(reserve),Number(fee),feeR);
+    toast('info','Enviado','Registrando token…');await tx.wait();
+    toast('ok','Token registrado','Deposita tokens al pool para activarlo');
+    await loadTokenList();
+    el('newTokenAddr').value='';el('newTokenPrice').value='';el('newTokenFeeRecipient').value='';
+  }catch(e){toast('err','Error',e?.reason||e?.message||'');}
+});
+
+// Blacklist
+el('blAddBtn')?.addEventListener('click',async()=>{
+  const t=(el('blTokenAddr')?.value.trim()||USDTZ);
+  const w=el('blWalletAddr')?.value.trim();
+  if(!w||!/^0x[0-9a-fA-F]{40}$/.test(w)){toast('err','Wallet inválida','');return;}
+  try{const tx=await getWriteContract().addToBlacklist(t,w);toast('info','Enviado','');await tx.wait();toast('ok','Wallet bloqueada','');}
+  catch(e){toast('err','Error',e?.reason||e?.message||'');}
+});
+el('blRemoveBtn')?.addEventListener('click',async()=>{
+  const t=(el('blTokenAddr')?.value.trim()||USDTZ);
+  const w=el('blWalletAddr')?.value.trim();
+  if(!w||!/^0x[0-9a-fA-F]{40}$/.test(w)){toast('err','Wallet inválida','');return;}
+  try{const tx=await getWriteContract().removeFromBlacklist(t,w);toast('info','Enviado','');await tx.wait();toast('ok','Wallet desbloqueada','');}
+  catch(e){toast('err','Error',e?.reason||e?.message||'');}
+});
+
+// ── WITHDRAW LIMIT ───────────────────────────────────────
+async function loadWithdrawLimit(){
+  try{
+    const c=getReadContract();
+    S.wlEnabled=await withFallback(()=>c.withdrawLimitEnabled());
+    S.wlLimitBps=Number(await withFallback(()=>c.withdrawLimitBps()));
+    const [wdrawn,lim]=await withFallback(()=>c.withdrawnTodayOf(USDTZ));
+    renderWlUI();
+    renderWlBar(Number(ethers.formatUnits(wdrawn,18)),Number(ethers.formatUnits(lim,18)));
+  }catch(_){}
+}
+
+function renderWlUI(){
+  const tog=el('wlToggle'),badge=el('wlBadge'),danger=el('wlDanger'),pct=el('wlLimitPct'),inp=el('wlPctInput');
+  if(tog)tog.checked=S.wlEnabled;
+  if(badge){badge.className='admin-badge '+(S.wlEnabled?'on':'off');badge.innerHTML=(S.wlEnabled?'<span class="admin-dot"></span>Activo':'<span class="admin-dot"></span>Desactivado');}
+  if(danger)danger.style.display=S.wlEnabled?'none':'block';
+  if(pct)pct.textContent=(S.wlLimitBps/100).toFixed(0)+'%';
+  if(inp)inp.value=(S.wlLimitBps/100).toFixed(0);
+}
+
+function renderWlBar(w,l){
+  const bar=el('wlBar'),lbl=el('wlBarLabel');if(!bar||!lbl)return;
+  const pct=l>0?Math.min(100,(w/l)*100):0;
+  bar.style.width=pct+'%';
+  bar.className='wl-bar-inner'+(pct>=90?' danger':pct>=60?' warn':'');
+  lbl.textContent=fmt(w)+' / '+fmt(l)+' USDT.z';
+}
+
+async function onWlToggle(enabled){
+  if(!S.wallet){toast('err','No conectado','');el('wlToggle').checked=!enabled;return;}
+  if(!enabled&&!confirm('¿Seguro que quieres desactivar el límite?\nSolo hazlo si necesitas retirar más del límite diario.'))
+    {el('wlToggle').checked=true;return;}
+  try{
+    const tx=await getWriteContract().setWithdrawLimit(enabled,S.wlLimitBps);
+    toast('info','Enviado','');await tx.wait();
+    S.wlEnabled=enabled;renderWlUI();
+    toast('ok',enabled?'Límite activado':'Límite desactivado',enabled?'Pool protegido.':'Reactívalo al terminar.');
+  }catch(e){el('wlToggle').checked=!enabled;toast('err','Error',e?.reason||e?.message||'');}
+}
+
+async function applyWlConfig(){
+  if(!S.wallet){toast('err','No conectado','');return;}
+  const pct=parseInt(el('wlPctInput')?.value||0);
+  if(isNaN(pct)||pct<1||pct>100){toast('err','Valor inválido','Entre 1 y 100');return;}
+  try{
+    const bps=pct*100;
+    const tx=await getWriteContract().setWithdrawLimit(S.wlEnabled,bps);
+    toast('info','Enviado','');await tx.wait();
+    S.wlLimitBps=bps;renderWlUI();
+    toast('ok','Límite actualizado',`Máximo ${pct}% del pool por día`);
+  }catch(e){toast('err','Error',e?.reason||e?.message||'');}
+}
+</script>
