@@ -1029,14 +1029,16 @@ async function loadStats(){
 
 async function loadOnchainTxs(){
   try{
-    const provider = getProvider();
+    // FIX: getProvider() se llama DENTRO de cada lambda para que withFallback use
+    // el provider actualizado tras cada rotación de RPC.
+    // Antes: `const provider = getProvider()` fuera de las lambdas → rotación inútil.
     const swappedTopic = ethers.id('SwappedToken(address,address,string,uint256,uint256,uint256,uint256,uint256,uint256)');
     const soldTopic    = ethers.id('TokenSoldToContract(address,address,uint256,uint256,uint256,uint256)');
-    const latest = await provider.getBlockNumber();
+    const latest = await withFallback(()=>getProvider().getBlockNumber());
     const fromBlock = Math.max(0,latest-200000);
     const [buyLogs,sellLogs] = await Promise.all([
-      withFallback(()=>provider.getLogs({address:S.contractAddress,topics:[swappedTopic],fromBlock,toBlock:'latest'})),
-      withFallback(()=>provider.getLogs({address:S.contractAddress,topics:[soldTopic],fromBlock,toBlock:'latest'})).catch(()=>[]),
+      withFallback(()=>getProvider().getLogs({address:S.contractAddress,topics:[swappedTopic],fromBlock,toBlock:'latest'})),
+      withFallback(()=>getProvider().getLogs({address:S.contractAddress,topics:[soldTopic],fromBlock,toBlock:'latest'})).catch(()=>[]),
     ]);
     const ifaceBuy  = new ethers.Interface(['event SwappedToken(address indexed buyer, address indexed tokenAddr, string symbol, uint256 bnbSent, uint256 tokenReceived, uint256 feeCharged, uint256 priceAtSwap, uint256 newPrice, uint256 timestamp)']);
     const ifaceSell = new ethers.Interface(['event TokenSoldToContract(address indexed seller, address indexed tokenAddr, uint256 tokenAmount, uint256 bnbPaid, uint256 priceUsed, uint256 timestamp)']);
@@ -1755,8 +1757,9 @@ async function doVerifyContract(){
   if(msg){msg.textContent='✓ Formato válido';msg.className='valid-msg ok';}
   if(res){res.style.display='block';res.textContent='⏳ Verificando onchain…';res.style.color='var(--t3)';}
   try{
-    const testC=new ethers.Contract(addr,CONTRACT_ABI,getProvider());
-    await withFallback(()=>testC.isAdmin(S.wallet));
+    // FIX: testC se crea DENTRO de la lambda para que withFallback use el provider
+    // actualizado tras cada rotación de RPC. Antes: testC capturado fuera → rotación inútil.
+    await withFallback(()=>new ethers.Contract(addr,CONTRACT_ABI,getProvider()).isAdmin(S.wallet));
     if(res){res.textContent='✅ Contrato verificado onchain';res.style.color='var(--ac)';}
     if(btn) btn.disabled=false;
   }catch(e){
