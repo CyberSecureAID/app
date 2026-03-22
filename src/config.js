@@ -1,33 +1,38 @@
 'use strict';
-const CONFIG = Object.freeze({
-  /*
-   * CONTRACT_ADDRESS: Dirección del smart contract principal.
-   * Este es el contrato que administra el pool y el swap.
-   * Puede ser actualizado desde el panel admin pero la nueva
-   * dirección siempre es validada (formato 0x + 40 hex) antes
-   * de aceptarse. El contrato es quien valida todo lo crítico.
-   */
-  CONTRACT_ADDRESS_DEFAULT: '0x345Ccc716c6536d97D6Ef65D542303691a4400B6',
 
-  /*
-   * TOKEN_ADDRESS: Dirección del ERC20 (USDT.z en BSC).
-   * Immutable — solo el admin puede cambiar el símbolo visual,
-   * pero la dirección del token es fija en el código.
-   * Amenaza mitigada: Si alguien cambia el símbolo desde DevTools,
-   * la dirección real del contrato ERC20 no cambia.
-   */
+/*
+ * ══════════════════════════════════════════════════════════
+ * VARIABLES DE ENTORNO (Vite)
+ *
+ * Vite expone las variables que empiezan con VITE_ al frontend
+ * mediante import.meta.env. Al hacer `npm run build`, Vite las
+ * inyecta en el bundle — nunca quedan expuestas en el servidor.
+ *
+ * En desarrollo: se leen del archivo .env (no se sube a Git)
+ * En producción: se configuran en el panel de tu hosting
+ *   (Vercel, Netlify, Cloudflare Pages, etc.)
+ * ══════════════════════════════════════════════════════════
+ */
+const _env = {
+  CONTRACT_ADDRESS: import.meta.env.VITE_CONTRACT_ADDRESS,
+  WC_PROJECT_ID:    import.meta.env.VITE_WC_PROJECT_ID,
+};
+
+// Guard: si falta alguna variable de entorno, avisar en consola
+if (!_env.CONTRACT_ADDRESS) {
+  console.error('[CONFIG] VITE_CONTRACT_ADDRESS no está definida en .env');
+}
+if (!_env.WC_PROJECT_ID) {
+  console.error('[CONFIG] VITE_WC_PROJECT_ID no está definida en .env');
+}
+
+const CONFIG = Object.freeze({
+
+  CONTRACT_ADDRESS_DEFAULT: _env.CONTRACT_ADDRESS || '0x345Ccc716c6536d97D6Ef65D542303691a4400B6',
+
   TOKEN_ADDRESS: '0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4',
 
-  /*
-   * BSC_CHAIN_ID: BNB Smart Chain Mainnet.
-   * Usado para verificar que la wallet está en la red correcta.
-   */
-  /*
-   * WALLETCONNECT_PROJECT_ID: ID del proyecto en cloud.walletconnect.com
-   * Regístrate gratis en https://cloud.walletconnect.com → New Project
-   * Reemplaza 'YOUR_PROJECT_ID' con el ID que te dan (es gratuito).
-   */
-  WALLETCONNECT_PROJECT_ID: '49c17c9c4700eee8b26ac16e719da422',
+  WALLETCONNECT_PROJECT_ID: _env.WC_PROJECT_ID || '',
 
   BSC_CHAIN_ID: '0x38',
   BSC_CHAIN_PARAMS: Object.freeze({
@@ -38,46 +43,24 @@ const CONFIG = Object.freeze({
     blockExplorerUrls: ['https://bscscan.com'],
   }),
 
-  /*
-   * PUBLIC_RPC: Endpoint público de BSC para lectura sin wallet.
-   * Permite que loadContractStats() funcione sin MetaMask conectado.
-   * Sin dependencias externas de pago — solo BSC público.
-   */
   PUBLIC_RPC: 'https://bsc-dataseed.binance.org/',
 
-  /*
-   * LIMITS: Límites financieros del sistema.
-   * Propósito: Prevenir inputs absurdos que puedan causar
-   * comportamientos inesperados en cálculos o en el contrato.
-   * Invariante: BNB_MAX_PER_TX debe coincidir con el límite del contrato.
-   */
   LIMITS: Object.freeze({
-    BNB_MAX_PER_TX: 100,
-    SLIPPAGE_MIN: 0.01,
-    SLIPPAGE_MAX: 50,
-    BNB_PRICE_MIN: 10,
-    BNB_PRICE_MAX: 100_000,
-    TOKEN_PRICE_MIN: 0.0000001,
-    TOKEN_PRICE_MAX: 100_000,
-    GAS_RESERVE_BNB: 0.001, // BNB que no se puede gastar (reserva para gas)
+    BNB_MAX_PER_TX:    100,
+    SLIPPAGE_MIN:      0.01,
+    SLIPPAGE_MAX:      50,
+    BNB_PRICE_MIN:     10,
+    BNB_PRICE_MAX:     100_000,
+    TOKEN_PRICE_MIN:   0.0000001,
+    TOKEN_PRICE_MAX:   100_000,
+    GAS_RESERVE_BNB:   0.001,
   }),
 
-  /*
-   * AUTHORIZED_WALLETS: Lista hardcoded de wallets admin.
-   * IMPORTANTE: Esta es una capa de UX, no de seguridad real.
-   * La seguridad real está en el contrato (onlyOwner modifier).
-   * El frontend nunca confía solo en esta lista — siempre
-   * verifica también con c.isAdmin() onchain.
-   */
   AUTHORIZED_WALLETS: [
-    '0x5167b4d52ffa149daf81f6b7c22bb8e7e4749cda', // Jesus — Blockchain Developer
-    '0x6f3928326f082029236321f033425dda881cfa4f', // Pavel — General Administrator
+    '0x5167b4d52ffa149daf81f6b7c22bb8e7e4749cda',
+    '0x6f3928326f082029236321f033425dda881cfa4f',
   ],
 
-  /*
-   * ABIs: Interfaces mínimas requeridas para interactuar con los contratos.
-   * Solo se incluyen las funciones realmente usadas — surface mínima.
-   */
   TOKEN_ABI: Object.freeze([
     'function approve(address spender, uint256 amount) returns (bool)',
     'function allowance(address owner, address spender) view returns (uint256)',
@@ -106,7 +89,6 @@ const CONFIG = Object.freeze({
     'function totalBnbCollected() view returns (uint256)',
     'function totalTokensSold() view returns (uint256)',
     'function totalTransactions() view returns (uint256)',
-    // ── Buyback v4.5 ──
     'function enableBuyback(address t, uint256 buyPrice, bool inverseCurve)',
     'function disableBuyback(address t)',
     'function sellTokens(address t, uint256 tokenAmount, uint256 minBnbOut)',
@@ -114,14 +96,3 @@ const CONFIG = Object.freeze({
     'function getBuybackInfo(address t) view returns (bool,uint256,bool,uint256,uint256,uint256,uint256)',
   ]),
 });
-
-
-/* ══════════════════════════════════════════════════════════════
-   MÓDULO: GUARDS
-   Propósito: Funciones puras de validación y sanitización.
-   Invariante: Ninguna función de este módulo tiene efectos
-     secundarios. Son funciones matemáticas puras.
-   Uso: Llamadas ANTES de cualquier operación crítica (cálculos,
-     llamadas al contrato, escritura en DOM).
-   Seguridad [T7, T8]: Previene XSS y inputs maliciosos.
-══════════════════════════════════════════════════════════════ */
