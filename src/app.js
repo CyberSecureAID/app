@@ -40,7 +40,7 @@ function bindEvents() {
 
   // ── ADMIN TRIGGER ──
   document.getElementById('admTrigger')
-    .addEventListener('click', () => window.open('./admin.html', '_blank'));
+    .addEventListener('click', () => ADMIN.open());
 
   // ── WALLET OVERLAY ──
   document.getElementById('walOverlay')
@@ -53,6 +53,39 @@ function bindEvents() {
     .addEventListener('click', () => WALLET.connect('metamask'));
   document.getElementById('walOptTrust')
     .addEventListener('click', () => WALLET.connect('trust'));
+  // Nuevas wallets — misma interfaz, mismo flujo
+  document.getElementById('walOptWC')
+    .addEventListener('click', () => WALLET.connect('walletconnect'));
+  document.getElementById('walOptCoinbase')
+    .addEventListener('click', () => WALLET.connect('coinbase'));
+  document.getElementById('walOptOKX')
+    .addEventListener('click', () => WALLET.connect('okx'));
+
+  // ── SELL listeners ────────────────────────────────────────
+  document.getElementById('sellAmt')
+    ?.addEventListener('input', e => SELL.onSellAmt(e.target.value));
+  document.getElementById('sellMaxBtn')
+    ?.addEventListener('click', () => {
+      const bal = STATE.sellTokenBalance
+        ? Number(ethers.formatUnits(STATE.sellTokenBalance, 18))
+        : 0;
+      if (!bal) return;
+      const inp = document.getElementById('sellAmt');
+      if (inp) { inp.value = bal.toFixed(6); SELL.onSellAmt(inp.value); }
+    });
+  document.getElementById('sellBtn')
+    ?.addEventListener('click', () => SELL.initSell());
+  document.getElementById('cfmSellBtn')
+    ?.addEventListener('click', () => SELL.executeSell());
+  document.getElementById('sellOverlayX')
+    ?.addEventListener('click', () => {
+      document.getElementById('sellOverlay').classList.remove('open');
+    });
+  document.getElementById('sellOverlay')
+    ?.addEventListener('click', e => {
+      if (e.target.id === 'sellOverlay')
+        document.getElementById('sellOverlay').classList.remove('open');
+    });
 
   // ── SWAP OVERLAY ──
   document.getElementById('swapOverlay')
@@ -184,6 +217,7 @@ const APP = {
 
     if (!walletAutoDetected) {
       await STATS.load().catch(() => {});
+        SELL.checkBuybackStatus().catch(() => {});
     }
 
     setInterval(() => STATS.load().catch(() => {}), 30_000);
