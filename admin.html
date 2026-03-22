@@ -253,7 +253,7 @@ body::after{
 .auth-shield{display:flex;align-items:center;gap:8px;background:rgba(0,245,160,.05);border:1px solid rgba(0,245,160,.15);border-radius:8px;padding:9px 13px;margin-bottom:14px;font-size:.75rem;color:var(--ac)}
 .auth-shield-icon{font-size:1rem;flex-shrink:0}
 
-/* ── ADMIN DUAL CARDS ── */
+/* ADMIN DUAL CARDS */
 .admin-dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
 .admin-card{position:relative;border-radius:16px;padding:20px;overflow:hidden;transition:transform .2s,box-shadow .2s;border:1px solid var(--border)}
 .admin-card:hover{transform:translateY(-2px)}
@@ -276,7 +276,7 @@ body::after{
 .admin-addr:hover{border-color:rgba(255,255,255,.2);color:var(--t2)}
 .admin-self-tag{position:absolute;top:10px;right:10px;font-size:.58rem;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:20px;background:rgba(79,141,255,.12);color:var(--blue);border:1px solid rgba(79,141,255,.2)}
 .pending-replace-box{display:none;border-radius:14px;padding:16px 18px;border:1px solid rgba(255,200,0,.25);background:rgba(255,200,0,.04);margin-bottom:16px}
-/* ── TOKENS VIEW ── */
+/* TOKENS VIEW */
 .token-card{border-radius:14px;padding:16px 18px;border:1px solid var(--border);background:rgba(0,0,0,.2);margin-bottom:12px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
 .token-symbol{font-size:.9rem;font-weight:700;color:var(--t1)}
 .token-addr{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
@@ -286,7 +286,7 @@ body::after{
 .token-badge{font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase}
 .token-badge.active{background:rgba(0,245,160,.1);color:var(--ac);border:1px solid rgba(0,245,160,.2)}
 .token-badge.inactive{background:rgba(255,92,92,.1);color:var(--red);border:1px solid rgba(255,92,92,.2)}
-/* ── WITHDRAW LIMIT ── */
+/* WITHDRAW LIMIT */
 .wl-card{border-radius:14px;padding:18px 20px;border:1px solid var(--border);background:rgba(0,0,0,.2);margin-bottom:14px}
 .wl-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .wl-toggle{position:relative;width:42px;height:22px;flex-shrink:0}
@@ -300,13 +300,13 @@ body::after{
 .wl-bar-inner.warn{background:linear-gradient(90deg,rgba(255,200,0,.9),rgba(255,140,0,.5))}
 .wl-bar-inner.danger{background:linear-gradient(90deg,var(--red),rgba(255,92,92,.4))}
 .wl-danger{background:rgba(255,92,92,.06);border:1px solid rgba(255,92,92,.18);border-radius:9px;padding:10px 13px;font-size:.7rem;color:rgba(255,180,180,.8);margin-top:10px;display:none}
-/* ── REPLACE MODAL ── */
+/* REPLACE MODAL */
 .rp-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);z-index:999;align-items:center;justify-content:center}
 .rp-modal.open{display:flex}
 .rp-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;width:min(420px,90vw);box-shadow:0 20px 50px rgba(0,0,0,.6)}
 @media(max-width:768px){.admin-dual-grid{grid-template-columns:1fr}}
 
-/* ── BUYBACK PANEL ── */
+/* BUYBACK PANEL */
 .bb-status-pill{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase}
 .bb-status-pill.on{background:rgba(0,245,160,.1);color:var(--ac);border:1px solid rgba(0,245,160,.25)}
 .bb-status-pill.off{background:rgba(255,255,255,.05);color:var(--t4);border:1px solid var(--border)}
@@ -485,8 +485,7 @@ body::after{
         </div>
       </div>
 
-      <!-- CONFIGURACIÓN -->
-
+      <!-- ADMINS -->
       <div class="view" id="viewAdmins">
         <div class="admin-dual-grid" id="adminCardsGrid">
           <div style="color:var(--t4);font-size:.78rem;padding:20px">Cargando administradores…</div>
@@ -518,14 +517,12 @@ body::after{
         </div>
       </div>
 
+      <!-- TOKENS -->
       <div class="view" id="viewTokens">
-        <!-- Lista de tokens activos -->
         <div class="card" style="margin-bottom:14px">
           <div class="form-title" style="margin-bottom:12px">🪙 Tokens Registrados <span id="tokenCountBadge" class="sb-badge" style="margin-left:6px">—</span></div>
           <div id="tokenListWrap"><div style="color:var(--t4);font-size:.78rem">Cargando tokens…</div></div>
         </div>
-
-        <!-- Agregar token nuevo -->
         <div class="card">
           <div class="form-title" style="margin-bottom:12px">➕ Agregar Nuevo Token</div>
           <div class="form-grid">
@@ -549,8 +546,6 @@ body::after{
           <button class="btn btn-green btn-full" style="margin-top:12px" id="addTokenBtn">➕ Registrar Token</button>
           <div class="hint" style="margin-top:8px">El contrato intentará leer el símbolo automáticamente. Necesitas depositar tokens al pool por separado.</div>
         </div>
-
-        <!-- Blacklist rápida -->
         <div class="card" style="margin-top:14px">
           <div class="form-title" style="margin-bottom:12px">🚫 Blacklist Rápida</div>
           <label class="form-lbl">Token (dirección)</label>
@@ -564,9 +559,8 @@ body::after{
         </div>
       </div>
 
+      <!-- BUYBACK -->
       <div class="view" id="viewBuyback">
-
-        <!-- Explicación del módulo -->
         <div class="bb-info-box" style="margin-bottom:18px">
           <div class="bb-info-title">🔄 ¿Qué es el Módulo de Recompra?</div>
           <div class="bb-info-text">
@@ -579,14 +573,10 @@ body::after{
             <strong>Al desactivarlo</strong> todo vuelve al modo normal: BNB va directo al depósito y el botón de venta se bloquea en el frontend del usuario.
           </div>
         </div>
-
-        <!-- Lista de tokens con estado de buyback -->
         <div class="card" style="margin-bottom:14px">
           <div class="form-title" style="margin-bottom:14px">Estado por Token</div>
           <div id="bbTokenList"><div style="color:var(--t4);font-size:.78rem">Cargando tokens…</div></div>
         </div>
-
-        <!-- Panel de configuración (se muestra al seleccionar token) -->
         <div class="card" id="bbConfigCard" style="display:none">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
             <div>
@@ -601,15 +591,11 @@ body::after{
               </label>
             </div>
           </div>
-
-          <!-- Stats cuando está activo -->
           <div id="bbStatsRow" class="bb-stats-row" style="display:none">
             <div class="bb-stat"><div class="bb-stat-val" id="bbStatBnb">—</div><div class="bb-stat-lbl">BNB en contrato</div></div>
             <div class="bb-stat"><div class="bb-stat-val" id="bbStatTokBought">—</div><div class="bb-stat-lbl">Tokens comprados</div></div>
             <div class="bb-stat"><div class="bb-stat-val" id="bbStatBnbPaid">—</div><div class="bb-stat-lbl">BNB pagado total</div></div>
           </div>
-
-          <!-- Barra de liquidez BNB -->
           <div id="bbLiqSection" style="display:none;margin-bottom:16px">
             <div style="display:flex;justify-content:space-between;font-size:.67rem;color:var(--t3);margin-bottom:3px">
               <span>Liquidez BNB disponible</span>
@@ -617,13 +603,9 @@ body::after{
             </div>
             <div class="bb-bnb-bar-outer"><div class="bb-bnb-bar-inner" id="bbLiqBar" style="width:60%"></div></div>
           </div>
-
-          <!-- Precio de compra -->
           <label class="form-lbl">Precio de compra (BNB por 1 token × 1e18)</label>
           <input type="text" class="form-inp" id="bbBuyPrice" placeholder="ej: 11000000000000000 ≈ 0.011 BNB por token">
           <div class="hint" style="margin-bottom:12px">El precio de venta actual del token se muestra como referencia: <strong id="bbSellPriceRef">—</strong></div>
-
-          <!-- Curva inversa -->
           <div style="background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px">
             <div style="display:flex;align-items:center;justify-content:space-between">
               <div>
@@ -636,8 +618,6 @@ body::after{
               </label>
             </div>
           </div>
-
-          <!-- Depósito manual de BNB -->
           <div class="bb-warn-box">
             <div style="font-size:.76rem;font-weight:700;color:rgba(255,200,0,.9);margin-bottom:8px">💰 Liquidez Inicial (Depósito Manual de BNB)</div>
             <div style="font-size:.7rem;color:var(--t3);margin-bottom:10px">Deposita BNB directamente al contrato para arrancar el buyback con liquidez inmediata sin esperar acumulación por swaps.</div>
@@ -646,28 +626,20 @@ body::after{
               <button class="btn btn-blue" onclick="bbDepositBNB()">Depositar BNB</button>
             </div>
           </div>
-
-          <!-- Botones principales -->
           <div style="display:flex;gap:9px;margin-top:4px">
             <button class="btn btn-green btn-full" id="bbApplyBtn" onclick="bbApplyConfig()">💾 Guardar Configuración</button>
           </div>
           <div class="valid-msg" id="bbConfigMsg" style="margin-top:8px"></div>
         </div>
-
-        <!-- Info cuando no hay token seleccionado -->
         <div class="card" id="bbSelectHint" style="text-align:center;padding:24px;color:var(--t4);font-size:.8rem">
           👆 Selecciona un token arriba para configurar su recompra
         </div>
-
       </div>
+
+      <!-- SETTINGS -->
       <div class="view" id="viewSettings">
         <div class="form-grid" style="grid-template-columns:1.2fr 1fr">
-
-          <!-- LEFT: Controles -->
           <div style="display:flex;flex-direction:column;gap:14px">
-
-
-            <!-- LÍMITE DIARIO DE RETIRO -->
             <div class="wl-card">
               <div class="wl-toggle-row">
                 <div>
@@ -697,8 +669,6 @@ body::after{
               </div>
               <div class="wl-danger" id="wlDanger">⚠️ Límite desactivado. Reactívalo al terminar la operación.</div>
             </div>
-
-            <!-- Marca -->
             <div class="card">
               <div class="form-title">🏷 Marca de la Plataforma</div>
               <label class="form-lbl">Nombre de la Plataforma</label>
@@ -707,8 +677,6 @@ body::after{
               <input type="text" class="form-inp" id="brandToken" value="USDT.z">
               <button class="btn btn-green btn-full" id="applyBrandingBtn">💾 Guardar Marca</button>
             </div>
-
-            <!-- Control del contrato -->
             <div class="card">
               <div class="form-title" style="margin-bottom:11px">🔒 Control del Contrato</div>
               <div style="display:flex;gap:9px">
@@ -717,51 +685,13 @@ body::after{
               </div>
               <div class="hint" style="margin-top:10px">Pausar detiene todos los swaps. Reanudar los habilita nuevamente. Ambas acciones requieren firma onchain.</div>
             </div>
-
-            <!-- ACORDEÓN 1: Solo cambiar contrato -->
             <div class="card" style="padding:0;overflow:hidden">
               <div class="acc-hdr" id="acc1Hdr">
-                <div class="acc-title">
-                  <span>📋</span>
-                  <div>
-                    <div>Cambiar Solo el Contrato</div>
-                    <div style="font-size:.65rem;font-weight:400;color:var(--t3);margin-top:1px">Mismo ABI — nueva dirección</div>
-                  </div>
-                </div>
+                <div class="acc-title"><span>📋</span><div><div>Cambiar Solo el Contrato</div><div style="font-size:.65rem;font-weight:400;color:var(--t3);margin-top:1px">Mismo ABI — nueva dirección</div></div></div>
                 <span class="acc-arrow">▼</span>
               </div>
               <div class="acc-body" id="acc1Body">
-                <div class="auth-shield">
-                  <span class="auth-shield-icon">🛡</span>
-                  <span>Solo wallets autorizadas pueden aplicar este cambio. Se verifica onchain antes de confirmar.</span>
-                </div>
-                <div class="info-block" style="margin-bottom:14px">
-                  <p>Usa esta opción si desplegaste un nuevo contrato con las <strong>mismas funciones</strong>. El ABI actual se reutiliza — solo cambias la dirección.</p>
-                </div>
-
-                <div style="background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:14px">
-                  <div style="font-size:.7rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Funciones requeridas en el nuevo contrato</div>
-                  <div class="fn-grid">
-                    <span class="fn-tag required">isAdmin(address)</span>
-                    <span class="fn-tag required">getDashboardStats1()</span>
-                    <span class="fn-tag required">getPoolBalance()</span>
-                    <span class="fn-tag required">getUsdtzPrice()</span>
-                    <span class="fn-tag required">setUSDTzPrice(uint256)</span>
-                    <span class="fn-tag required">depositTokens(uint256)</span>
-                    <span class="fn-tag required">withdrawAllTokens()</span>
-                    <span class="fn-tag required">getBnbRefPrice()</span>
-                    <span class="fn-tag optional">forceUpdateBnbRefPrice(uint256)</span>
-                    <span class="fn-tag optional">updateBnbRefPrice(uint256)</span>
-                    <span class="fn-tag optional">paused()</span>
-                    <span class="fn-tag event">event Swapped(address,uint256,uint256)</span>
-                  </div>
-                  <div class="fn-legend">
-                    <div class="fn-leg"><div class="fn-leg-dot" style="background:var(--ac)"></div>Requerida</div>
-                    <div class="fn-leg"><div class="fn-leg-dot" style="background:var(--blue)"></div>Opcional</div>
-                    <div class="fn-leg"><div class="fn-leg-dot" style="background:var(--purple)"></div>Evento</div>
-                  </div>
-                </div>
-
+                <div class="auth-shield"><span class="auth-shield-icon">🛡</span><span>Solo wallets autorizadas pueden aplicar este cambio. Se verifica onchain antes de confirmar.</span></div>
                 <label class="form-lbl">Nueva Dirección del Contrato</label>
                 <input type="text" class="form-inp" id="newContractAddr" placeholder="0x…">
                 <div class="valid-msg" id="newContractMsg"></div>
@@ -772,45 +702,28 @@ body::after{
                 </div>
               </div>
             </div>
-
-            <!-- ACORDEÓN 2: Contrato + ABI nuevo -->
             <div class="card" style="padding:0;overflow:hidden">
               <div class="acc-hdr" id="acc2Hdr">
-                <div class="acc-title">
-                  <span>🔧</span>
-                  <div>
-                    <div>Cambiar Contrato + ABI Personalizado</div>
-                    <div style="font-size:.65rem;font-weight:400;color:var(--t3);margin-top:1px">Contrato completamente nuevo desde Remix</div>
-                  </div>
-                </div>
+                <div class="acc-title"><span>🔧</span><div><div>Cambiar Contrato + ABI Personalizado</div><div style="font-size:.65rem;font-weight:400;color:var(--t3);margin-top:1px">Contrato completamente nuevo desde Remix</div></div></div>
                 <span class="acc-arrow">▼</span>
               </div>
               <div class="acc-body" id="acc2Body">
-                <div class="auth-shield">
-                  <span class="auth-shield-icon">🛡</span>
-                  <span>Solo wallets autorizadas. El ABI se valida y guarda en localStorage antes de aplicar.</span>
-                </div>
-                <div class="info-block" style="margin-bottom:14px">
-                  <p>Usa esta opción si tu nuevo contrato tiene <strong>funciones diferentes o adicionales</strong>. Pega el ABI que obtienes de Remix Ethereum en el campo de abajo.</p>
-                  <p><strong>¿Cómo obtener el ABI en Remix?</strong> Compila el contrato → pestaña "Compilation Details" → copia el campo "ABI".</p>
-                </div>
+                <div class="auth-shield"><span class="auth-shield-icon">🛡</span><span>Solo wallets autorizadas. El ABI se valida y guarda en localStorage antes de aplicar.</span></div>
                 <label class="form-lbl">Nueva Dirección del Contrato</label>
                 <input type="text" class="form-inp" id="newContractAddr2" placeholder="0x…">
                 <div class="valid-msg" id="newContractMsg2"></div>
                 <label class="form-lbl" style="margin-top:13px">ABI del Contrato (JSON desde Remix)</label>
-                <textarea class="abi-textarea" id="abiInput" placeholder='[{"inputs":[],"name":"getPoolBalance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},...]'></textarea>
+                <textarea class="abi-textarea" id="abiInput" placeholder='[{"inputs":[],"name":"getPoolBalance",...}]'></textarea>
                 <div class="verify-result" id="verifyResult2"></div>
                 <div style="display:flex;gap:9px;margin-top:14px">
                   <button class="btn btn-blue" style="flex:1" id="validateAbiBtn">🔍 Validar ABI</button>
                   <button class="btn btn-green" style="flex:1" id="applyAbiBtn" disabled>✓ Aplicar Todo</button>
                 </div>
-                <div class="hint" style="margin-top:10px">El ABI se guarda en <code>localStorage</code> de este navegador. Si cambias de dispositivo, deberás ingresarlo nuevamente.</div>
+                <div class="hint" style="margin-top:10px">El ABI se guarda en <code>localStorage</code> de este navegador.</div>
               </div>
             </div>
+          </div>
 
-          </div><!-- /left -->
-
-          <!-- RIGHT: Estado del sistema -->
           <div class="card">
             <div class="form-title">🖥 Estado del Sistema</div>
             <div class="sys-row"><span class="sys-lbl">Versión</span><span class="sys-val">MiSwap v8.3</span></div>
@@ -828,9 +741,8 @@ body::after{
               <div style="font-size:.67rem;font-family:var(--mono);color:var(--ac);background:rgba(0,245,160,.06);border:1px solid rgba(0,245,160,.14);border-radius:7px;padding:7px 11px">0x5167…cda (Jesus)</div>
               <div style="font-size:.67rem;font-family:var(--mono);color:var(--ac);background:rgba(0,245,160,.06);border:1px solid rgba(0,245,160,.14);border-radius:7px;padding:7px 11px">0x6f39…fa4f (Pavel)</div>
             </div>
-            <div class="info-note" style="margin-top:15px">🔒 Cualquier cambio de contrato o ABI es verificado contra estas 2 wallets antes de aplicarse. No se puede modificar desde el frontend.</div>
+            <div class="info-note" style="margin-top:15px">🔒 Cualquier cambio de contrato o ABI es verificado contra estas 2 wallets antes de aplicarse.</div>
           </div>
-
         </div>
       </div>
 
@@ -840,6 +752,7 @@ body::after{
 
 <div id="toastStack"></div>
 
+<!-- ════ SCRIPT PRINCIPAL ════════════════════════════════════════════════════ -->
 <script>
 'use strict';
 const CONTRACT_ADDRESS='0x345Ccc716c6536d97D6Ef65D542303691a4400B6';
@@ -848,27 +761,22 @@ const BSC_CHAIN_ID='0x38';
 const AUTHORIZED=['0x5167b4d52ffa149daf81f6b7c22bb8e7e4749cda','0x6f3928326f082029236321f033425dda881cfa4f'];
 const RPC_LIST=['https://bsc-dataseed.binance.org/','https://bsc-dataseed1.binance.org/','https://bsc-dataseed2.binance.org/','https://bsc-dataseed3.binance.org/','https://bsc-dataseed4.binance.org/'];
 const CONTRACT_ABI=[
-  // ── CORE ──
   'function isAdmin(address) view returns (bool)',
   'function paused() view returns (bool)',
   'function totalBnbCollected() view returns (uint256)',
   'function totalTransactions() view returns (uint256)',
   'function totalTokensSold() view returns (uint256)',
-  // ── SWAP ──
   'function swap(uint256 bnbPriceInWei, uint256 minUsdtzOut) payable',
   'function swapForToken(address t, uint256 bnbPriceInWei, uint256 minOut) payable',
   'function estimateSwap(uint256 bnbAmount, uint256 bnbPrice) view returns (uint256)',
   'function isBnbPriceValid(uint256 bnbPrice) view returns (bool valid, uint256 minA, uint256 maxA)',
-  // ── PRECIO BNB ──
   'function updateBnbRefPrice(uint256 newPrice)',
   'function forceUpdateBnbRefPrice(uint256 newPrice)',
   'function getBnbRefPrice() view returns (uint256)',
   'function secondsUntilNextPriceUpdate() view returns (uint256)',
-  // ── PRECIO TOKEN ──
   'function setUSDTzPrice(uint256 newPrice)',
   'function setTokenPrice(address t, uint256 newPrice)',
   'function getUsdtzPrice() view returns (uint256)',
-  // ── POOL ──
   'function depositTokens(uint256 amount)',
   'function depositToken(address t, uint256 amount)',
   'function withdrawAllTokens()',
@@ -877,7 +785,6 @@ const CONTRACT_ABI=[
   'function withdrawToken(address t, uint256 amount)',
   'function getPoolBalance() view returns (uint256)',
   'function getTokenPoolBalance(address t) view returns (uint256)',
-  // ── MULTI-TOKEN ──
   'function addToken(address tokenAddr, uint256 initialPrice, uint256 impactBps, uint256 poolReserveBps, uint256 feeBps, address feeRecipient)',
   'function removeToken(address t)',
   'function reactivateToken(address t)',
@@ -886,7 +793,6 @@ const CONTRACT_ABI=[
   'function listActiveTokens() view returns (address[],string[],uint256[],uint256[],uint256[])',
   'function getTokenCount() view returns (uint256)',
   'function getTokenAt(uint256 i) view returns (address)',
-  // ── WHITELIST / BLACKLIST ──
   'function addToWhitelist(address t, address wallet)',
   'function removeFromWhitelist(address t, address wallet)',
   'function setWhitelistEnabled(address t, bool enabled)',
@@ -895,20 +801,15 @@ const CONTRACT_ABI=[
   'function batchBlacklist(address t, address[] wallets)',
   'function isWalletBlacklisted(address t, address w) view returns (bool)',
   'function isWalletWhitelisted(address t, address w) view returns (bool)',
-  // ── HISTORIAL WALLET ──
   'function getWalletStats(address t, address wallet) view returns (uint256,uint256,uint256,uint256)',
-  // ── TEST TOKEN ──
   'function sendTestToken(address recipient)',
   'function hasUsedTest(address w) view returns (bool)',
-  // ── DASHBOARD ──
   'function getDashboardStats1() view returns (uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)',
   'function getDashboardStats() view returns (uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,bool)',
-  // ── LÍMITE DE RETIRO ──
   'function withdrawLimitEnabled() view returns (bool)',
   'function withdrawLimitBps() view returns (uint256)',
   'function setWithdrawLimit(bool enabled, uint256 limitBps)',
   'function withdrawnTodayOf(address t) view returns (uint256 withdrawn, uint256 dailyLimit)',
-  // ── ADMINS DUAL ──
   'function getAdminInfo() view returns (address,string,string,bool,address,string,string,bool,bool,address,address,address,uint256)',
   'function suspendOtherAdmin()',
   'function reactivateOtherAdmin()',
@@ -917,11 +818,9 @@ const CONTRACT_ABI=[
   'function cancelReplaceRequest()',
   'function executeReplace()',
   'function secondsUntilReplace() view returns (uint256)',
-  // ── EMERGENCIA ──
   'function pause()',
   'function unpause()',
   'function rescueERC20(address t, uint256 amount)',
-  // ── EVENTOS ──
   'event SwappedToken(address indexed buyer, address indexed tokenAddr, string symbol, uint256 bnbSent, uint256 tokenReceived, uint256 feeCharged, uint256 priceAtSwap, uint256 newPrice, uint256 timestamp)',
   'event AdminSuspended(address indexed suspended, address indexed by, uint256 timestamp)',
   'event AdminReactivated(address indexed reactivated, address indexed by, uint256 timestamp)',
@@ -930,7 +829,6 @@ const CONTRACT_ABI=[
   'event ReplaceCancelled(address indexed cancelledBy, address indexed target, address newWallet, uint256 timestamp)',
   'event WithdrawLimitChanged(bool enabled, uint256 limitBps, address indexed by, uint256 timestamp)',
   'event TokenAdded(address indexed tokenAddr, string symbol, uint256 initialPrice, uint256 timestamp)',
-  // ── BUYBACK ──
   'function enableBuyback(address t, uint256 buyPrice, bool inverseCurve)',
   'function disableBuyback(address t)',
   'function updateBuybackPrice(address t, uint256 newBuyPrice, bool inverseCurve)',
@@ -973,8 +871,6 @@ const getWriteContract=()=>{
   const p=new ethers.BrowserProvider(window.ethereum);
   return{
     async _signer(){return p.getSigner();},
-    _call(fn){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s)[fn](...Array.from(arguments).slice(1)))},
-    // proxy all calls
     suspendOtherAdmin(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).suspendOtherAdmin())},
     reactivateOtherAdmin(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).reactivateOtherAdmin())},
     requestReplaceOtherAdmin(w){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).requestReplaceOtherAdmin(w))},
@@ -995,6 +891,9 @@ const getWriteContract=()=>{
     removeToken(t){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).removeToken(t))},
     pause(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).pause())},
     unpause(){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).unpause())},
+    disableBuyback(t){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).disableBuyback(t))},
+    enableBuyback(t,p2,c){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).enableBuyback(t,p2,c))},
+    updateBuybackPrice(t,p2,c){return this._signer().then(s=>new ethers.Contract(S.contractAddress,CONTRACT_ABI,s).updateBuybackPrice(t,p2,c))},
   };
 };
 const getTokenWrite=async()=>{const p=new ethers.BrowserProvider(window.ethereum);const s=await p.getSigner();return new ethers.Contract(TOKEN_ADDRESS,TOKEN_ABI,s);};
@@ -1011,15 +910,14 @@ async function fetchBnbPrice(){
 
 async function loadStats(){
   try{
-    const c=getReadContract();
-    const s1=await withFallback(()=>c.getDashboardStats1());
+    const s1=await withFallback(()=>getReadContract().getDashboardStats1());
     S.poolBal=Number(ethers.formatUnits(s1[0],18));
     S.bnbColl=Number(ethers.formatUnits(s1[2],18));
     S.txCount=Number(s1[3]);
     S.tokensSold=Number(ethers.formatUnits(s1[4],18));
     S.usdtzPrice=Number(ethers.formatUnits(s1[5],18));
     if(!S.poolMax||S.poolBal>S.poolMax)S.poolMax=S.poolBal+S.tokensSold||S.poolBal;
-    try{S.paused=await withFallback(()=>c.paused());}catch(_){}
+    try{S.paused=await withFallback(()=>getReadContract().paused());}catch(_){}
   }catch(_){
     try{const pb=await withFallback(()=>getReadContract().getPoolBalance());S.poolBal=Number(ethers.formatUnits(pb,18));}catch(__){}
   }
@@ -1109,12 +1007,12 @@ function renderCharts(){
   const barC=el('chartBar');
   if(barC){
     if(chartBar){chartBar.destroy();chartBar=null;}
-    chartBar=new Chart(barC,{type:'bar',data:{labels:txData.length?txData.map((_,i)=>`#${i+1}`):['Sin datos'],datasets:[{data:txData.length?txData.map(t=>t.token||0):[0],backgroundColor:'rgba(0,245,160,.18)',borderColor:'#00f5a0',borderWidth:1.5,borderRadius:6,hoverBackgroundColor:'rgba(0,245,160,.4)'}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#111420',borderColor:'rgba(255,255,255,.1)',borderWidth:1,callbacks:{label:ctx=>`${ctx.parsed.y.toFixed(2)} ${S.tokenSymbol}${txData[ctx.dataIndex]?.bnb?' (−'+txData[ctx.dataIndex].bnb.toFixed(4)+' BNB)':''}` }}},scales:{x:{ticks:{color:'rgba(255,255,255,.28)',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'rgba(255,255,255,.28)',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}}}}});
+    chartBar=new Chart(barC,{type:'bar',data:{labels:txData.length?txData.map((_,i)=>`#${i+1}`):['Sin datos'],datasets:[{data:txData.length?txData.map(t=>t.token||0):[0],backgroundColor:'rgba(0,245,160,.18)',borderColor:'#00f5a0',borderWidth:1.5,borderRadius:6,hoverBackgroundColor:'rgba(0,245,160,.4)'}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'rgba(255,255,255,.28)',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'rgba(255,255,255,.28)',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}}}}});
   }
   const donutC=el('chartDonut');
   if(donutC){
     if(chartDonut){chartDonut.destroy();chartDonut=null;}
-    chartDonut=new Chart(donutC,{type:'doughnut',data:{labels:['Disponible','Vendido'],datasets:[{data:[Math.max(0.001,S.poolBal),Math.max(0.001,S.tokensSold)],backgroundColor:['rgba(0,245,160,.62)','rgba(79,141,255,.62)'],borderColor:['#111420','#111420'],borderWidth:3,hoverOffset:7}]},options:{responsive:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#111420',borderColor:'rgba(255,255,255,.1)',borderWidth:1,callbacks:{label:ctx=>`${ctx.label}: ${fmt(ctx.parsed)} ${S.tokenSymbol}`}}}}});
+    chartDonut=new Chart(donutC,{type:'doughnut',data:{labels:['Disponible','Vendido'],datasets:[{data:[Math.max(0.001,S.poolBal),Math.max(0.001,S.tokensSold)],backgroundColor:['rgba(0,245,160,.62)','rgba(79,141,255,.62)'],borderColor:['#111420','#111420'],borderWidth:3,hoverOffset:7}]},options:{responsive:true,cutout:'70%',plugins:{legend:{display:false}}}});
   }
 }
 
@@ -1157,7 +1055,7 @@ async function deposit(){
   if(!amt||amt<=0){toast('err','Monto inválido','Ingresa una cantidad válida');return;}
   try{
     const amtWei=ethers.parseUnits(amt.toFixed(6),18);
-    const tw=await (async()=>{const p=new ethers.BrowserProvider(window.ethereum);const s=await p.getSigner();return new ethers.Contract(TOKEN_ADDRESS,TOKEN_ABI,s);})();
+    const tw=await getTokenWrite();
     toast('info','Paso 1/2','Aprobando — confirma en tu wallet');
     const appTx=await tw.approve(S.contractAddress,amtWei);await appTx.wait();
     const cw=getWriteContract();
@@ -1199,147 +1097,72 @@ async function togglePause(pause){
   }catch(e){if(e.code===4001||e.code==='ACTION_REJECTED')toast('err','Rechazado','Cancelado');else toast('err','Error',e?.reason||e?.shortMessage||e?.message||'');}
 }
 
-
-
-// ── ACCORDION ──
-function initAccordions() {
-  [['acc1Hdr','acc1Body'],['acc2Hdr','acc2Body']].forEach(([hId,bId]) => {
-    const hdr=el(hId), body=el(bId);
-    if(!hdr||!body) return;
-    hdr.addEventListener('click',()=>{
-      const open=hdr.classList.toggle('open');
-      body.classList.toggle('open',open);
-    });
+function initAccordions(){
+  [['acc1Hdr','acc1Body'],['acc2Hdr','acc2Body']].forEach(([hId,bId])=>{
+    const hdr=el(hId),body=el(bId);
+    if(!hdr||!body)return;
+    hdr.addEventListener('click',()=>{const open=hdr.classList.toggle('open');body.classList.toggle('open',open);});
   });
 }
 
-// ── VALIDATE ADDRESS FORMAT ──
-function isValidAddr(addr) { return /^0x[0-9a-fA-F]{40}$/.test(addr.trim()); }
+function isValidAddr(addr){return /^0x[0-9a-fA-F]{40}$/.test(addr.trim());}
 
-// ── VERIFY CONTRACT ONCHAIN (Acordeón 1) ──
-async function verifyContractOnchain() {
-  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','Solo wallets admin pueden hacer este cambio');return;}
+async function verifyContractOnchain(){
+  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','Solo wallets admin');return;}
   const addr=el('newContractAddr').value.trim();
-  if(!isValidAddr(addr)){
-    el('newContractMsg').className='valid-msg err';
-    el('newContractMsg').textContent='✗ Dirección inválida';
-    return;
-  }
-  el('newContractMsg').className='valid-msg ok';
-  el('newContractMsg').textContent='✓ Formato válido';
-  const res=el('verifyResult1');
-  res.className='verify-result info';
-  res.style.display='block';
-  res.textContent='⏳ Verificando funciones en la blockchain…';
-
-  try {
-    const REQUIRED = ['isAdmin','getDashboardStats1','getPoolBalance','getUsdtzPrice','setUSDTzPrice','depositTokens','withdrawAllTokens','getBnbRefPrice'];
-    const testContract = new ethers.Contract(addr, CONTRACT_ABI, getProvider());
-    // Test isAdmin as a proxy for contract validity
+  if(!isValidAddr(addr)){el('newContractMsg').className='valid-msg err';el('newContractMsg').textContent='✗ Dirección inválida';return;}
+  el('newContractMsg').className='valid-msg ok';el('newContractMsg').textContent='✓ Formato válido';
+  const res=el('verifyResult1');res.className='verify-result info';res.style.display='block';res.textContent='⏳ Verificando…';
+  try{
+    const testContract=new ethers.Contract(addr,CONTRACT_ABI,getProvider());
     await withFallback(()=>testContract.isAdmin(S.wallet));
-    res.className='verify-result ok';
-    res.innerHTML='✅ Contrato verificado onchain. Todas las funciones requeridas están disponibles.<br><span style="font-size:.7rem;opacity:.7">Puedes aplicar el cambio de dirección.</span>';
+    res.className='verify-result ok';res.innerHTML='✅ Contrato verificado onchain.';
     el('applyContractBtn').disabled=false;
-  } catch(e) {
-    res.className='verify-result err';
-    res.innerHTML='❌ No se pudo verificar el contrato.<br><span style="font-size:.7rem;opacity:.7">Asegúrate de que tiene las funciones requeridas y está en BSC Mainnet.</span>';
-    el('applyContractBtn').disabled=true;
-  }
+  }catch(e){res.className='verify-result err';res.innerHTML='❌ No se pudo verificar el contrato.';el('applyContractBtn').disabled=true;}
 }
 
-// ── APPLY CONTRACT ONLY (Acordeón 1) ──
-function applyContractOnly() {
-  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','Solo wallets admin pueden hacer este cambio');return;}
+function applyContractOnly(){
+  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','');return;}
   const addr=el('newContractAddr').value.trim();
-  if(!isValidAddr(addr)){toast('err','Dirección inválida','Verifica el formato');return;}
-  S.contractAddress=addr;
-  set('sysContract',abbr(addr));
+  if(!isValidAddr(addr)){toast('err','Dirección inválida','');return;}
+  S.contractAddress=addr;set('sysContract',abbr(addr));
   try{localStorage.setItem('miswap_contract_address',addr);}catch(_){}
-  toast('ok','Contrato actualizado',`Nueva dirección: ${abbr(addr)}`);
-  el('verifyResult1').className='verify-result';
-  el('applyContractBtn').disabled=true;
-  el('newContractAddr').value='';
-  el('newContractMsg').textContent='';
-  // Reload stats with new contract
-  loadStats().then(()=>renderAll()).catch(()=>{});
-  loadOnchainTxs().catch(()=>{});
+  toast('ok','Contrato actualizado',`${abbr(addr)}`);
+  el('verifyResult1').className='verify-result';el('applyContractBtn').disabled=true;
+  el('newContractAddr').value='';el('newContractMsg').textContent='';
+  loadStats().then(()=>renderAll()).catch(()=>{});loadOnchainTxs().catch(()=>{});
 }
 
-// ── VALIDATE ABI JSON (Acordeón 2) ──
 const REQUIRED_FN_NAMES=['isAdmin','getDashboardStats1','getPoolBalance','setUSDTzPrice','depositTokens','withdrawAllTokens'];
-function validateAbi() {
-  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','Solo wallets admin pueden hacer este cambio');return;}
-  const addr=el('newContractAddr2').value.trim();
-  const raw=el('abiInput').value.trim();
-  const res=el('verifyResult2');
-
-  if(!isValidAddr(addr)){
-    el('newContractMsg2').className='valid-msg err';
-    el('newContractMsg2').textContent='✗ Dirección inválida';
-    res.className='verify-result err';res.style.display='block';res.textContent='❌ Primero corrige la dirección del contrato.';
-    return;
-  }
-  el('newContractMsg2').className='valid-msg ok';
-  el('newContractMsg2').textContent='✓ Formato válido';
-
+function validateAbi(){
+  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','');return;}
+  const addr=el('newContractAddr2').value.trim();const raw=el('abiInput').value.trim();const res=el('verifyResult2');
+  if(!isValidAddr(addr)){el('newContractMsg2').className='valid-msg err';el('newContractMsg2').textContent='✗ Dirección inválida';res.className='verify-result err';res.style.display='block';res.textContent='❌ Corrige la dirección.';return;}
+  el('newContractMsg2').className='valid-msg ok';el('newContractMsg2').textContent='✓ Formato válido';
   if(!raw){res.className='verify-result err';res.style.display='block';res.textContent='❌ El campo ABI está vacío.';return;}
-
-  let parsed;
-  try { parsed=JSON.parse(raw); }
-  catch(e){res.className='verify-result err';res.style.display='block';res.textContent='❌ JSON inválido — '+e.message;return;}
-
+  let parsed;try{parsed=JSON.parse(raw);}catch(e){res.className='verify-result err';res.style.display='block';res.textContent='❌ JSON inválido — '+e.message;return;}
   if(!Array.isArray(parsed)){res.className='verify-result err';res.style.display='block';res.textContent='❌ El ABI debe ser un array JSON.';return;}
-
   const fns=parsed.filter(x=>x.type==='function'||x.type==='event').map(x=>x.name);
   const missing=REQUIRED_FN_NAMES.filter(n=>!fns.includes(n));
-  const found=REQUIRED_FN_NAMES.filter(n=>fns.includes(n));
-
-  if(missing.length>0){
-    res.className='verify-result warn';
-    res.style.display='block';
-    res.innerHTML=`⚠ ABI válido pero le faltan funciones requeridas:<br><strong>${missing.join(', ')}</strong><br><span style="font-size:.7rem;opacity:.8">El dashboard podría funcionar parcialmente.</span>`;
-    el('applyAbiBtn').disabled=false; // allow anyway with warning
-  } else {
-    res.className='verify-result ok';
-    res.style.display='block';
-    res.innerHTML=`✅ ABI válido. ${parsed.length} entradas totales, ${found.length}/${REQUIRED_FN_NAMES.length} funciones requeridas encontradas.<br><span style="font-size:.7rem;opacity:.8">Listo para aplicar.</span>`;
-    el('applyAbiBtn').disabled=false;
-  }
+  if(missing.length>0){res.className='verify-result warn';res.style.display='block';res.innerHTML=`⚠ Faltan: <strong>${missing.join(', ')}</strong>`;el('applyAbiBtn').disabled=false;}
+  else{res.className='verify-result ok';res.style.display='block';res.innerHTML=`✅ ABI válido. ${parsed.length} entradas.`;el('applyAbiBtn').disabled=false;}
 }
 
-// ── APPLY CONTRACT + ABI (Acordeón 2) ──
-function applyContractAndAbi() {
-  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','Solo wallets admin pueden hacer este cambio');return;}
-  const addr=el('newContractAddr2').value.trim();
-  const raw=el('abiInput').value.trim();
-  if(!isValidAddr(addr)){toast('err','Dirección inválida','Verifica el formato');return;}
-  let parsed;
-  try{parsed=JSON.parse(raw);}catch(e){toast('err','ABI inválido',e.message);return;}
+function applyContractAndAbi(){
+  if(!S.wallet||!AUTHORIZED.includes(S.wallet)){toast('err','No autorizado','');return;}
+  const addr=el('newContractAddr2').value.trim();const raw=el('abiInput').value.trim();
+  if(!isValidAddr(addr)){toast('err','Dirección inválida','');return;}
+  let parsed;try{parsed=JSON.parse(raw);}catch(e){toast('err','ABI inválido',e.message);return;}
   if(!Array.isArray(parsed)){toast('err','ABI inválido','Debe ser un array JSON');return;}
-
-  // Build human-readable ABI for ethers from full JSON ABI
-  S.contractAddress=addr;
-  S.customAbi=parsed; // store full ABI for future use
-  set('sysContract',abbr(addr));
-  set('sysAbi','Personalizado ✓');
-
-  try{
-    localStorage.setItem('miswap_contract_address',addr);
-    localStorage.setItem('miswap_contract_abi',raw);
-  }catch(_){}
-
-  toast('ok','Contrato + ABI aplicados',`${abbr(addr)} — ${parsed.length} entradas ABI guardadas`);
-  el('verifyResult2').className='verify-result';
-  el('applyAbiBtn').disabled=true;
-  el('newContractAddr2').value='';
-  el('abiInput').value='';
-  el('newContractMsg2').textContent='';
-  loadStats().then(()=>renderAll()).catch(()=>{});
-  loadOnchainTxs().catch(()=>{});
+  S.contractAddress=addr;S.customAbi=parsed;set('sysContract',abbr(addr));set('sysAbi','Personalizado ✓');
+  try{localStorage.setItem('miswap_contract_address',addr);localStorage.setItem('miswap_contract_abi',raw);}catch(_){}
+  toast('ok','Contrato + ABI aplicados',`${abbr(addr)} — ${parsed.length} entradas`);
+  el('verifyResult2').className='verify-result';el('applyAbiBtn').disabled=true;
+  el('newContractAddr2').value='';el('abiInput').value='';el('newContractMsg2').textContent='';
+  loadStats().then(()=>renderAll()).catch(()=>{});loadOnchainTxs().catch(()=>{});
 }
 
-// Load saved contract/ABI from localStorage on init
-function loadSavedConfig() {
+function loadSavedConfig(){
   try{
     const savedAddr=localStorage.getItem('miswap_contract_address');
     if(savedAddr&&isValidAddr(savedAddr)){S.contractAddress=savedAddr;set('sysContract',abbr(savedAddr));}
@@ -1350,7 +1173,7 @@ function loadSavedConfig() {
 
 function validateDepositAmt(){
   const a=parseFloat(el('depositAmt')?.value),btn=el('depositBtn');if(!btn)return;
-  if(!a||a<=0||( S.adminTokenBalLoaded&&a>S.adminTokenBal)){btn.disabled=true;return;}
+  if(!a||a<=0||(S.adminTokenBalLoaded&&a>S.adminTokenBal)){btn.disabled=true;return;}
   btn.disabled=false;
 }
 
@@ -1385,8 +1208,7 @@ async function connect(){
     el('lockScreen').style.display='none';el('shell').classList.add('visible');
     toast('info','Cargando dashboard...','Leyendo blockchain...');
     await Promise.all([fetchBnbPrice(),loadStats()]);
-    await loadOnchainTxs();
-    await loadAdminTokenBal();
+    await loadOnchainTxs();await loadAdminTokenBal();
     renderAll();renderDashTx();
     toast('ok','Dashboard listo','Datos cargados desde BSC Mainnet');
     setInterval(async()=>{await fetchBnbPrice();updatePriceCalc();set('topBnb',S.bnbPrice>0?S.bnbPrice.toFixed(2):'—');},15000);
@@ -1427,240 +1249,127 @@ document.addEventListener('DOMContentLoaded',()=>{
   el('applyBrandingBtn')?.addEventListener('click',applyBranding);
   el('pauseBtn')?.addEventListener('click',()=>togglePause(true));
   el('unpauseBtn')?.addEventListener('click',()=>togglePause(false));
-  // brandContract field removed — handled in accordion panels
-  // Accordion
-  initAccordions();
-  loadSavedConfig();
-
-  // Accordion 1: contract only
-  el('newContractAddr')?.addEventListener('input',function(){
-    const v=isValidAddr(this.value.trim());
-    el('newContractMsg').className='valid-msg '+(v?'ok':'err');
-    el('newContractMsg').textContent=v?'✓ Formato válido':this.value.length>2?'✗ Inválido':'';
-    el('applyContractBtn').disabled=true;
-    el('verifyResult1').className='verify-result';
-  });
+  initAccordions();loadSavedConfig();
+  el('newContractAddr')?.addEventListener('input',function(){const v=isValidAddr(this.value.trim());el('newContractMsg').className='valid-msg '+(v?'ok':'err');el('newContractMsg').textContent=v?'✓ Formato válido':this.value.length>2?'✗ Inválido':'';el('applyContractBtn').disabled=true;el('verifyResult1').className='verify-result';});
   el('verifyContractBtn')?.addEventListener('click',verifyContractOnchain);
   el('applyContractBtn')?.addEventListener('click',applyContractOnly);
-
-  // Accordion 2: contract + ABI
-  el('newContractAddr2')?.addEventListener('input',function(){
-    const v=isValidAddr(this.value.trim());
-    el('newContractMsg2').className='valid-msg '+(v?'ok':'err');
-    el('newContractMsg2').textContent=v?'✓ Formato válido':this.value.length>2?'✗ Inválido':'';
-    el('applyAbiBtn').disabled=true;el('verifyResult2').className='verify-result';
-  });
+  el('newContractAddr2')?.addEventListener('input',function(){const v=isValidAddr(this.value.trim());el('newContractMsg2').className='valid-msg '+(v?'ok':'err');el('newContractMsg2').textContent=v?'✓ Formato válido':this.value.length>2?'✗ Inválido':'';el('applyAbiBtn').disabled=true;el('verifyResult2').className='verify-result';});
   el('validateAbiBtn')?.addEventListener('click',validateAbi);
   el('applyAbiBtn')?.addEventListener('click',applyContractAndAbi);
-
   if(window.ethereum){window.ethereum.request({method:'eth_accounts'}).then(accounts=>{if(accounts.length&&AUTHORIZED.includes(accounts[0].toLowerCase()))connect();}).catch(()=>{});}
 });
 
-// ════════════════════════════════════════════════════════
-// BUYBACK MODULE — Admin v8.3
-// ════════════════════════════════════════════════════════
-
-S.bbToken = null; // token seleccionado actualmente
-
-async function loadBuybackPanel() {
-  try {
-    const c = getReadContract();
-    const [addrs, syms, prices] = await withFallback(() => c.listActiveTokens());
-    const wrap = el('bbTokenList'); if (!wrap) return;
-    if (!addrs.length) { wrap.innerHTML = '<div style="color:var(--t4);font-size:.78rem">No hay tokens activos</div>'; return; }
-
-    let html = '';
-    for (let i = 0; i < addrs.length; i++) {
-      let enabled = false, buyPrice = 0;
-      try {
-        const bb = await withFallback(() => c.getBuybackInfo(addrs[i]));
-        enabled  = bb[0];
-        buyPrice = Number(ethers.formatUnits(bb[1], 18));
-      } catch(_) {}
-
-      html += `<div class="bb-token-row">
-        <div>
-          <div class="bb-token-sym">${esc(syms[i])}</div>
-          <div class="bb-token-addr">${esc(addrs[i])}</div>
-          ${enabled ? `<div style="font-size:.68rem;color:var(--t3);margin-top:3px">Precio compra: <strong style="color:var(--ac)">${buyPrice.toFixed(8)} BNB</strong></div>` : ''}
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="bb-status-pill ${enabled ? 'on' : 'off'}">${enabled ? '● Activo' : '○ Inactivo'}</span>
-          <button class="btn" style="font-size:.72rem;padding:6px 14px" onclick="selectBbToken('${addrs[i]}','${syms[i]}',${prices[i]})">Configurar</button>
-        </div>
-      </div>`;
+// BUYBACK MODULE
+S.bbToken=null;
+async function loadBuybackPanel(){
+  try{
+    const c=getReadContract();
+    const [addrs,syms,prices]=await withFallback(()=>c.listActiveTokens());
+    const wrap=el('bbTokenList');if(!wrap)return;
+    if(!addrs.length){wrap.innerHTML='<div style="color:var(--t4);font-size:.78rem">No hay tokens activos</div>';return;}
+    let html='';
+    for(let i=0;i<addrs.length;i++){
+      let enabled=false,buyPrice=0;
+      try{const bb=await withFallback(()=>c.getBuybackInfo(addrs[i]));enabled=bb[0];buyPrice=Number(ethers.formatUnits(bb[1],18));}catch(_){}
+      html+=`<div class="bb-token-row"><div><div class="bb-token-sym">${esc(syms[i])}</div><div class="bb-token-addr">${esc(addrs[i])}</div>${enabled?`<div style="font-size:.68rem;color:var(--t3);margin-top:3px">Precio compra: <strong style="color:var(--ac)">${buyPrice.toFixed(8)} BNB</strong></div>`:''}</div><div style="display:flex;align-items:center;gap:10px"><span class="bb-status-pill ${enabled?'on':'off'}">${enabled?'● Activo':'○ Inactivo'}</span><button class="btn" style="font-size:.72rem;padding:6px 14px" onclick="selectBbToken('${addrs[i]}','${syms[i]}',${prices[i]})">Configurar</button></div></div>`;
     }
-    wrap.innerHTML = html;
-  } catch(e) {
-    const w = el('bbTokenList');
-    if(w) w.innerHTML = '<div style="color:var(--red);font-size:.75rem">Error cargando tokens</div>';
-  }
+    wrap.innerHTML=html;
+  }catch(e){const w=el('bbTokenList');if(w)w.innerHTML='<div style="color:var(--red);font-size:.75rem">Error cargando tokens</div>';}
 }
 
-async function selectBbToken(addr, sym, priceWei) {
-  S.bbToken = addr;
-  el('bbConfigCard').style.display = 'block';
-  el('bbSelectHint').style.display = 'none';
-  set('bbConfigTitle', `Recompra — ${sym}`);
-  set('bbConfigAddr', addr);
-
-  // Precio de venta como referencia
-  const sellPrice = Number(ethers.formatUnits(priceWei, 18));
-  set('bbSellPriceRef', sellPrice.toFixed(8) + ' BNB');
-
-  try {
-    const c = getReadContract();
-    const bb = await withFallback(() => c.getBuybackInfo(addr));
-    const enabled     = bb[0];
-    const buyPrice    = bb[1];
-    const inverseCurve= bb[2];
-    const tokBought   = Number(ethers.formatUnits(bb[3], 18));
-    const bnbPaid     = Number(ethers.formatUnits(bb[4], 18));
-    const bnbBal      = Number(ethers.formatUnits(bb[5], 18));
-
-    // Toggle principal
-    const tog = el('bbMainToggle');
-    if(tog) tog.checked = enabled;
-    const pill = el('bbActivePill');
-    if(pill) { pill.className = 'bb-status-pill ' + (enabled ? 'on' : 'off'); pill.textContent = enabled ? '● Activo' : '○ Inactivo'; }
-
-    // Precio y curva
-    if(buyPrice > 0) el('bbBuyPrice').value = buyPrice.toString();
-    const curveChk = el('bbInverseCurve');
-    if(curveChk) curveChk.checked = inverseCurve;
-
-    // Stats
-    if(enabled) {
-      el('bbStatsRow').style.display = 'grid';
-      el('bbLiqSection').style.display = 'block';
-      set('bbStatBnb', bnbBal.toFixed(4) + ' BNB');
-      set('bbStatTokBought', fmt(tokBought));
-      set('bbStatBnbPaid', bnbPaid.toFixed(4) + ' BNB');
-      set('bbLiqLabel', bnbBal.toFixed(4) + ' BNB disponible');
-      // Barra relativa al BNB pagado total
-      const pct = bnbPaid > 0 ? Math.min(100, (bnbBal / (bnbPaid + bnbBal)) * 100) : 80;
-      const bar = el('bbLiqBar'); if(bar) bar.style.width = pct + '%';
-    } else {
-      el('bbStatsRow').style.display = 'none';
-      el('bbLiqSection').style.display = 'none';
-    }
-  } catch(e) { console.warn('[BB]', e.message); }
+async function selectBbToken(addr,sym,priceWei){
+  S.bbToken=addr;
+  el('bbConfigCard').style.display='block';el('bbSelectHint').style.display='none';
+  set('bbConfigTitle',`Recompra — ${sym}`);set('bbConfigAddr',addr);
+  const sellPrice=Number(ethers.formatUnits(priceWei,18));set('bbSellPriceRef',sellPrice.toFixed(8)+' BNB');
+  try{
+    const c=getReadContract();const bb=await withFallback(()=>c.getBuybackInfo(addr));
+    const enabled=bb[0],buyPrice=bb[1],inverseCurve=bb[2],tokBought=Number(ethers.formatUnits(bb[3],18)),bnbPaid=Number(ethers.formatUnits(bb[4],18)),bnbBal=Number(ethers.formatUnits(bb[5],18));
+    const tog=el('bbMainToggle');if(tog)tog.checked=enabled;
+    const pill=el('bbActivePill');if(pill){pill.className='bb-status-pill '+(enabled?'on':'off');pill.textContent=enabled?'● Activo':'○ Inactivo';}
+    if(buyPrice>0)el('bbBuyPrice').value=buyPrice.toString();
+    const curveChk=el('bbInverseCurve');if(curveChk)curveChk.checked=inverseCurve;
+    if(enabled){
+      el('bbStatsRow').style.display='grid';el('bbLiqSection').style.display='block';
+      set('bbStatBnb',bnbBal.toFixed(4)+' BNB');set('bbStatTokBought',fmt(tokBought));set('bbStatBnbPaid',bnbPaid.toFixed(4)+' BNB');
+      set('bbLiqLabel',bnbBal.toFixed(4)+' BNB disponible');
+      const pct=bnbPaid>0?Math.min(100,(bnbBal/(bnbPaid+bnbBal))*100):80;
+      const bar=el('bbLiqBar');if(bar)bar.style.width=pct+'%';
+    }else{el('bbStatsRow').style.display='none';el('bbLiqSection').style.display='none';}
+  }catch(e){console.warn('[BB]',e.message);}
 }
 
-async function onBbToggle(enabled) {
-  if (!S.wallet) { toast('err','No conectado',''); el('bbMainToggle').checked = !enabled; return; }
-  if (!S.bbToken) { toast('err','Selecciona un token primero',''); el('bbMainToggle').checked = !enabled; return; }
-
-  const pill = el('bbActivePill');
-  if(pill) { pill.className = 'bb-status-pill ' + (enabled ? 'on' : 'off'); pill.textContent = enabled ? '● Activo' : '○ Inactivo'; }
-
-  if (!enabled) {
-    // Desactivar directamente
-    try {
-      const tx = await getWriteContract().disableBuyback(S.bbToken);
-      toast('info','Desactivando…','Confirma en tu wallet');
-      await tx.wait();
-      toast('ok','Buyback desactivado','El BNB sigue en el contrato — retíralo cuando quieras');
-      el('bbStatsRow').style.display = 'none';
-      el('bbLiqSection').style.display = 'none';
+async function onBbToggle(enabled){
+  if(!S.wallet){toast('err','No conectado','');el('bbMainToggle').checked=!enabled;return;}
+  if(!S.bbToken){toast('err','Selecciona un token primero','');el('bbMainToggle').checked=!enabled;return;}
+  const pill=el('bbActivePill');
+  if(pill){pill.className='bb-status-pill '+(enabled?'on':'off');pill.textContent=enabled?'● Activo':'○ Inactivo';}
+  if(!enabled){
+    try{
+      const tx=await getWriteContract().disableBuyback(S.bbToken);
+      toast('info','Desactivando…','Confirma en tu wallet');await tx.wait();
+      toast('ok','Buyback desactivado','');
+      el('bbStatsRow').style.display='none';el('bbLiqSection').style.display='none';
       await loadBuybackPanel();
-    } catch(e) {
-      el('bbMainToggle').checked = true;
-      if(pill){pill.className='bb-status-pill on';pill.textContent='● Activo';}
-      toast('err','Error', e?.reason || e?.message || '');
-    }
+    }catch(e){el('bbMainToggle').checked=true;if(pill){pill.className='bb-status-pill on';pill.textContent='● Activo';}toast('err','Error',e?.reason||e?.message||'');}
   }
-  // Si enabled=true, usuario debe guardar config con bbApplyConfig
 }
 
-async function bbApplyConfig() {
-  if (!S.wallet) { toast('err','No conectado',''); return; }
-  if (!S.bbToken) { toast('err','Selecciona un token primero',''); return; }
-
-  const priceRaw    = el('bbBuyPrice')?.value.trim();
-  const inverseCurve= el('bbInverseCurve')?.checked || false;
-  const isActive    = el('bbMainToggle')?.checked || false;
-  const msgEl       = el('bbConfigMsg');
-
-  if (!priceRaw || isNaN(priceRaw) || BigInt(priceRaw) <= 0n) {
-    if(msgEl){msgEl.className='valid-msg err';msgEl.textContent='✗ Precio inválido. Ingresa el valor en wei (ej: 11000000000000000)';}
-    return;
-  }
-
-  try {
-    const price = BigInt(priceRaw);
-    let tx;
-    if (isActive) {
-      // Verificar si ya está activo para usar update en lugar de enable
-      const c = getReadContract();
-      const bb = await withFallback(() => c.getBuybackInfo(S.bbToken));
-      if (bb[0]) {
-        tx = await getWriteContract().updateBuybackPrice(S.bbToken, price, inverseCurve);
-        toast('info','Actualizando precio…','Confirma en tu wallet');
-      } else {
-        tx = await getWriteContract().enableBuyback(S.bbToken, price, inverseCurve);
-        toast('info','Activando buyback…','Confirma en tu wallet');
-      }
-    } else {
-      toast('info','Activa el toggle para habilitar el buyback','');
-      return;
-    }
+async function bbApplyConfig(){
+  if(!S.wallet){toast('err','No conectado','');return;}
+  if(!S.bbToken){toast('err','Selecciona un token primero','');return;}
+  const priceRaw=el('bbBuyPrice')?.value.trim();
+  const inverseCurve=el('bbInverseCurve')?.checked||false;
+  const isActive=el('bbMainToggle')?.checked||false;
+  const msgEl=el('bbConfigMsg');
+  if(!priceRaw||isNaN(priceRaw)||BigInt(priceRaw)<=0n){if(msgEl){msgEl.className='valid-msg err';msgEl.textContent='✗ Precio inválido.';}return;}
+  try{
+    const price=BigInt(priceRaw);let tx;
+    if(isActive){
+      const c=getReadContract();const bb=await withFallback(()=>c.getBuybackInfo(S.bbToken));
+      if(bb[0]){tx=await getWriteContract().updateBuybackPrice(S.bbToken,price,inverseCurve);toast('info','Actualizando precio…','Confirma en tu wallet');}
+      else{tx=await getWriteContract().enableBuyback(S.bbToken,price,inverseCurve);toast('info','Activando buyback…','Confirma en tu wallet');}
+    }else{toast('info','Activa el toggle para habilitar el buyback','');return;}
     await tx.wait();
     if(msgEl){msgEl.className='valid-msg ok';msgEl.textContent='✓ Configuración guardada onchain';}
     toast('ok','Buyback configurado','');
-    el('bbStatsRow').style.display = 'grid';
-    el('bbLiqSection').style.display = 'block';
-    await loadBuybackPanel();
-    await selectBbToken(S.bbToken, '', BigInt(priceRaw));
-  } catch(e) {
-    if(msgEl){msgEl.className='valid-msg err';msgEl.textContent='✗ ' + (e?.reason||e?.message||'Error');}
-    toast('err','Error', e?.reason || e?.message || '');
-  }
+    el('bbStatsRow').style.display='grid';el('bbLiqSection').style.display='block';
+    await loadBuybackPanel();await selectBbToken(S.bbToken,'',BigInt(priceRaw));
+  }catch(e){if(msgEl){msgEl.className='valid-msg err';msgEl.textContent='✗ '+(e?.reason||e?.message||'Error');}toast('err','Error',e?.reason||e?.message||'');}
 }
 
-async function bbDepositBNB() {
-  if (!S.wallet) { toast('err','No conectado',''); return; }
-  const amt = parseFloat(el('bbDepositBnb')?.value);
-  if (!amt || amt <= 0) { toast('err','Monto inválido','Ingresa una cantidad de BNB'); return; }
-  try {
-    const bnbWei = ethers.parseEther(amt.toFixed(6));
-    const p = new ethers.BrowserProvider(window.ethereum);
-    const s = await p.getSigner();
-    const c = new ethers.Contract(S.contractAddress, CONTRACT_ABI, s);
+async function bbDepositBNB(){
+  if(!S.wallet){toast('err','No conectado','');return;}
+  const amt=parseFloat(el('bbDepositBnb')?.value);
+  if(!amt||amt<=0){toast('err','Monto inválido','Ingresa una cantidad de BNB');return;}
+  try{
+    const bnbWei=ethers.parseEther(amt.toFixed(6));
+    const p=new ethers.BrowserProvider(window.ethereum);const s=await p.getSigner();
+    const c=new ethers.Contract(S.contractAddress,CONTRACT_ABI,s);
     toast('info','Depositando BNB…','Confirma en tu wallet');
-    const tx = await c.depositBNBForBuyback({ value: bnbWei });
-    await tx.wait();
-    toast('ok','BNB depositado', `${amt} BNB añadidos como liquidez de recompra`);
-    el('bbDepositBnb').value = '';
-    if(S.bbToken) await selectBbToken(S.bbToken, '', 0n);
-  } catch(e) {
-    toast('err','Error', e?.reason || e?.message || '');
-  }
+    const tx=await c.depositBNBForBuyback({value:bnbWei});await tx.wait();
+    toast('ok','BNB depositado',`${amt} BNB añadidos como liquidez`);
+    el('bbDepositBnb').value='';
+    if(S.bbToken)await selectBbToken(S.bbToken,'',0n);
+  }catch(e){toast('err','Error',e?.reason||e?.message||'');}
 }
-
 </script>
-</body>
-</html>
+
+<!-- ════ SCRIPT MÓDULOS ADICIONALES (ADMINS, TOKENS, WITHDRAW LIMIT) ═══════ -->
+<!-- FIX: Movido dentro de </body> — antes estaba fuera de </html> -->
 <script>
-// ════════════════════════════════════════════════════════
-// MiSwap Admin v8.2 — Módulos nuevos
-// ════════════════════════════════════════════════════════
+'use strict';
 
-const USDTZ = '0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4';
+const USDTZ='0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4';
 
-// ── HELPERS ──────────────────────────────────────────────
 function iAmActive(){
-  if(!S.wallet) return false;
+  if(!S.wallet)return false;
   const w=S.wallet.toLowerCase();
-  return (S.adminA.wallet.toLowerCase()===w&&S.adminA.active)||(S.adminB.wallet.toLowerCase()===w&&S.adminB.active);
+  return(S.adminA.wallet.toLowerCase()===w&&S.adminA.active)||(S.adminB.wallet.toLowerCase()===w&&S.adminB.active);
 }
-function isSelfWallet(w){ return S.wallet&&w.toLowerCase()===S.wallet.toLowerCase(); }
-function fmtCountdown(ts){
-  const s=Math.max(0,ts-Math.floor(Date.now()/1000));
-  return `${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m ${s%60}s`;
-}
+function isSelfWallet(w){return S.wallet&&w.toLowerCase()===S.wallet.toLowerCase();}
+function fmtCountdown(ts){const s=Math.max(0,ts-Math.floor(Date.now()/1000));return `${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m ${s%60}s`;}
 
-// ── ADMINS ───────────────────────────────────────────────
 async function loadAdminInfo(){
   try{
     const c=getReadContract();
@@ -1672,30 +1381,22 @@ async function loadAdminInfo(){
     S.adminA.wallet='0x5167b4D52fFa149DAF81F6b7c22BB8e7E4749cda';
     S.adminB.wallet='0x6F3928326f082029236321f033425Dda881CfA4f';
   }
-  renderAdminCards();
-  renderPendingReplace();
+  renderAdminCards();renderPendingReplace();
 }
 
 function renderAdminCards(){
-  const grid=el('adminCardsGrid'); if(!grid) return;
-  const active=iAmActive();
-  const hasReq=S.pendingReplace?.active;
+  const grid=el('adminCardsGrid');if(!grid)return;
+  const active=iAmActive();const hasReq=S.pendingReplace?.active;
   const admins=[{...S.adminA,slot:'A',emoji:'👨‍💻'},{...S.adminB,slot:'B',emoji:'👨‍💼'}];
   grid.innerHTML=admins.map(a=>{
-    const self=isSelfWallet(a.wallet);
-    const cls=a.active?'active-card':'suspended-card';
+    const self=isSelfWallet(a.wallet);const cls=a.active?'active-card':'suspended-card';
     const badge=a.active?'<span class="admin-badge on"><span class="admin-dot"></span>Activo</span>':'<span class="admin-badge off"><span class="admin-dot"></span>Suspendido</span>';
-    const showSusp=active&&!self&&a.active;
-    const showReact=active&&!self&&!a.active;
-    const showRepl=active&&!self&&!hasReq;
-    const showSelf=active&&self&&!hasReq;
+    const showSusp=active&&!self&&a.active;const showReact=active&&!self&&!a.active;
+    const showRepl=active&&!self&&!hasReq;const showSelf=active&&self&&!hasReq;
     return `<div class="admin-card ${cls}">
       <div class="admin-card-glow"></div>
       ${self?'<div class="admin-self-tag">Tú</div>':''}
-      <div class="admin-card-header">
-        <div class="admin-avatar">${a.emoji}</div>
-        <div><div class="admin-name">${esc(a.name)}</div><div class="admin-role">${esc(a.role)}</div>${badge}</div>
-      </div>
+      <div class="admin-card-header"><div class="admin-avatar">${a.emoji}</div><div><div class="admin-name">${esc(a.name)}</div><div class="admin-role">${esc(a.role)}</div>${badge}</div></div>
       <div class="admin-addr" onclick="navigator.clipboard.writeText('${a.wallet}');toast('ok','Copiado','${a.wallet.slice(0,10)}…')">${esc(a.wallet)}</div>
       <div style="display:flex;flex-direction:column;gap:7px">
         ${showSusp?`<button class="btn btn-red" onclick="adminSuspend()">⏸ Suspender</button>`:''}
@@ -1710,20 +1411,13 @@ function renderAdminCards(){
 }
 
 function renderPendingReplace(){
-  const box=el('pendingReplaceBox'); if(!box) return;
+  const box=el('pendingReplaceBox');if(!box)return;
   if(!S.pendingReplace?.active){box.style.display='none';return;}
   box.style.display='block';
-  const pr=S.pendingReplace;
-  const expired=Math.floor(Date.now()/1000)>=pr.executeAfter;
-  const canAct=iAmActive();
-  box.innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-    <span style="font-size:1.2rem">⏳</span>
-    <div><div style="font-size:.82rem;font-weight:700;color:var(--t1)">Solicitud de Reemplazo Pendiente</div>
-    <div style="font-size:.68rem;color:var(--t3);margin-top:2px">${expired?'✅ Puede ejecutarse ahora':`Ejecutable en: <strong id="rpCountdown" style="color:rgba(255,200,0,.9)">${fmtCountdown(pr.executeAfter)}</strong>`}</div></div></div>
-  <div style="font-size:.68rem;color:var(--t3);margin-bottom:4px">Wallet objetivo:</div>
-  <div class="admin-addr" style="margin-bottom:8px">${esc(pr.target)}</div>
-  <div style="font-size:.68rem;color:var(--t3);margin-bottom:4px">Nueva wallet propuesta:</div>
-  <div class="admin-addr" style="color:var(--ac);margin-bottom:12px">${esc(pr.newWallet)}</div>
+  const pr=S.pendingReplace;const expired=Math.floor(Date.now()/1000)>=pr.executeAfter;const canAct=iAmActive();
+  box.innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:1.2rem">⏳</span><div><div style="font-size:.82rem;font-weight:700;color:var(--t1)">Solicitud de Reemplazo Pendiente</div><div style="font-size:.68rem;color:var(--t3);margin-top:2px">${expired?'✅ Puede ejecutarse ahora':`Ejecutable en: <strong id="rpCountdown" style="color:rgba(255,200,0,.9)">${fmtCountdown(pr.executeAfter)}</strong>`}</div></div></div>
+  <div style="font-size:.68rem;color:var(--t3);margin-bottom:4px">Wallet objetivo:</div><div class="admin-addr" style="margin-bottom:8px">${esc(pr.target)}</div>
+  <div style="font-size:.68rem;color:var(--t3);margin-bottom:4px">Nueva wallet propuesta:</div><div class="admin-addr" style="color:var(--ac);margin-bottom:12px">${esc(pr.newWallet)}</div>
   <div style="display:flex;gap:8px">
     ${canAct?`<button class="btn btn-red" style="flex:1" onclick="adminCancelReplace()">✕ Cancelar</button>`:''}
     ${expired&&canAct?`<button class="btn btn-green" style="flex:1" onclick="adminExecuteReplace()">✓ Ejecutar</button>`:''}
@@ -1732,21 +1426,10 @@ function renderPendingReplace(){
   if(!expired){clearInterval(window._rpTimer);window._rpTimer=setInterval(()=>{const cd=el('rpCountdown');if(cd)cd.textContent=fmtCountdown(pr.executeAfter);if(Math.floor(Date.now()/1000)>=pr.executeAfter){clearInterval(window._rpTimer);renderPendingReplace();}},1000);}
 }
 
-async function adminSuspend(){if(!S.wallet){toast('err','No conectado','');return;}
-  try{const tx=await getWriteContract().suspendOtherAdmin();toast('info','Enviado','');await tx.wait();toast('ok','Admin suspendido','Reversible en cualquier momento');await loadAdminInfo();}
-  catch(e){toast('err','Error',e?.reason||e?.message||'');}}
-
-async function adminReactivate(){if(!S.wallet){toast('err','No conectado','');return;}
-  try{const tx=await getWriteContract().reactivateOtherAdmin();toast('info','Enviado','');await tx.wait();toast('ok','Admin reactivado','Privilegios restaurados');await loadAdminInfo();}
-  catch(e){toast('err','Error',e?.reason||e?.message||'');}}
-
-async function adminCancelReplace(){if(!S.wallet){toast('err','No conectado','');return;}
-  try{const tx=await getWriteContract().cancelReplaceRequest();toast('info','Enviado','');await tx.wait();toast('ok','Solicitud cancelada','');await loadAdminInfo();}
-  catch(e){toast('err','Error',e?.reason||e?.message||'');}}
-
-async function adminExecuteReplace(){if(!S.wallet){toast('err','No conectado','');return;}
-  try{const tx=await getWriteContract().executeReplace();toast('info','Enviado','');await tx.wait();toast('ok','Reemplazo ejecutado','Wallet actualizada permanentemente');await loadAdminInfo();}
-  catch(e){toast('err','Error',e?.reason||e?.message||'');}}
+async function adminSuspend(){if(!S.wallet)return;try{const tx=await getWriteContract().suspendOtherAdmin();toast('info','Enviado','');await tx.wait();toast('ok','Admin suspendido','');await loadAdminInfo();}catch(e){toast('err','Error',e?.reason||e?.message||'');}}
+async function adminReactivate(){if(!S.wallet)return;try{const tx=await getWriteContract().reactivateOtherAdmin();toast('info','Enviado','');await tx.wait();toast('ok','Admin reactivado','');await loadAdminInfo();}catch(e){toast('err','Error',e?.reason||e?.message||'');}}
+async function adminCancelReplace(){if(!S.wallet)return;try{const tx=await getWriteContract().cancelReplaceRequest();toast('info','Enviado','');await tx.wait();toast('ok','Solicitud cancelada','');await loadAdminInfo();}catch(e){toast('err','Error',e?.reason||e?.message||'');}}
+async function adminExecuteReplace(){if(!S.wallet)return;try{const tx=await getWriteContract().executeReplace();toast('info','Enviado','');await tx.wait();toast('ok','Reemplazo ejecutado','');await loadAdminInfo();}catch(e){toast('err','Error',e?.reason||e?.message||'');}}
 
 S.rpTarget=null;
 function openRpModal(target){
@@ -1756,94 +1439,73 @@ function openRpModal(target){
   el('rpModal').classList.add('open');
 }
 function closeRpModal(){el('rpModal').classList.remove('open');S.rpTarget=null;}
-el('rpAddrInput')?.addEventListener('input',function(){
-  const v=/^0x[0-9a-fA-F]{40}$/.test(this.value.trim());
-  el('rpAddrMsg').className='valid-msg '+(v?'ok':'err');
-  el('rpAddrMsg').textContent=v?'✓ Válida':this.value.length>2?'✗ Inválida':'';
-  el('rpConfirmBtn').disabled=!v;
-});
-el('rpCancelBtn')?.addEventListener('click',closeRpModal);
-el('rpConfirmBtn')?.addEventListener('click',async function(){
-  const w=el('rpAddrInput').value.trim();if(!w||!S.rpTarget)return;
-  try{
-    const fn=S.rpTarget==='self'?'requestReplaceSelf':'requestReplaceOtherAdmin';
-    const tx=await getWriteContract()[fn](w);
-    closeRpModal();toast('info','Solicitud enviada','Timelock 48h iniciado');
-    await tx.wait();toast('ok','Registrado onchain','Ejecutable en 48h si no se cancela');
-    await loadAdminInfo();
-  }catch(e){toast('err','Error',e?.reason||e?.message||'');}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  el('rpAddrInput')?.addEventListener('input',function(){
+    const v=/^0x[0-9a-fA-F]{40}$/.test(this.value.trim());
+    el('rpAddrMsg').className='valid-msg '+(v?'ok':'err');
+    el('rpAddrMsg').textContent=v?'✓ Válida':this.value.length>2?'✗ Inválida':'';
+    el('rpConfirmBtn').disabled=!v;
+  });
+  el('rpCancelBtn')?.addEventListener('click',closeRpModal);
+  el('rpConfirmBtn')?.addEventListener('click',async function(){
+    const w=el('rpAddrInput').value.trim();if(!w||!S.rpTarget)return;
+    try{
+      const fn=S.rpTarget==='self'?'requestReplaceSelf':'requestReplaceOtherAdmin';
+      const tx=await getWriteContract()[fn](w);
+      closeRpModal();toast('info','Solicitud enviada','Timelock 48h iniciado');
+      await tx.wait();toast('ok','Registrado onchain','Ejecutable en 48h');
+      await loadAdminInfo();
+    }catch(e){toast('err','Error',e?.reason||e?.message||'');}
+  });
+  el('addTokenBtn')?.addEventListener('click',async()=>{
+    const addr=el('newTokenAddr')?.value.trim();const price=el('newTokenPrice')?.value.trim();
+    const impact=el('newTokenImpact')?.value;const reserve=el('newTokenReserve')?.value;
+    const fee=el('newTokenFee')?.value;const feeR=el('newTokenFeeRecipient')?.value.trim();
+    if(!addr||!price||!feeR){toast('err','Campos incompletos','');return;}
+    if(!/^0x[0-9a-fA-F]{40}$/.test(addr)||!/^0x[0-9a-fA-F]{40}$/.test(feeR)){toast('err','Dirección inválida','');return;}
+    try{
+      const tx=await getWriteContract().addToken(addr,BigInt(price),Number(impact),Number(reserve),Number(fee),feeR);
+      toast('info','Enviado','');await tx.wait();toast('ok','Token registrado','');
+      await loadTokenList();el('newTokenAddr').value='';el('newTokenPrice').value='';el('newTokenFeeRecipient').value='';
+    }catch(e){toast('err','Error',e?.reason||e?.message||'');}
+  });
+  el('blAddBtn')?.addEventListener('click',async()=>{
+    const t=(el('blTokenAddr')?.value.trim()||USDTZ);const w=el('blWalletAddr')?.value.trim();
+    if(!w||!/^0x[0-9a-fA-F]{40}$/.test(w)){toast('err','Wallet inválida','');return;}
+    try{const tx=await getWriteContract().addToBlacklist(t,w);toast('info','Enviado','');await tx.wait();toast('ok','Wallet bloqueada','');}
+    catch(e){toast('err','Error',e?.reason||e?.message||'');}
+  });
+  el('blRemoveBtn')?.addEventListener('click',async()=>{
+    const t=(el('blTokenAddr')?.value.trim()||USDTZ);const w=el('blWalletAddr')?.value.trim();
+    if(!w||!/^0x[0-9a-fA-F]{40}$/.test(w)){toast('err','Wallet inválida','');return;}
+    try{const tx=await getWriteContract().removeFromBlacklist(t,w);toast('info','Enviado','');await tx.wait();toast('ok','Wallet desbloqueada','');}
+    catch(e){toast('err','Error',e?.reason||e?.message||'');}
+  });
 });
 
-// ── TOKENS ───────────────────────────────────────────────
 async function loadTokenList(){
   try{
     const c=getReadContract();
     const [addrs,syms,prices,bals,avails]=await withFallback(()=>c.listActiveTokens());
-    const count=addrs.length;
-    set('tokenCountBadge',count);
+    set('tokenCountBadge',addrs.length);
     const wrap=el('tokenListWrap');if(!wrap)return;
-    if(!count){wrap.innerHTML='<div style="color:var(--t4);font-size:.78rem">No hay tokens activos</div>';return;}
+    if(!addrs.length){wrap.innerHTML='<div style="color:var(--t4);font-size:.78rem">No hay tokens activos</div>';return;}
     wrap.innerHTML=addrs.map((_,i)=>{
       const price=Number(ethers.formatUnits(prices[i],18));
       const bal=Number(ethers.formatUnits(bals[i],18));
       const avail=Number(ethers.formatUnits(avails[i],18));
-      return `<div class="token-card">
-        <div>
-          <div class="token-symbol">${esc(syms[i])} <span class="token-badge active">Activo</span></div>
-          <div class="token-addr">${esc(addrs[i])}</div>
-          <div class="token-stats">
-            <div class="token-stat">Pool: <strong>${fmt(bal)}</strong></div>
-            <div class="token-stat">Disponible: <strong>${fmt(avail)}</strong></div>
-            <div class="token-stat">Precio: <strong>${price.toFixed(8)} BNB</strong></div>
-          </div>
-        </div>
-        <button class="btn btn-red" style="font-size:.7rem;padding:6px 12px" onclick="removeTokenAction('${addrs[i]}')">Desactivar</button>
-      </div>`;
+      return `<div class="token-card"><div><div class="token-symbol">${esc(syms[i])} <span class="token-badge active">Activo</span></div><div class="token-addr">${esc(addrs[i])}</div><div class="token-stats"><div class="token-stat">Pool: <strong>${fmt(bal)}</strong></div><div class="token-stat">Disponible: <strong>${fmt(avail)}</strong></div><div class="token-stat">Precio: <strong>${price.toFixed(8)} BNB</strong></div></div></div><button class="btn btn-red" style="font-size:.7rem;padding:6px 12px" onclick="removeTokenAction('${addrs[i]}')">Desactivar</button></div>`;
     }).join('');
   }catch(e){const w=el('tokenListWrap');if(w)w.innerHTML='<div style="color:var(--red);font-size:.75rem">Error cargando tokens</div>';}
 }
 
 async function removeTokenAction(addr){
-  if(!confirm('¿Desactivar este token? Los usuarios no podrán comprarlo hasta reactivarlo.'))return;
+  if(!confirm('¿Desactivar este token?'))return;
   try{const tx=await getWriteContract().removeToken(addr);toast('info','Enviado','');await tx.wait();toast('ok','Token desactivado','');await loadTokenList();}
   catch(e){toast('err','Error',e?.reason||e?.message||'');}
 }
 
-el('addTokenBtn')?.addEventListener('click',async()=>{
-  const addr=el('newTokenAddr')?.value.trim();
-  const price=el('newTokenPrice')?.value.trim();
-  const impact=el('newTokenImpact')?.value;
-  const reserve=el('newTokenReserve')?.value;
-  const fee=el('newTokenFee')?.value;
-  const feeR=el('newTokenFeeRecipient')?.value.trim();
-  if(!addr||!price||!feeR){toast('err','Campos incompletos','Completa todos los campos requeridos');return;}
-  if(!/^0x[0-9a-fA-F]{40}$/.test(addr)||!/^0x[0-9a-fA-F]{40}$/.test(feeR)){toast('err','Dirección inválida','');return;}
-  try{
-    const tx=await getWriteContract().addToken(addr,BigInt(price),Number(impact),Number(reserve),Number(fee),feeR);
-    toast('info','Enviado','Registrando token…');await tx.wait();
-    toast('ok','Token registrado','Deposita tokens al pool para activarlo');
-    await loadTokenList();
-    el('newTokenAddr').value='';el('newTokenPrice').value='';el('newTokenFeeRecipient').value='';
-  }catch(e){toast('err','Error',e?.reason||e?.message||'');}
-});
-
-// Blacklist
-el('blAddBtn')?.addEventListener('click',async()=>{
-  const t=(el('blTokenAddr')?.value.trim()||USDTZ);
-  const w=el('blWalletAddr')?.value.trim();
-  if(!w||!/^0x[0-9a-fA-F]{40}$/.test(w)){toast('err','Wallet inválida','');return;}
-  try{const tx=await getWriteContract().addToBlacklist(t,w);toast('info','Enviado','');await tx.wait();toast('ok','Wallet bloqueada','');}
-  catch(e){toast('err','Error',e?.reason||e?.message||'');}
-});
-el('blRemoveBtn')?.addEventListener('click',async()=>{
-  const t=(el('blTokenAddr')?.value.trim()||USDTZ);
-  const w=el('blWalletAddr')?.value.trim();
-  if(!w||!/^0x[0-9a-fA-F]{40}$/.test(w)){toast('err','Wallet inválida','');return;}
-  try{const tx=await getWriteContract().removeFromBlacklist(t,w);toast('info','Enviado','');await tx.wait();toast('ok','Wallet desbloqueada','');}
-  catch(e){toast('err','Error',e?.reason||e?.message||'');}
-});
-
-// ── WITHDRAW LIMIT ───────────────────────────────────────
 async function loadWithdrawLimit(){
   try{
     const c=getReadContract();
@@ -1867,20 +1529,17 @@ function renderWlUI(){
 function renderWlBar(w,l){
   const bar=el('wlBar'),lbl=el('wlBarLabel');if(!bar||!lbl)return;
   const pct=l>0?Math.min(100,(w/l)*100):0;
-  bar.style.width=pct+'%';
-  bar.className='wl-bar-inner'+(pct>=90?' danger':pct>=60?' warn':'');
+  bar.style.width=pct+'%';bar.className='wl-bar-inner'+(pct>=90?' danger':pct>=60?' warn':'');
   lbl.textContent=fmt(w)+' / '+fmt(l)+' USDT.z';
 }
 
 async function onWlToggle(enabled){
   if(!S.wallet){toast('err','No conectado','');el('wlToggle').checked=!enabled;return;}
-  if(!enabled&&!confirm('¿Seguro que quieres desactivar el límite?\nSolo hazlo si necesitas retirar más del límite diario.'))
-    {el('wlToggle').checked=true;return;}
+  if(!enabled&&!confirm('¿Seguro que quieres desactivar el límite?')){el('wlToggle').checked=true;return;}
   try{
     const tx=await getWriteContract().setWithdrawLimit(enabled,S.wlLimitBps);
-    toast('info','Enviado','');await tx.wait();
-    S.wlEnabled=enabled;renderWlUI();
-    toast('ok',enabled?'Límite activado':'Límite desactivado',enabled?'Pool protegido.':'Reactívalo al terminar.');
+    toast('info','Enviado','');await tx.wait();S.wlEnabled=enabled;renderWlUI();
+    toast('ok',enabled?'Límite activado':'Límite desactivado','');
   }catch(e){el('wlToggle').checked=!enabled;toast('err','Error',e?.reason||e?.message||'');}
 }
 
@@ -1889,11 +1548,12 @@ async function applyWlConfig(){
   const pct=parseInt(el('wlPctInput')?.value||0);
   if(isNaN(pct)||pct<1||pct>100){toast('err','Valor inválido','Entre 1 y 100');return;}
   try{
-    const bps=pct*100;
-    const tx=await getWriteContract().setWithdrawLimit(S.wlEnabled,bps);
-    toast('info','Enviado','');await tx.wait();
-    S.wlLimitBps=bps;renderWlUI();
+    const bps=pct*100;const tx=await getWriteContract().setWithdrawLimit(S.wlEnabled,bps);
+    toast('info','Enviado','');await tx.wait();S.wlLimitBps=bps;renderWlUI();
     toast('ok','Límite actualizado',`Máximo ${pct}% del pool por día`);
   }catch(e){toast('err','Error',e?.reason||e?.message||'');}
 }
 </script>
+
+</body>
+</html>
