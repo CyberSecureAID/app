@@ -27,7 +27,7 @@ const CONFIG = Object.freeze({
    * Regístrate gratis en https://cloud.walletconnect.com → New Project
    * Reemplaza 'YOUR_PROJECT_ID' con el ID que te dan (es gratuito).
    */
-  WALLETCONNECT_PROJECT_ID: 'YOUR_PROJECT_ID',
+  WALLETCONNECT_PROJECT_ID: '49c17c9c4700eee8b26ac16e719da422',
 
   BSC_CHAIN_ID: '0x38',
   BSC_CHAIN_PARAMS: Object.freeze({
