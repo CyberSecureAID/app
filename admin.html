@@ -1000,10 +1000,11 @@ const getTokWC = async addr => { const p=new ethers.BrowserProvider(window.ether
 
 // ── BNB PRICE ─────────────────────────────────────────────────────────────────
 async function fetchBnbPrice(){
+  // FIX: Binance devuelve 451 desde GitHub Pages — movida al final como fallback
   const apis = [
-    ()=>fetch('https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT').then(r=>r.json()).then(d=>parseFloat(d.price)),
-    ()=>fetch('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD').then(r=>r.json()).then(d=>d.USD),
+    ()=>fetch('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD').then(r=>r.json()).then(d=>parseFloat(d.USD)),
     ()=>fetch('https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd').then(r=>r.json()).then(d=>d.binancecoin.usd),
+    ()=>fetch('https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT').then(r=>r.json()).then(d=>parseFloat(d.price)),
   ];
   for(const api of apis){ try{ const p=await api(); if(p>50&&p<100000){S.bnbPrice=p;return p;} }catch(_){} }
   return S.bnbPrice;
