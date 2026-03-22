@@ -42,7 +42,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--t1);min-height:100
 @keyframes nIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
 @keyframes irisShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-/* Fondo decorativo (puramente visual, no interfiere con clicks) */
+/* Fondo decorativo */
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse 80% 60% at 10% 5%,rgba(160,102,255,.06) 0%,transparent 55%),
   radial-gradient(ellipse 70% 50% at 90% 85%,rgba(79,141,255,.07) 0%,transparent 55%),
@@ -61,19 +61,17 @@ header{position:sticky;top:0;z-index:200;background:rgba(6,8,16,.88);backdrop-fi
 .logo-name{font-family:var(--logo-font);font-weight:800;letter-spacing:-.02em;background:var(--iris-grad);background-size:200% 200%;animation:irisShift 6s ease infinite;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hdr-right{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;min-width:0}
 
-/* Ticker BNB precio */
+/* Ticker BNB */
 .bnb-tick{display:none;align-items:center;gap:5px;background:var(--glass);border:1px solid var(--glass-brd);border-radius:99px;padding:4px 10px;font-size:.72rem;font-family:var(--mono);flex-shrink:0;white-space:nowrap}
 @media(min-width:600px){.bnb-tick.tick-ready{display:flex}}
 .btlbl{font-size:.64rem;color:var(--t3)}.btprice{color:var(--bnb);font-weight:600}
 .btchg{font-size:.63rem;padding:1px 5px;border-radius:4px}.btchg.pos{background:var(--ok-dim);color:var(--ok)}.btchg.neg{background:var(--er-dim);color:var(--er)}
 
-/* Network pill — solo visible cuando wallet está conectada (JS la muestra/oculta) */
 .net-pill{display:none;align-items:center;gap:5px;background:var(--bnb-dim);border:1px solid rgba(243,186,47,.16);border-radius:99px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--bnb);font-family:var(--mono);flex-shrink:0;white-space:nowrap}
 .nd{width:5px;height:5px;border-radius:50%;background:var(--bnb);animation:pulse 2.4s infinite}
 .lang-btn{background:var(--glass);border:1px solid var(--glass-brd);color:var(--t2);padding:5px 10px;border-radius:var(--r-sm);font-family:var(--mono);font-size:.70rem;font-weight:600;cursor:pointer;transition:all var(--t);white-space:nowrap;flex-shrink:0}
 .lang-btn:hover{color:var(--t1);border-color:var(--ac);background:var(--ac-dim)}
 
-/* Chip de wallet conectada */
 .wal-chip{display:flex;align-items:center;gap:6px;background:var(--glass);border:1px solid var(--glass-brd);border-radius:99px;padding:4px 12px 4px 8px;font-size:.73rem;color:var(--t1);font-family:var(--mono);min-width:0;flex-shrink:1;overflow:hidden;white-space:nowrap}
 .wal-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite;flex-shrink:0}
 .wal-addr{font-weight:500;overflow:hidden;text-overflow:ellipsis;max-width:80px}
@@ -102,6 +100,165 @@ main{flex:1;display:flex;flex-direction:column;align-items:center;justify-conten
 .swap-card{background:rgba(10,13,26,0.80);backdrop-filter:blur(48px) saturate(1.8);-webkit-backdrop-filter:blur(48px) saturate(1.8);border:1px solid var(--glass-brd);border-radius:var(--r-2xl);padding:clamp(16px,4vw,24px);width:100%;box-shadow:var(--sh-lg),inset 0 1px 0 rgba(255,255,255,.05);position:relative;overflow:hidden}
 .swap-card::before{content:'';position:absolute;top:-80px;right:-80px;width:240px;height:240px;pointer-events:none;background:radial-gradient(circle,rgba(160,102,255,.12) 0%,rgba(79,141,255,.08) 40%,transparent 70%);border-radius:50%}
 .swap-card::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;pointer-events:none;background:radial-gradient(circle,rgba(45,232,154,.08) 0%,transparent 70%);border-radius:50%}
+
+/* ══════════════════════════════════════════════════════════════
+   SWAP CARD TOP — tabs [Swap | Sell] + slippage toggle
+   FIX BUG 6 & 7: reemplaza .swap-head anterior
+══════════════════════════════════════════════════════════════ */
+.swap-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 8px;
+}
+
+/* El .swap-head original se oculta (remplazado por .swap-card-top) */
+.swap-head { display: none; }
+
+/* ── TABS SWAP / SELL ── */
+.swap-tabs {
+  display: flex;
+  gap: 2px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--glass-brd);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.swap-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--t3);
+  font-family: var(--sans);
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t);
+  white-space: nowrap;
+}
+.swap-tab:hover:not(.tab-disabled) {
+  color: var(--t2);
+  background: rgba(255,255,255,.06);
+}
+.swap-tab.active {
+  background: var(--raised);
+  color: var(--t1);
+  box-shadow: 0 1px 6px rgba(0,0,0,.35);
+}
+.swap-tab.tab-disabled {
+  opacity: .55;
+  cursor: pointer;
+}
+
+/* Badge Off/On en el tab Sell */
+.sell-tab-badge-off {
+  font-size: .58rem;
+  font-weight: 800;
+  color: var(--er);
+  background: rgba(247,108,108,.12);
+  border: 1px solid rgba(247,108,108,.2);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: var(--mono);
+  letter-spacing: .03em;
+}
+.sell-tab-badge-on {
+  font-size: .58rem;
+  font-weight: 800;
+  color: var(--ok);
+  background: var(--ok-dim);
+  border: 1px solid rgba(45,232,154,.25);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: var(--mono);
+  letter-spacing: .03em;
+}
+
+/* ── SELL PANEL — estado bloqueado ── */
+.sell-locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 20px;
+  text-align: center;
+}
+.sell-locked-ico { font-size: 2rem; opacity: .45; }
+.sell-locked-msg { font-size: .80rem; color: var(--t3); line-height: 1.6; max-width: 300px; }
+.sell-locked-msg strong { color: var(--t2); }
+
+/* ── SELL PANEL — cuerpo activo ── */
+.sell-body { display: flex; flex-direction: column; gap: 0; }
+
+/* Fila de detalles estimación */
+.sell-est-row {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(0,0,0,.2);
+  border: 1px solid var(--glass-brd);
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  margin: 8px 0;
+  font-size: .74rem;
+  color: var(--t3);
+  line-height: 1.5;
+}
+.sell-est-row .val {
+  color: var(--t1);
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 600;
+  display: block;
+  margin-top: 2px;
+}
+.sell-est-row .val.warn { color: var(--er); }
+
+/* Nota de approve */
+.sell-approve-note {
+  display: none;
+  font-size: .70rem;
+  color: rgba(243,186,47,.8);
+  background: var(--bnb-dim);
+  border: 1px solid rgba(243,186,47,.18);
+  border-radius: var(--r-sm);
+  padding: 8px 12px;
+  margin-top: 8px;
+  line-height: 1.55;
+}
+
+/* Botón Sell */
+#sellBtn {
+  background: linear-gradient(135deg,rgba(247,108,108,.15) 0%,rgba(200,60,60,.1) 100%);
+  color: #ff8888;
+  border: 1px solid rgba(247,108,108,.25);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 16px;
+  border-radius: var(--r-lg);
+  width: 100%;
+  cursor: pointer;
+  transition: opacity var(--t),transform var(--t),box-shadow var(--t);
+  margin-top: 12px;
+  letter-spacing: .01em;
+  font-family: var(--sans);
+}
+#sellBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg,rgba(247,108,108,.28) 0%,rgba(200,60,60,.2) 100%);
+  border-color: rgba(247,108,108,.45);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(247,108,108,.2);
+}
+#sellBtn:disabled { opacity: .36; cursor: not-allowed; transform: none; }
+
+/* ══════════════════════════════════════════════════════════════
+   RESTO DEL CSS ORIGINAL — sin cambios
+══════════════════════════════════════════════════════════════ */
 .swap-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .swap-title{font-size:1rem;font-weight:800;color:var(--t1);letter-spacing:-.02em}
 .slip-toggle{display:flex;align-items:center;gap:5px;background:var(--glass);border:1px solid var(--glass-brd);border-radius:var(--r-sm);padding:4px 10px;font-size:.72rem;font-weight:600;color:var(--t2);cursor:pointer;transition:all var(--t)}
@@ -130,8 +287,6 @@ main{flex:1;display:flex;flex-direction:column;align-items:center;justify-conten
 .arr-wrap{display:flex;justify-content:center;margin:6px 0}
 .arr-btn{background:var(--raised);border:2px solid rgba(10,13,26,.95);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--t3);font-size:1rem;transition:all var(--t)}
 .arr-btn:hover{color:var(--iris-b);border-color:rgba(79,141,255,.3)}
-
-/* Detalles de la transacción (colapsable) */
 .details-toggle{display:flex;align-items:center;justify-content:space-between;background:var(--inset);border:1px solid var(--glass-brd);border-radius:var(--r-sm);padding:9px 13px;margin-top:10px;cursor:pointer;transition:all var(--t);user-select:none}
 .details-toggle:hover{border-color:rgba(255,255,255,.13)}
 .details-toggle-left{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--t2)}
@@ -235,14 +390,10 @@ main{flex:1;display:flex;flex-direction:column;align-items:center;justify-conten
 .wd-title{font-size:.78rem;font-weight:700;color:var(--er);margin-bottom:5px}
 .wd-desc{font-size:.72rem;color:var(--t3);margin-bottom:8px;line-height:1.5}
 .wd-amt{font-size:.80rem;color:var(--t1);font-family:var(--mono);font-weight:600;margin-bottom:10px}
-
-/* Deposit balance row */
 .deposit-bal-row{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--t3);margin-bottom:6px;flex-wrap:wrap}
 .deposit-bal-val{color:var(--t1);font-family:var(--mono);font-weight:600}
 .deposit-max-btn{background:var(--ac-dim);color:var(--ac);border:none;border-radius:4px;padding:1px 6px;font-size:.62rem;font-weight:700;cursor:pointer;transition:all var(--t);font-family:var(--sans)}
 .deposit-max-btn:hover{background:var(--ac);color:#fff}
-
-/* Price calculator */
 .pc-tabs{display:flex;gap:6px;margin-bottom:12px}
 .pct{background:var(--glass);border:1px solid var(--glass-brd);border-radius:var(--r-sm);padding:5px 12px;font-size:.73rem;font-weight:700;color:var(--t3);cursor:pointer;transition:all var(--t)}
 .pct.on{background:var(--ac-dim);border-color:var(--ac);color:var(--ac)}
@@ -258,7 +409,7 @@ main{flex:1;display:flex;flex-direction:column;align-items:center;justify-conten
 .pc-ratio-field input:focus{border-color:var(--ac)}
 .pc-ratio-unit{font-size:.72rem;color:var(--t3);font-family:var(--mono)}
 
-/* ── NOTIFICACIONES (Toast) ── */
+/* ── NOTIFICACIONES ── */
 #notifStack{position:fixed;bottom:80px;right:16px;z-index:2000;display:flex;flex-direction:column-reverse;gap:8px;pointer-events:none;max-width:320px}
 .notif{background:rgba(9,12,22,.97);backdrop-filter:blur(24px);border:1px solid var(--glass-brd);border-radius:var(--r-lg);padding:12px 16px;font-size:.80rem;color:var(--t2);line-height:1.45;display:flex;flex-direction:column;gap:4px;animation:nIn .2s ease;pointer-events:auto;position:relative;overflow:hidden}
 .notif::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
