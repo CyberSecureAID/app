@@ -8,21 +8,147 @@ const WALLET = {
    * type: 'metamask' | 'trust'
    * Falla silenciosamente si el usuario rechaza (código 4001).
    */
+  // ── Proveedor activo (puede ser window.ethereum, okx, coinbase o WC) ──────
+  _activeProvider: null,
+
+  /*
+   * connect(type): Solicita conexión según tipo de wallet.
+   * type: 'metamask' | 'trust' | 'walletconnect' | 'coinbase' | 'okx'
+   *
+   * MetaMask / Trust Wallet → window.ethereum (sin cambios)
+   * Coinbase Wallet         → window.coinbaseWalletExtension o window.ethereum
+   * OKX Wallet              → window.okxwallet
+   * WalletConnect           → modal QR + 300+ wallets móviles
+   *
+   * Tras conectar, _activeProvider siempre expone la misma
+   * interfaz EVM → todo el código existente funciona igual.
+   */
   async connect(type) {
     this.closeOverlay();
-    if (!window.ethereum) {
-      UI.notif('err', 'No Wallet', type === 'metamask'
-        ? 'MetaMask not detected. Install at metamask.io'
-        : 'Trust Wallet not detected. Open in Trust Wallet browser');
-      return;
-    }
     try {
+      if (type === 'walletconnect') {
+        await this._connectWalletConnect();
+        return;
+      }
+      if (type === 'coinbase') {
+        await this._connectCoinbase();
+        return;
+      }
+      if (type === 'okx') {
+        await this._connectOKX();
+        return;
+      }
+      // MetaMask / Trust Wallet — comportamiento original intacto
+      if (!window.ethereum) {
+        UI.notif('err', 'No Wallet', type === 'metamask'
+          ? 'MetaMask not detected. Install at metamask.io'
+          : 'Trust Wallet not detected. Open in Trust Wallet browser');
+        return;
+      }
+      this._activeProvider = window.ethereum;
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       if (accounts.length) await this.setup(accounts[0], type);
     } catch (e) {
       if (e.code === 4001 || e.code === 'ACTION_REJECTED') UI.notif('err', 'Rejected', 'Connection request rejected');
       else UI.notif('err', 'Connection Error', e.message || '');
     }
+  },
+
+  /*
+   * _connectWalletConnect(): Abre modal WalletConnect v2.
+   * Requiere @walletconnect/ethereum-provider cargado desde CDN.
+   * Project ID gratuito desde cloud.walletconnect.com
+   * Compatible con: Trust Wallet móvil, MetaMask móvil, Rainbow,
+   *   Coin98, SafePal, TokenPocket, OKX móvil y 290+ más.
+   */
+  async _connectWalletConnect() {
+    try {
+      if (typeof window.EthereumProvider === 'undefined') {
+        UI.notif('err', 'WalletConnect', 'WalletConnect library not loaded. Check your internet connection.');
+        return;
+      }
+      UI.notif('info', 'WalletConnect', 'Opening connection modal…');
+
+      const provider = await window.EthereumProvider.init({
+        projectId: CONFIG.WALLETCONNECT_PROJECT_ID,
+        chains: [56], // BSC Mainnet
+        optionalChains: [56],
+        showQrModal: true,
+        qrModalOptions: {
+          themeMode: 'dark',
+          themeVariables: {
+            '--wcm-background-color': '#111420',
+            '--wcm-accent-color':     '#00f5a0',
+          },
+        },
+        metadata: {
+          name:        'MiSwap',
+          description: 'Token Swap on BSC',
+          url:          window.location.origin,
+          icons:       [window.location.origin + '/favicon.ico'],
+        },
+      });
+
+      await provider.connect();
+      const accounts = provider.accounts;
+      if (!accounts || !accounts.length) { UI.notif('err', 'WalletConnect', 'No accounts returned'); return; }
+
+      // Exponer como window.ethereum para que CHAIN funcione igual
+      this._activeProvider = provider;
+      window._wcProvider   = provider; // referencia para CHAIN
+
+      // Listeners de WalletConnect
+      provider.on('accountsChanged', async (accs) => {
+        if (!accs.length) { this._disconnect(); return; }
+        await this.setup(accs[0], 'walletconnect', true);
+        UI.notif('info', 'Account Changed', UI.abbr(accs[0]));
+      });
+      provider.on('disconnect', () => this._disconnect());
+      provider.on('chainChanged', (chainId) => {
+        if (chainId !== 56 && chainId !== '0x38') {
+          UI.notif('err', 'Wrong Network', 'Switch to BNB Smart Chain (BSC Mainnet)');
+        }
+      });
+
+      await this.setup(accounts[0], 'walletconnect');
+    } catch (e) {
+      if (e?.message?.includes('User rejected') || e?.code === 4001) {
+        UI.notif('err', 'Rejected', 'WalletConnect connection rejected');
+      } else {
+        UI.notif('err', 'WalletConnect Error', e?.message || 'Could not connect');
+      }
+    }
+  },
+
+  /*
+   * _connectCoinbase(): Conecta Coinbase Wallet.
+   * Detecta la extensión en window.coinbaseWalletExtension.
+   * Si no está instalada, redirige a la app.
+   */
+  async _connectCoinbase() {
+    const provider = window.coinbaseWalletExtension || window.ethereum;
+    if (!provider) {
+      UI.notif('err', 'Coinbase Wallet', 'Not detected. Install from coinbase.com/wallet');
+      return;
+    }
+    this._activeProvider = provider;
+    const accounts = await provider.request({ method: 'eth_requestAccounts' });
+    if (accounts.length) await this.setup(accounts[0], 'coinbase');
+  },
+
+  /*
+   * _connectOKX(): Conecta OKX Wallet.
+   * Usa window.okxwallet (extensión OKX) o window.ethereum como fallback.
+   */
+  async _connectOKX() {
+    const provider = window.okxwallet || window.ethereum;
+    if (!provider) {
+      UI.notif('err', 'OKX Wallet', 'Not detected. Install from okx.com/web3');
+      return;
+    }
+    this._activeProvider = provider;
+    const accounts = await provider.request({ method: 'eth_requestAccounts' });
+    if (accounts.length) await this.setup(accounts[0], 'okx');
   },
 
   /*
@@ -48,12 +174,12 @@ const WALLET = {
     // [T12] Cambiar a BSC ANTES de leer balance
     await CHAIN.switchToBSC();
 
-    // Leer balance BNB
+    // Leer balance BNB — usar _activeProvider (soporta WC, OKX, Coinbase)
     try {
-      const hexBal = await window.ethereum.request({
+      const prov = this._activeProvider || window.ethereum;
+      const hexBal = await prov.request({
         method: 'eth_getBalance', params: [addr, 'latest'],
       });
-      // Usar BigInt para precisión completa (evita pérdida de decimales)
       STATE.bnbBalance = Number(ethers.formatEther(BigInt(hexBal)));
     } catch (_) { STATE.bnbBalance = 0; }
 
@@ -118,7 +244,8 @@ const WALLET = {
     if (chip) chip.style.display = 'flex';
     const wa = document.getElementById('walAddr'); if (wa) wa.textContent = UI.abbr(addr);
     const wb = document.getElementById('walBal'); if (wb) wb.textContent = `${STATE.bnbBalance.toFixed(4)} BNB`;
-    const we = document.getElementById('walEmoji'); if (we) we.textContent = type === 'trust' ? '🛡️' : '🦊';
+    const emojiMap = {trust:'🛡️', metamask:'🦊', walletconnect:'🔗', coinbase:'🔵', okx:'⬛'};
+    const we = document.getElementById('walEmoji'); if (we) we.textContent = emojiMap[type] || '👛';
     const bd = document.getElementById('bnbBalDisp'); if (bd) bd.textContent = STATE.bnbBalance.toFixed(4);
     const np = document.getElementById('netPill'); if (np) np.style.display = 'flex';
   },
@@ -140,6 +267,12 @@ const WALLET = {
     document.getElementById('connectBtn').style.display = 'inline-flex';
     const chip = document.getElementById('walChip'); if (chip) chip.style.display = 'none';
     const np = document.getElementById('netPill'); if (np) np.style.display = 'none';
+    // Desconectar WalletConnect si estaba activo
+    if (window._wcProvider) {
+      try { await window._wcProvider.disconnect(); } catch(_) {}
+      window._wcProvider = null;
+    }
+    this._activeProvider = null;
     SWAP.updateBtn();
     ADMIN.close();
     UI.notif('info', 'Wallet Disconnected', 'Connect your wallet to continue');
@@ -150,8 +283,9 @@ const WALLET = {
    * No es crítico — falla silenciosamente.
    */
   addToken() {
-    if (!window.ethereum) return;
-    window.ethereum.request({
+    const prov = this._activeProvider || window.ethereum;
+    if (!prov) return;
+    prov.request({
       method: 'wallet_watchAsset',
       params: { type: 'ERC20', options: {
         address: CONFIG.TOKEN_ADDRESS,
@@ -168,6 +302,8 @@ const WALLET = {
    * Solo se llama UNA vez al inicio (APP.init).
    */
   setupListeners() {
+    // WalletConnect registra sus propios listeners en _connectWalletConnect()
+    // Solo registramos listeners nativos de window.ethereum aquí
     if (!window.ethereum) return;
 
     window.ethereum.on('accountsChanged', async (accounts) => {
@@ -198,9 +334,10 @@ const WALLET = {
    * Llamado periódicamente (cada 15s) y post-swap.
    */
   async refreshBalance() {
-    if (!STATE.walletConnected || !window.ethereum) return;
+    const prov = this._activeProvider || window.ethereum;
+    if (!STATE.walletConnected || !prov) return;
     try {
-      const h = await window.ethereum.request({
+      const h = await prov.request({
         method: 'eth_getBalance', params: [STATE.walletAddress, 'latest'],
       });
       STATE.bnbBalance = Number(ethers.formatEther(BigInt(h)));
