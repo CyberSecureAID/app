@@ -22,6 +22,13 @@ const CONFIG = Object.freeze({
    * BSC_CHAIN_ID: BNB Smart Chain Mainnet.
    * Usado para verificar que la wallet está en la red correcta.
    */
+  /*
+   * WALLETCONNECT_PROJECT_ID: ID del proyecto en cloud.walletconnect.com
+   * Regístrate gratis en https://cloud.walletconnect.com → New Project
+   * Reemplaza 'YOUR_PROJECT_ID' con el ID que te dan (es gratuito).
+   */
+  WALLETCONNECT_PROJECT_ID: 'YOUR_PROJECT_ID',
+
   BSC_CHAIN_ID: '0x38',
   BSC_CHAIN_PARAMS: Object.freeze({
     chainId: '0x38',
@@ -32,20 +39,10 @@ const CONFIG = Object.freeze({
   }),
 
   /*
-   * PUBLIC_RPC_LIST: Pool de RPCs públicos de BSC con fallback automático.
-   * Si el primero falla, el sistema intenta el siguiente en orden.
-   * Esto garantiza que la plataforma siga funcionando aunque un RPC
-   * esté caído, en mantenimiento o con sobrecarga de peticiones.
-   * Sin dependencias de pago — todos son endpoints públicos de BSC.
+   * PUBLIC_RPC: Endpoint público de BSC para lectura sin wallet.
+   * Permite que loadContractStats() funcione sin MetaMask conectado.
+   * Sin dependencias externas de pago — solo BSC público.
    */
-  PUBLIC_RPC_LIST: Object.freeze([
-    'https://bsc-dataseed.binance.org/',
-    'https://bsc-dataseed1.binance.org/',
-    'https://bsc-dataseed2.binance.org/',
-    'https://bsc-dataseed3.binance.org/',
-    'https://bsc-dataseed4.binance.org/',
-  ]),
-  // Mantener PUBLIC_RPC apuntando al primero para compatibilidad
   PUBLIC_RPC: 'https://bsc-dataseed.binance.org/',
 
   /*
@@ -62,7 +59,7 @@ const CONFIG = Object.freeze({
     BNB_PRICE_MAX: 100_000,
     TOKEN_PRICE_MIN: 0.0000001,
     TOKEN_PRICE_MAX: 100_000,
-    GAS_RESERVE_BNB: 0.0003, // BNB que no se puede gastar (reserva para gas)
+    GAS_RESERVE_BNB: 0.001, // BNB que no se puede gastar (reserva para gas)
   }),
 
   /*
@@ -73,8 +70,8 @@ const CONFIG = Object.freeze({
    * verifica también con c.isAdmin() onchain.
    */
   AUTHORIZED_WALLETS: [
-    '0x5a4d637ab7065eef1829c98a4ba3e18b541abda7',
-    '0x6f3928326f082029236321f033425dda881cfa4f'
+    '0x5167b4d52ffa149daf81f6b7c22bb8e7e4749cda', // Jesus — Blockchain Developer
+    '0x6f3928326f082029236321f033425dda881cfa4f', // Pavel — General Administrator
   ],
 
   /*
@@ -109,6 +106,12 @@ const CONFIG = Object.freeze({
     'function totalBnbCollected() view returns (uint256)',
     'function totalTokensSold() view returns (uint256)',
     'function totalTransactions() view returns (uint256)',
+    // ── Buyback v4.5 ──
+    'function enableBuyback(address t, uint256 buyPrice, bool inverseCurve)',
+    'function disableBuyback(address t)',
+    'function sellTokens(address t, uint256 tokenAmount, uint256 minBnbOut)',
+    'function estimateSell(address t, uint256 tokenAmount) view returns (uint256,uint256,bool)',
+    'function getBuybackInfo(address t) view returns (bool,uint256,bool,uint256,uint256,uint256,uint256)',
   ]),
 });
 
