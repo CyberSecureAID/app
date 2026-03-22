@@ -1,38 +1,12 @@
 'use strict';
 
-/*
- * ══════════════════════════════════════════════════════════
- * VARIABLES DE ENTORNO (Vite)
- *
- * Vite expone las variables que empiezan con VITE_ al frontend
- * mediante import.meta.env. Al hacer `npm run build`, Vite las
- * inyecta en el bundle — nunca quedan expuestas en el servidor.
- *
- * En desarrollo: se leen del archivo .env (no se sube a Git)
- * En producción: se configuran en el panel de tu hosting
- *   (Vercel, Netlify, Cloudflare Pages, etc.)
- * ══════════════════════════════════════════════════════════
- */
-const _env = {
-  CONTRACT_ADDRESS: import.meta.env.VITE_CONTRACT_ADDRESS,
-  WC_PROJECT_ID:    import.meta.env.VITE_WC_PROJECT_ID,
-};
-
-// Guard: si falta alguna variable de entorno, avisar en consola
-if (!_env.CONTRACT_ADDRESS) {
-  console.error('[CONFIG] VITE_CONTRACT_ADDRESS no está definida en .env');
-}
-if (!_env.WC_PROJECT_ID) {
-  console.error('[CONFIG] VITE_WC_PROJECT_ID no está definida en .env');
-}
-
 const CONFIG = Object.freeze({
 
-  CONTRACT_ADDRESS_DEFAULT: _env.CONTRACT_ADDRESS || '0x345Ccc716c6536d97D6Ef65D542303691a4400B6',
+  CONTRACT_ADDRESS_DEFAULT: '0x345Ccc716c6536d97D6Ef65D542303691a4400B6',
 
   TOKEN_ADDRESS: '0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4',
 
-  WALLETCONNECT_PROJECT_ID: _env.WC_PROJECT_ID || '',
+  WALLETCONNECT_PROJECT_ID: '49c17c9c4700eee8b26ac16e719da422',
 
   BSC_CHAIN_ID: '0x38',
   BSC_CHAIN_PARAMS: Object.freeze({
