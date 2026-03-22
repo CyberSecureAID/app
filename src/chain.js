@@ -19,68 +19,38 @@ const CHAIN = {
   },
 
   /*
-   * _RPC_INDEX: Índice del RPC activo en CONFIG.PUBLIC_RPC_LIST.
-   * Empieza en 0 (primer RPC). Si falla, avanza al siguiente.
-   * Se reinicia a 0 cuando llega al final de la lista.
-   */
-  _rpcIndex: 0,
-
-  /*
    * _getReadProvider(): Retorna provider para operaciones de solo lectura.
-   * Usa el RPC activo del pool. Si ese RPC falla, _rotateRpc() avanza
-   * al siguiente automáticamente en el próximo intento.
+   * Prioridad: public JsonRpcProvider para stats (evita depender de la red del usuario)
+   * BrowserProvider solo si el usuario está conectado y en BSC.
+   * Por qué este cambio: Si el user está en otra red, leer via BrowserProvider
+   *   puede dar errores o datos de la red equivocada.
    */
   _getReadProvider() {
-    if (!this._publicProvider) {
-      const rpc = CONFIG.PUBLIC_RPC_LIST[this._rpcIndex];
-      this._publicProvider = new ethers.JsonRpcProvider(rpc);
-    }
+    if (!this._publicProvider) this._publicProvider = new ethers.JsonRpcProvider(CONFIG.PUBLIC_RPC);
     return this._publicProvider;
-  },
-
-  /*
-   * _rotateRpc(): Avanza al siguiente RPC del pool.
-   * Llamado automáticamente cuando una petición falla.
-   * Invalida el provider actual para forzar reconexión al nuevo RPC.
-   * Si ya probó todos, vuelve al primero (round-robin).
-   */
-  _rotateRpc() {
-    const list = CONFIG.PUBLIC_RPC_LIST;
-    this._rpcIndex = (this._rpcIndex + 1) % list.length;
-    this._publicProvider = null;
-    this._contract = null;
-    this._tokenR = null;
-    console.warn(`[CHAIN] RPC rotado → ${list[this._rpcIndex]}`);
-  },
-
-  /*
-   * callWithFallback(fn): Ejecuta fn() con fallback automático de RPC.
-   * Si la llamada falla, rota al siguiente RPC y reintenta una vez.
-   * Patrón: await CHAIN.callWithFallback(() => CHAIN.getReadContract().metodo())
-   */
-  async callWithFallback(fn) {
-    try {
-      return await fn();
-    } catch (e) {
-      console.warn('[CHAIN] RPC falló, rotando al siguiente...', e.message);
-      this._rotateRpc();
-      try {
-        return await fn();
-      } catch (e2) {
-        // Si el segundo intento también falla, rotar una vez más para el próximo
-        this._rotateRpc();
-        throw e2;
-      }
-    }
   },
 
   /*
    * _getWriteProvider(): Retorna provider con signer (wallet requerida).
    * Lanza excepción si no hay wallet — el caller debe manejarla.
    */
+  /*
+   * _getWriteProvider(): Retorna el provider con capacidad de firma.
+   * Prioridad:
+   *   1. WALLET._activeProvider — WalletConnect, OKX, Coinbase
+   *   2. window.ethereum        — MetaMask, Trust Wallet (comportamiento original)
+   * Esto permite que getWriteContract() funcione con cualquier wallet
+   * sin cambiar ninguna otra parte del código.
+   */
   _getWriteProvider() {
-    if (!window.ethereum) throw new Error('No wallet provider available');
-    if (!this._provider) this._provider = new ethers.BrowserProvider(window.ethereum);
+    const prov = (typeof WALLET !== 'undefined' && WALLET._activeProvider)
+      ? WALLET._activeProvider
+      : window.ethereum;
+    if (!prov) throw new Error('No wallet provider available');
+    if (!this._provider || this._lastProv !== prov) {
+      this._provider  = new ethers.BrowserProvider(prov);
+      this._lastProv  = prov;
+    }
     return this._provider;
   },
 
@@ -139,24 +109,30 @@ const CHAIN = {
    *   que leería sería el de esa red, no el BNB real.
    * Si el usuario rechaza o la red ya está añadida, falla silenciosamente.
    */
+  /*
+   * switchToBSC(): Solicita cambio a BSC Mainnet.
+   * Usa _activeProvider si está disponible (WalletConnect, OKX, Coinbase).
+   * WalletConnect ya inicia en BSC (chains:[56]) — el switch es silencioso.
+   */
   async switchToBSC() {
-    if (!window.ethereum) return;
+    const prov = (typeof WALLET !== 'undefined' && WALLET._activeProvider)
+      ? WALLET._activeProvider
+      : window.ethereum;
+    if (!prov) return;
     try {
-      await window.ethereum.request({
+      await prov.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: CONFIG.BSC_CHAIN_ID }],
       });
     } catch (e) {
       if (e.code === 4902) {
-        // Red no añadida — intentamos añadirla
         try {
-          await window.ethereum.request({
+          await prov.request({
             method: 'wallet_addEthereumChain',
             params: [CONFIG.BSC_CHAIN_PARAMS],
           });
-        } catch (_) { /* usuario rechazó añadir la red */ }
+        } catch (_) {}
       }
-      // Otros errores: usuario ya está en BSC o rechazó el switch
     }
   },
 
