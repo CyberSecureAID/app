@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; connect-src https://min-api.cryptocompare.com https://api.coingecko.com https://api.binance.com https://bsc-dataseed.binance.org https://bsc-dataseed1.binance.org https://bsc-dataseed2.binance.org https://bsc-dataseed3.binance.org https://bsc-dataseed4.binance.org https://relay.walletconnect.com https://relay.walletconnect.org wss://relay.walletconnect.com wss://relay.walletconnect.org wss: https:; img-src 'self' data: https:; form-action 'none'; base-uri 'self'; upgrade-insecure-requests;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; connect-src https://min-api.cryptocompare.com https://api.coingecko.com https://api.binance.com https://bsc-dataseed.binance.org https://bsc-dataseed1.binance.org https://bsc-dataseed2.binance.org https://bsc-dataseed3.binance.org https://bsc-dataseed4.binance.org https://relay.walletconnect.com https://relay.walletconnect.org wss://relay.walletconnect.com wss://relay.walletconnect.org wss: https:; img-src 'self' data: https:; form-action 'none'; base-uri 'self'; upgrade-insecure-requests;">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
@@ -447,7 +447,57 @@
 <div id="notifStack"></div>
 
 <!-- ════ DEPENDENCIAS ═══════════════════════════════════════════════════════ -->
-<script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.13.0/dist/umd/index.min.js" crossorigin="anonymous"></script>
+<!--
+  WalletConnect CDN — carga con fallback automático.
+  
+  Problema raíz: Los CDNs fallan de formas distintas:
+  - jsdelivr: devuelve MIME 'text/plain' → navegador rechaza ejecutar
+  - unpkg con crossOrigin='anonymous': triggerea CORS check → falla si no hay header
+  - esm.run: sirve ES Module, no UMD → window.EthereumProvider no se registra
+  
+  Solución: cargar sin atributo crossOrigin (no se triggerea CORS check en <script>).
+  Si el primer CDN falla, el onerror lo detecta y prueba el siguiente.
+  Si todos fallan: WalletConnect no está disponible pero el app sigue funcionando
+  (wallet.js ya maneja this.case con el check typeof window.EthereumProvider).
+-->
+<script>
+(function(){
+  var WC_VERSION = '2.13.0';
+  var WC_PATH = '@walletconnect/ethereum-provider@' + WC_VERSION + '/dist/umd/index.min.js';
+  // Sin crossOrigin — evita el CORS check que bloquea unpkg y otros.
+  // El MIME check de strict mode solo falla si el servidor manda text/plain (jsdelivr bug).
+  // unpkg siempre sirve application/javascript correctamente.
+  var CDNS = [
+    'https://unpkg.com/' + WC_PATH,
+    'https://cdn.jsdelivr.net/npm/' + WC_PATH,
+  ];
+  var idx = 0;
+
+  function tryNext() {
+    if (idx >= CDNS.length) {
+      console.warn('[WC] Todos los CDNs fallaron — WalletConnect no disponible. El swap BNB sigue funcionando.');
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = CDNS[idx++];
+    // SIN crossOrigin: evita el CORS preflight que bloquea unpkg desde GitHub Pages
+    s.onerror = function() {
+      console.warn('[WC] CDN fallido, intentando siguiente…', s.src);
+      tryNext();
+    };
+    s.onload = function() {
+      if (typeof window.EthereumProvider === 'undefined') {
+        // El script cargó pero no registró EthereumProvider (p.ej. formato ESM)
+        console.warn('[WC] Script cargado pero EthereumProvider no disponible, probando siguiente…');
+        tryNext();
+      }
+    };
+    document.head.appendChild(s);
+  }
+
+  tryNext();
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js" integrity="sha512-bLwLr3lzJN1cvtbClBMhKDyaD0uocWmphiqO8v0w3/z/XqUwzkM00gZq7BV3dQS9mQu0rarZMTsxlcnIHszElA==" crossorigin="anonymous"></script>
 
 <!-- ════ MÓDULOS ════════════════════════════════════════════════════════════ -->
