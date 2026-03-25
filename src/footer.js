@@ -19,6 +19,8 @@ const FOOTER = {
     const foot = document.getElementById('dynamicFooter');
     if (!foot) return;
     if (this._fallback) { foot.innerHTML = this._fallback; return; }
+    const nosotrosText   = typeof LANG !== 'undefined' ? LANG.t('nosotros_text')   : '';
+    const disclaimerText = typeof LANG !== 'undefined' ? LANG.t('disclaimer_text') : '';
     foot.innerHTML = `
       <div class="foot-main">
         <span id="footPlatformName">MiSwap</span>
@@ -28,6 +30,11 @@ const FOOTER = {
         <span data-i18n="all_rights">All rights reserved</span>
         <span class="foot-sep">·</span>
         <button class="foot-link-btn" id="footTermsBtn" data-i18n="terms_link">Términos</button>
+      </div>
+      <div class="foot-nosotros">
+        <div class="foot-nosotros-title" data-i18n="nosotros_title">Nosotros</div>
+        <div class="foot-nosotros-text" id="footNosotrosText" data-i18n="nosotros_text">${nosotrosText}</div>
+        <div class="foot-disclaimer" id="footDisclaimerText" data-i18n="disclaimer_text">${disclaimerText}</div>
       </div>
       <button class="adm-trigger" id="admTrigger">⚙</button>`;
     LANG.apply();
@@ -66,6 +73,8 @@ const FOOTER = {
       } catch (_) {}
     }
     const footerText = esc(res.footerText || 'MiSwap');
+    const nosotrosText   = typeof LANG !== 'undefined' ? LANG.t('nosotros_text')   : '';
+    const disclaimerText = typeof LANG !== 'undefined' ? LANG.t('disclaimer_text') : '';
     foot.innerHTML = `
       <div class="foot-main">
         <span>${footerText}</span>
@@ -73,6 +82,11 @@ const FOOTER = {
         ${extraHtml  ? `<span class="foot-sep">·</span>${extraHtml}` : ''}
         <span class="foot-sep">·</span>
         <button class="foot-link-btn" id="footTermsBtn" data-i18n="terms_link">Terms</button>
+      </div>
+      <div class="foot-nosotros">
+        <div class="foot-nosotros-title" data-i18n="nosotros_title">About Us</div>
+        <div class="foot-nosotros-text" id="footNosotrosText" data-i18n="nosotros_text">${nosotrosText}</div>
+        <div class="foot-disclaimer" id="footDisclaimerText" data-i18n="disclaimer_text">${disclaimerText}</div>
       </div>
       <button class="adm-trigger" id="admTrigger">⚙</button>`;
     const admTrigger = document.getElementById('admTrigger');

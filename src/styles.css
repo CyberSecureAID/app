@@ -70,6 +70,13 @@ header{position:sticky;top:0;z-index:200;background:rgba(6,8,16,.88);backdrop-fi
 .net-pill{display:none;align-items:center;gap:5px;background:var(--bnb-dim);border:1px solid rgba(243,186,47,.16);border-radius:99px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--bnb);font-family:var(--mono);flex-shrink:0;white-space:nowrap}
 .nd{width:5px;height:5px;border-radius:50%;background:var(--bnb);animation:pulse 2.4s infinite}
 .lang-btn{background:var(--glass);border:1px solid var(--glass-brd);color:var(--t2);padding:5px 10px;border-radius:var(--r-sm);font-family:var(--mono);font-size:.70rem;font-weight:600;cursor:pointer;transition:all var(--t);white-space:nowrap;flex-shrink:0}
+.lang-btn:hover,.lang-btn:focus{color:var(--t1);border-color:var(--ac);background:var(--ac-dim);outline:none}
+/* ── LANG DROPDOWN ── */
+.lang-dropdown{position:relative;flex-shrink:0}
+.lang-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:rgba(10,13,26,.98);border:1px solid var(--glass-brd);border-radius:var(--r-sm);overflow:hidden;z-index:999;min-width:100px;box-shadow:var(--sh)}
+.lang-menu.open{display:block}
+.lang-opt{display:block;width:100%;background:none;border:none;color:var(--t2);padding:7px 14px;font-size:.75rem;font-family:var(--mono);font-weight:600;cursor:pointer;text-align:left;transition:all var(--t);white-space:nowrap}
+.lang-opt:hover{background:var(--glass-h);color:var(--t1)}
 .lang-btn:hover{color:var(--t1);border-color:var(--ac);background:var(--ac-dim)}
 
 .wal-chip{display:flex;align-items:center;gap:6px;background:var(--glass);border:1px solid var(--glass-brd);border-radius:99px;padding:4px 12px 4px 8px;font-size:.73rem;color:var(--t1);font-family:var(--mono);min-width:0;flex-shrink:1;overflow:hidden;white-space:nowrap}
@@ -409,6 +416,15 @@ main{flex:1;display:flex;flex-direction:column;align-items:center;justify-conten
 .pc-ratio-field input:focus{border-color:var(--ac)}
 .pc-ratio-unit{font-size:.72rem;color:var(--t3);font-family:var(--mono)}
 
+/* ── ADMIN TAX SECTION ── */
+.tax-grid{display:flex;flex-direction:column;gap:8px}
+.tax-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--inset);border-radius:var(--r-sm)}
+.tax-lbl{flex:1;font-size:.76rem;color:var(--t2);font-weight:600}
+.tax-inp-wrap{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.tax-inp{background:var(--glass);border:1px solid var(--glass-brd);border-radius:6px;padding:4px 8px;color:var(--t1);font-family:var(--mono);font-size:.80rem;width:64px;outline:none;text-align:right;transition:border-color var(--t)}
+.tax-inp:focus{border-color:var(--ac)}
+.tax-unit{font-size:.68rem;color:var(--t3);font-family:var(--mono)}
+
 /* ── NOTIFICACIONES ── */
 #notifStack{position:fixed;bottom:80px;right:16px;z-index:2000;display:flex;flex-direction:column-reverse;gap:8px;pointer-events:none;max-width:320px}
 .notif{background:rgba(9,12,22,.97);backdrop-filter:blur(24px);border:1px solid var(--glass-brd);border-radius:var(--r-lg);padding:12px 16px;font-size:.80rem;color:var(--t2);line-height:1.45;display:flex;flex-direction:column;gap:4px;animation:nIn .2s ease;pointer-events:auto;position:relative;overflow:hidden}
@@ -421,11 +437,16 @@ main{flex:1;display:flex;flex-direction:column;align-items:center;justify-conten
 .notif-close:hover{color:var(--t1)}
 
 /* ── FOOTER ── */
-footer{background:rgba(6,8,16,.60);border-top:1px solid var(--glass-brd);padding:16px clamp(12px,3vw,24px);display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:10}
+footer{background:rgba(6,8,16,.60);border-top:1px solid var(--glass-brd);padding:20px clamp(12px,3vw,24px);display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;z-index:10}
 .foot-main{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;font-size:.72rem;color:var(--t3)}
 .foot-sep{color:var(--t4)}
 .adm-trigger{background:none;border:1px solid transparent;color:transparent;border-radius:var(--r-sm);padding:4px 10px;font-size:.66rem;cursor:pointer;transition:all var(--t);font-family:var(--mono)}
 footer:hover .adm-trigger{opacity:.5;color:var(--t3);border-color:var(--glass-brd)}
+/* ── FOOTER NOSOTROS ── */
+.foot-nosotros{width:100%;max-width:700px;display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--glass-brd);padding-top:14px;margin-top:4px}
+.foot-nosotros-title{font-size:.72rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;text-align:center}
+.foot-nosotros-text{font-size:.72rem;color:var(--t3);line-height:1.65;text-align:center}
+.foot-disclaimer{font-size:.68rem;color:var(--t4);line-height:1.6;text-align:center;border-top:1px solid var(--glass-brd);padding-top:10px}
 
 /* ══════════════════════════════════════════════════════════════
    MÓDULOS CSS v8: NUEVAS FUNCIONALIDADES MiSwap
@@ -433,7 +454,7 @@ footer:hover .adm-trigger{opacity:.5;color:var(--t3);border-color:var(--glass-br
 ══════════════════════════════════════════════════════════════ */
 
 /* ── MENÚ HORIZONTAL STICKY ── */
-.mi-nav{position:sticky;top:60px;z-index:190;background:rgba(6,8,16,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-brd);padding:0 clamp(8px,2vw,16px);display:flex;align-items:center;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-height:52px}
+.mi-nav{position:sticky;top:60px;z-index:190;background:rgba(6,8,16,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-brd);padding:0 clamp(8px,2vw,16px);display:flex;align-items:center;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-height:52px;justify-content:space-evenly}
 .mi-nav::-webkit-scrollbar{display:none}
 .mi-nav-item{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r-sm);background:transparent;border:1px solid transparent;color:var(--t2);font-size:.80rem;font-weight:600;font-family:var(--sans);cursor:pointer;transition:all var(--t);white-space:nowrap;flex-shrink:0;position:relative}
 .mi-nav-item:hover{background:var(--glass);color:var(--t1);border-color:var(--glass-brd)}
@@ -443,14 +464,14 @@ footer:hover .adm-trigger{opacity:.5;color:var(--t3);border-color:var(--glass-br
 @media(max-width:480px){.mi-nav-label{display:none}.mi-nav-item{padding:8px 10px}}
 
 /* ── SECCIÓN PRINCIPAL (mi-section-card) ── */
-.mi-section-card{background:rgba(10,13,26,.80);backdrop-filter:blur(48px) saturate(1.8);-webkit-backdrop-filter:blur(48px) saturate(1.8);border:1px solid var(--glass-brd);border-radius:var(--r-2xl);padding:clamp(16px,4vw,24px);width:100%;box-shadow:var(--sh-lg),inset 0 1px 0 rgba(255,255,255,.05)}
-.mi-section-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+.mi-section-card{background:rgba(10,13,26,.80);backdrop-filter:blur(48px) saturate(1.8);-webkit-backdrop-filter:blur(48px) saturate(1.8);border:1px solid var(--glass-brd);border-radius:var(--r-2xl);padding:clamp(20px,5vw,32px);width:100%;box-shadow:var(--sh-lg),inset 0 1px 0 rgba(255,255,255,.05)}
+.mi-section-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px}
 .mi-section-icon{font-size:1.8rem;flex-shrink:0;line-height:1}
-.mi-section-title{font-family:var(--logo-font);font-size:1.15rem;font-weight:800;color:var(--t1);letter-spacing:-.01em}
+.mi-section-title{font-family:var(--sans);font-size:1.1rem;font-weight:700;color:var(--t1);letter-spacing:-.01em}
 .mi-section-sub{font-size:.78rem;color:var(--t3);margin-top:2px}
 
 /* ── CAMPOS DE FORMULARIO ── */
-.mi-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.mi-field{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
 .mi-field-row{flex-direction:row;align-items:center}
 .mi-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:400px){.mi-field-grid{grid-template-columns:1fr}}
@@ -480,6 +501,13 @@ footer:hover .adm-trigger{opacity:.5;color:var(--t3);border-color:var(--glass-br
 .mi-fee-banner{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--r-sm);background:var(--ok-dim);border:1px solid rgba(45,232,154,.18);font-size:.82rem;color:var(--t1);margin-bottom:16px;flex-wrap:wrap}
 .mi-fee-banner strong{color:var(--ok);font-family:var(--mono)}
 .mi-fee-note{font-size:.70rem;color:var(--t3)}
+
+/* ── INFO BOX (Flash Tokens how-it-works, etc.) ── */
+.mi-info-box{background:var(--inset);border:1px solid var(--glass-brd);border-radius:var(--r);padding:18px 20px;text-align:center}
+.mi-info-title{font-family:var(--sans);font-size:.95rem;font-weight:700;color:var(--t1);margin-bottom:14px;letter-spacing:-.01em}
+.mi-steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;counter-reset:step-counter}
+.mi-steps li{display:flex;align-items:flex-start;gap:10px;text-align:left;color:var(--t2);font-size:.82rem;line-height:1.55;padding:8px 12px;background:var(--glass);border-radius:var(--r-sm);counter-increment:step-counter}
+.mi-steps li::before{content:counter(step-counter);flex-shrink:0;width:20px;height:20px;background:var(--ac-dim);color:var(--ac);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;margin-top:1px}
 
 /* ── STATUS MESSAGE ── */
 .mi-status{padding:10px 14px;border-radius:var(--r-sm);font-size:.82rem;line-height:1.5;margin-top:8px}

@@ -12,10 +12,11 @@ const BRIDGE_USDT = {
       <div class="mi-section-card">
         <div class="mi-section-header">
           <span class="mi-section-icon">🌉</span>
-          <div>
+          <div style="flex:1">
             <div class="mi-section-title" data-i18n="bridge_title">Bridge a USDT</div>
             <div class="mi-section-sub" data-i18n="bridge_sub">Convierte tus tokens a USDT vía PancakeSwap</div>
           </div>
+          <button class="info-btn" data-info="bridge-usdt">ℹ Info</button>
         </div>
         <div class="mi-fee-banner">
           <span>💰</span>

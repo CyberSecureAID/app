@@ -85,6 +85,29 @@ const LANG = {
       flash_my_empty:'Connect your wallet to see your Flash Tokens.',
       flash_my_none:'You have not created any Flash Tokens yet.',
       flash_status_active:'Active',flash_status_expired:'Expired',
+      // Nosotros / About footer
+      nosotros_title:'About Us',
+      nosotros_text:'MiSwap is a 100% decentralized and open-source platform built on BNB Smart Chain that offers unique opportunities to acquire exclusive tokens at flexible prices. Our mission is to democratize access to emerging projects without entry barriers. No registration or KYC required — respecting your privacy and autonomy. The system is intuitive and designed for users of all levels.',
+      disclaimer_title:'Disclaimer',
+      disclaimer_text:'The MiSwap team acts as a provider of decentralized technology infrastructure. We are not responsible for misuse of listed tokens, losses due to market volatility, fraudulent projects, or users\' investment decisions. Each user is responsible for doing their own research before operating. Blockchain transactions are irreversible. Operate at your own risk.',
+      // Admin — costs & taxes
+      admin_costs_title:'Service Costs',
+      admin_token_cost:'Token Creation Cost (BNB)',
+      admin_flash_cost:'Flash Token Creation Cost (BNB)',
+      admin_image_cost:'Image Upload Cost (BNB)',
+      admin_image_note:'Keep images at low resolution to reduce gas costs',
+      admin_taxes_title:'Tax Configuration',
+      admin_taxes_sub:'Percentage charged per service — sent to the tax wallet',
+      admin_tax_wallet:'Tax Receiver Wallet',
+      admin_tax_create_token:'Create Token (%)',
+      admin_tax_flash_token:'Create Flash Token (%)',
+      admin_tax_swap:'Swap (%)',
+      admin_tax_bridge:'Bridge USDT (%)',
+      admin_tax_pool:'Create Pool (%)',
+      admin_tax_sell:'Sell Token (%)',
+      admin_tax_image:'Upload Image (%)',
+      admin_save_costs:'Save Costs',
+      admin_save_taxes:'Save Taxes',
     },
     es: {
       connect_wallet:'Conectar Wallet',connect_wallet_title:'Conectar Wallet',
@@ -170,6 +193,29 @@ const LANG = {
       flash_my_empty:'Conecta tu wallet para ver tus Flash Tokens.',
       flash_my_none:'Aún no has creado Flash Tokens.',
       flash_status_active:'Activo',flash_status_expired:'Expirado',
+      // Nosotros / About footer
+      nosotros_title:'Nosotros',
+      nosotros_text:'MiSwap es una plataforma 100% descentralizada y opensource, construida sobre BNB Smart Chain que brinda oportunidades únicas de adquirir tokens exclusivos a precios flexibles. Nuestra misión es democratizar el acceso a proyectos emergentes sin barreras de entrada. No requerimos registro ni KYC, respetando tu privacidad y autonomía. El sistema es intuitivo y está diseñado para usuarios de todos los niveles.',
+      disclaimer_title:'Descargo de Responsabilidad',
+      disclaimer_text:'El equipo de MiSwap actúa como proveedor de infraestructura tecnológica descentralizada. No nos responsabilizamos por el uso indebido de tokens listados, pérdidas derivadas de volatilidad del mercado, proyectos fraudulentos ni decisiones de inversión de los usuarios. Cada usuario es responsable de investigar antes de operar. Las transacciones en blockchain son irreversibles. Opera bajo tu propio riesgo.',
+      // Admin — costs & taxes
+      admin_costs_title:'Costos de Servicios',
+      admin_token_cost:'Costo Creación de Token (BNB)',
+      admin_flash_cost:'Costo Creación Flash Token (BNB)',
+      admin_image_cost:'Costo Subida de Imagen (BNB)',
+      admin_image_note:'Mantén imágenes en baja resolución para reducir el costo de gas',
+      admin_taxes_title:'Configuración de Impuestos',
+      admin_taxes_sub:'Porcentaje cobrado por servicio — enviado a la wallet de impuestos',
+      admin_tax_wallet:'Wallet Receptora de Impuestos',
+      admin_tax_create_token:'Crear Token (%)',
+      admin_tax_flash_token:'Crear Flash Token (%)',
+      admin_tax_swap:'Swap (%)',
+      admin_tax_bridge:'Bridge USDT (%)',
+      admin_tax_pool:'Crear Pool (%)',
+      admin_tax_sell:'Vender Token (%)',
+      admin_tax_image:'Subir Imagen (%)',
+      admin_save_costs:'Guardar Costos',
+      admin_save_taxes:'Guardar Impuestos',
     },
     hi: {
       connect_wallet:'वॉलेट कनेक्ट करें',connect_wallet_title:'एक वॉलेट कनेक्ट करें',
@@ -350,7 +396,7 @@ const LANG = {
 
   /*
    * toggle(): Cycles through en → es → hi → ar → en and updates the DOM.
-   * The language button always shows the NEXT language code.
+   * Kept for backwards compatibility. Prefer setLang() for dropdown.
    */
   toggle() {
     const order = ['en', 'es', 'hi', 'ar'];
@@ -360,8 +406,34 @@ const LANG = {
   },
 
   /*
+   * setLang(code): Set a specific language and close the dropdown.
+   */
+  setLang(code) {
+    const order = ['en', 'es', 'hi', 'ar'];
+    if (!order.includes(code)) return;
+    STATE.lang = code;
+    this._closeDropdown();
+    this.apply();
+  },
+
+  _closeDropdown() {
+    const menu = document.getElementById('langMenu');
+    const btn  = document.getElementById('langBtn');
+    if (menu) menu.classList.remove('open');
+    if (btn)  btn.setAttribute('aria-expanded', 'false');
+  },
+
+  toggleDropdown() {
+    const menu = document.getElementById('langMenu');
+    const btn  = document.getElementById('langBtn');
+    if (!menu) return;
+    const isOpen = menu.classList.toggle('open');
+    if (btn) btn.setAttribute('aria-expanded', String(isOpen));
+  },
+
+  /*
    * apply(): Updates all data-i18n elements in the DOM.
-   * Called on load and on every language toggle.
+   * Called on load and on every language change.
    * Also applies dir="rtl" for Arabic (right-to-left support).
    */
   apply() {
@@ -374,12 +446,9 @@ const LANG = {
       if (val) el.textContent = val;
     });
 
-    // Button shows the next language in the cycle
-    const order = ['en', 'es', 'hi', 'ar'];
-    const idx = order.indexOf(STATE.lang);
-    const next = order[(idx + 1) % order.length].toUpperCase();
+    // Button shows current language code with dropdown indicator
     const langBtn = document.getElementById('langBtn');
-    if (langBtn) langBtn.textContent = next;
+    if (langBtn) langBtn.textContent = STATE.lang.toUpperCase() + ' ▾';
 
     // Re-render navigation labels for the current language
     if (typeof MENU !== 'undefined') MENU.applyLang();

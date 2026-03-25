@@ -12,10 +12,11 @@ const TOKEN_CREATOR = {
     sec.innerHTML = `
       <div class="mi-section-card">
         <div class="mi-section-header">
-          <div>
+          <div style="flex:1">
             <div class="mi-section-title" data-i18n="create_token_title">Crear Token BEP20</div>
             <div class="mi-section-sub" data-i18n="create_token_sub">Despliega tu propio token en BNB Smart Chain</div>
           </div>
+          <button class="info-btn" data-info="create-token">ℹ Info</button>
         </div>
         <div id="tokenCreatorNotConfigured" class="mi-notice mi-notice-warn" style="display:none">
           <span data-i18n="contract_not_configured">El contrato aún no ha sido deployado. Funcionalidad disponible próximamente.</span>

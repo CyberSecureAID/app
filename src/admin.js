@@ -35,6 +35,7 @@ const ADMIN = {
     if (window.ethereum || WALLET._activeProvider) this._loadAdminTokenBalance().catch(() => {});
     this.updateStats();
     this.updatePriceCalc();
+    this.loadCostsIntoForm();
   },
 
   /*
@@ -401,6 +402,30 @@ const ADMIN = {
       en: { title: '⚙ Contract & Branding', body: `<ul><li><strong>Contract:</strong> Changing reinitializes all connections.</li><li><strong>Platform name & Token symbol:</strong> Visual only.</li></ul>` },
       es: { title: '⚙ Contrato y Marca', body: `<ul><li><strong>Contrato:</strong> Cambiarla reinicia todas las conexiones.</li><li><strong>Nombre y símbolo:</strong> Solo visual.</li></ul>` },
     },
+    swap: {
+      en: { title: '🔄 Swap', body: `<ul><li>Exchange BNB for {sym} at the current platform rate.</li><li>Adjust slippage tolerance to avoid failed transactions on volatile markets.</li><li>MAX fills in your full available balance.</li><li>Est. Gas is approximate; actual gas depends on network congestion.</li></ul>` },
+      es: { title: '🔄 Swap', body: `<ul><li>Intercambia BNB por {sym} a la tasa actual de la plataforma.</li><li>Ajusta la tolerancia de slippage para evitar transacciones fallidas.</li><li>MÁX llena tu saldo disponible completo.</li><li>El gas estimado es aproximado; el gas real depende de la red.</li></ul>` },
+    },
+    'create-token': {
+      en: { title: '🪙 Create BEP-20 Token', body: `<ul><li>Deploy your own token on BNB Smart Chain in seconds.</li><li>Set the <strong>name</strong>, <strong>symbol</strong> (2–8 letters), and <strong>total supply</strong>.</li><li>Optionally enable bridging to USDT and add a token icon.</li><li><strong>Token Icon:</strong> The image is stored on-chain — this adds extra gas cost. Keep images under 50 KB for lower fees.</li><li>A creation fee of <strong>${CONFIG.TOKEN_CREATION_FEE_BNB} BNB</strong> applies plus estimated gas.</li></ul>` },
+      es: { title: '🪙 Crear Token BEP-20', body: `<ul><li>Despliega tu propio token en BNB Smart Chain en segundos.</li><li>Define el <strong>nombre</strong>, <strong>símbolo</strong> (2–8 letras) y <strong>supply total</strong>.</li><li>Opcionalmente activa el bridge a USDT y agrega un ícono al token.</li><li><strong>Ícono del Token:</strong> La imagen se almacena on-chain — esto genera un costo adicional en gas. Mantén imágenes bajo 50 KB para menores tarifas.</li><li>Se aplica una tarifa de creación de <strong>${CONFIG.TOKEN_CREATION_FEE_BNB} BNB</strong> más gas estimado.</li></ul>` },
+    },
+    'flash-token': {
+      en: { title: '⚡ Flash Tokens', body: `<ul><li>Flash tokens are <strong>temporary tokens</strong> that automatically expire.</li><li><strong>Time-Limited:</strong> Token becomes invalid after a set number of days (1–365).</li><li><strong>Transaction-Limited:</strong> Token is destroyed after a set number of transfers (1–1000).</li><li>Useful for promotions, airdrops, or controlled-supply experiments.</li><li>Creation fee: <strong>0.2 BNB</strong> + gas.</li></ul>` },
+      es: { title: '⚡ Flash Tokens', body: `<ul><li>Los Flash Tokens son <strong>tokens temporales</strong> que expiran automáticamente.</li><li><strong>Limitado por Tiempo:</strong> El token se invalida después de N días (1–365).</li><li><strong>Limitado por Transacciones:</strong> El token se destruye tras N transferencias (1–1000).</li><li>Útil para promociones, airdrops o experimentos de supply controlado.</li><li>Tarifa de creación: <strong>0.2 BNB</strong> + gas.</li></ul>` },
+    },
+    'bridge-usdt': {
+      en: { title: '🌉 Bridge USDT', body: `<ul><li>Swap any of your tokens for USDT via PancakeSwap routing.</li><li>Select the token, set the amount, and choose your slippage tolerance.</li><li>A <strong>${CONFIG.BRIDGE_FEE_PERCENT}% fee</strong> is applied to the input amount.</li><li>The route is: <em>Your Token → WBNB → USDT</em> (or direct if pair exists).</li><li>Connect your wallet first to load your token balances.</li></ul>` },
+      es: { title: '🌉 Bridge USDT', body: `<ul><li>Intercambia cualquiera de tus tokens por USDT vía PancakeSwap.</li><li>Selecciona el token, define el monto y elige tu tolerancia de slippage.</li><li>Se aplica una <strong>tarifa del ${CONFIG.BRIDGE_FEE_PERCENT}%</strong> al monto enviado.</li><li>La ruta es: <em>Tu Token → WBNB → USDT</em> (o directa si existe el par).</li><li>Conecta tu wallet primero para cargar tus balances.</li></ul>` },
+    },
+    'create-pool': {
+      en: { title: '💧 Create Liquidity Pool', body: `<ul><li>Add a token/BNB liquidity pair on <strong>PancakeSwap v2</strong>.</li><li>Enter the token address, the amount of tokens, and the BNB amount to pair.</li><li>LP tokens are sent directly to your wallet.</li><li>A pool creation fee of <strong>${CONFIG.POOL_CREATION_FEE_BNB} BNB</strong> applies plus gas.</li><li>You must hold the tokens you want to add as liquidity.</li></ul>` },
+      es: { title: '💧 Crear Pool de Liquidez', body: `<ul><li>Agrega un par token/BNB en <strong>PancakeSwap v2</strong>.</li><li>Ingresa la dirección del token, la cantidad de tokens y el monto de BNB a emparejar.</li><li>Los LP tokens van directamente a tu wallet.</li><li>Se aplica una tarifa de creación de <strong>${CONFIG.POOL_CREATION_FEE_BNB} BNB</strong> más gas.</li><li>Debes tener los tokens que quieres agregar como liquidez.</li></ul>` },
+    },
+    'my-tokens': {
+      en: { title: '👜 My Tokens', body: `<ul><li>View all tokens you have created with the connected wallet.</li><li>Each card shows the token name, symbol, supply, and contract address.</li><li>Connect your wallet to load your tokens.</li><li>Tokens are loaded from the on-chain factory contract.</li></ul>` },
+      es: { title: '👜 Mis Tokens', body: `<ul><li>Visualiza todos los tokens que has creado con la wallet conectada.</li><li>Cada tarjeta muestra el nombre, símbolo, supply y dirección del contrato.</li><li>Conecta tu wallet para cargar tus tokens.</li><li>Los tokens se cargan desde el contrato factory on-chain.</li></ul>` },
+    },
   },
 
   showInfo(key) {
@@ -447,5 +472,75 @@ const ADMIN = {
       e.preventDefault();
       ADMIN.open();
     }, { passive: false });
+  },
+
+  // ── Costs & Taxes (stored in STATE for runtime use; persisted in AdminConfig when available) ──
+  _costsStatus(msg, type) {
+    const el = document.getElementById('adminCostsStatus');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'mi-status mi-status-' + (type || 'info');
+    el.style.display = msg ? 'block' : 'none';
+  },
+
+  _taxesStatus(msg, type) {
+    const el = document.getElementById('adminTaxesStatus');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'mi-status mi-status-' + (type || 'info');
+    el.style.display = msg ? 'block' : 'none';
+  },
+
+  saveCosts() {
+    const getVal = id => {
+      const el = document.getElementById(id);
+      return el ? (parseFloat(el.value) || 0) : 0;
+    };
+    STATE.tokenCreationFee = getVal('costTokenCreation') || parseFloat(CONFIG.TOKEN_CREATION_FEE_BNB);
+    STATE.flashTokenFee    = getVal('costFlashToken')    || 0.2;
+    STATE.imageUploadFee   = getVal('costImageUpload')   || 0.05;
+    this._costsStatus('✅ ' + (STATE.lang === 'es' ? 'Costos guardados localmente.' : 'Costs saved locally.'), 'ok');
+    setTimeout(() => this._costsStatus('', ''), 3000);
+  },
+
+  saveTaxes() {
+    const getVal = id => {
+      const el = document.getElementById(id);
+      return el ? (parseFloat(el.value) || 0) : 0;
+    };
+    const wallet = (document.getElementById('taxReceiverWallet') || {}).value || '';
+    if (wallet && !/^0x[0-9a-fA-F]{40}$/.test(wallet)) {
+      this._taxesStatus('⚠ ' + (STATE.lang === 'es' ? 'Dirección de wallet inválida.' : 'Invalid wallet address.'), 'warn');
+      return;
+    }
+    STATE.taxConfig = {
+      receiverWallet:  wallet,
+      createToken:     getVal('taxCreateToken'),
+      flashToken:      getVal('taxFlashToken'),
+      swap:            getVal('taxSwap'),
+      bridge:          getVal('taxBridge'),
+      pool:            getVal('taxPool'),
+      sell:            getVal('taxSell'),
+      image:           getVal('taxImage'),
+    };
+    this._taxesStatus('✅ ' + (STATE.lang === 'es' ? 'Impuestos guardados localmente.' : 'Taxes saved locally.'), 'ok');
+    setTimeout(() => this._taxesStatus('', ''), 3000);
+  },
+
+  loadCostsIntoForm() {
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+    set('costTokenCreation', STATE.tokenCreationFee || CONFIG.TOKEN_CREATION_FEE_BNB);
+    set('costFlashToken',    STATE.flashTokenFee    || '0.2');
+    set('costImageUpload',   STATE.imageUploadFee   || '0.05');
+    if (STATE.taxConfig) {
+      set('taxReceiverWallet', STATE.taxConfig.receiverWallet || '');
+      set('taxCreateToken',    STATE.taxConfig.createToken    || 0);
+      set('taxFlashToken',     STATE.taxConfig.flashToken     || 0);
+      set('taxSwap',           STATE.taxConfig.swap           || 0);
+      set('taxBridge',         STATE.taxConfig.bridge         || 0);
+      set('taxPool',           STATE.taxConfig.pool           || 0);
+      set('taxSell',           STATE.taxConfig.sell           || 0);
+      set('taxImage',          STATE.taxConfig.image          || 0);
+    }
   },
 };

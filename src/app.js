@@ -4,7 +4,13 @@ function bindEvents() {
   const on  = (id, ev, fn) => { const e = document.getElementById(id); if (e) e.addEventListener(ev, fn); };
   const onQ = (sel, ev, fn) => document.querySelectorAll(sel).forEach(e => e.addEventListener(ev, fn));
 
-  on('langBtn', 'click', () => LANG.toggle());
+  on('langBtn', 'click', () => LANG.toggleDropdown());
+  onQ('.lang-opt', 'click', btn => LANG.setLang(btn.dataset.lang));
+  // Close lang dropdown when clicking outside
+  document.addEventListener('click', e => {
+    const dd = document.getElementById('langDropdown');
+    if (dd && !dd.contains(e.target)) LANG._closeDropdown();
+  });
   on('connectBtn', 'click', () => WALLET.openOverlay());
 
   on('tabSwap', 'click', () => {
@@ -79,6 +85,8 @@ function bindEvents() {
   on('adminApplyPriceBtn', 'click', () => ADMIN.applyPrice());
   on('adminWithdrawBtn',   'click', () => ADMIN.withdraw());
   on('adminBrandingBtn',   'click', () => ADMIN.applyBranding());
+  on('adminSaveCostsBtn',  'click', () => ADMIN.saveCosts());
+  on('adminSaveTaxesBtn',  'click', () => ADMIN.saveTaxes());
 
   on('depositMaxBtn', 'click', () => ADMIN.setDepositMax());
   on('depositAmt',    'input', () => ADMIN.validateDepositAmt());

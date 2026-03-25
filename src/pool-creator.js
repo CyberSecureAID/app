@@ -9,10 +9,11 @@ const POOL_CREATOR = {
       <div class="mi-section-card">
         <div class="mi-section-header">
           <span class="mi-section-icon">💧</span>
-          <div>
+          <div style="flex:1">
             <div class="mi-section-title" data-i18n="create_pool_title">Crear Pool de Liquidez</div>
             <div class="mi-section-sub" data-i18n="create_pool_sub">Agrega liquidez en PancakeSwap para tu token</div>
           </div>
+          <button class="info-btn" data-info="create-pool">ℹ Info</button>
         </div>
         <div id="poolCreatorNotConfigured" class="mi-notice mi-notice-warn" style="display:none">
           ⚠️ <span data-i18n="contract_not_configured">El contrato aún no ha sido deployado. Funcionalidad disponible próximamente.</span>
