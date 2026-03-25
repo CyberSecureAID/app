@@ -426,3 +426,144 @@ footer{background:rgba(6,8,16,.60);border-top:1px solid var(--glass-brd);padding
 .foot-sep{color:var(--t4)}
 .adm-trigger{background:none;border:1px solid transparent;color:transparent;border-radius:var(--r-sm);padding:4px 10px;font-size:.66rem;cursor:pointer;transition:all var(--t);font-family:var(--mono)}
 footer:hover .adm-trigger{opacity:.5;color:var(--t3);border-color:var(--glass-brd)}
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULOS CSS v8: NUEVAS FUNCIONALIDADES MiSwap
+   Tema oscuro consistente con --bg:#060810
+══════════════════════════════════════════════════════════════ */
+
+/* ── MENÚ HORIZONTAL STICKY ── */
+.mi-nav{position:sticky;top:60px;z-index:190;background:rgba(6,8,16,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-brd);padding:0 clamp(8px,2vw,16px);display:flex;align-items:center;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-height:52px}
+.mi-nav::-webkit-scrollbar{display:none}
+.mi-nav-item{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r-sm);background:transparent;border:1px solid transparent;color:var(--t2);font-size:.80rem;font-weight:600;font-family:var(--sans);cursor:pointer;transition:all var(--t);white-space:nowrap;flex-shrink:0;position:relative}
+.mi-nav-item:hover{background:var(--glass);color:var(--t1);border-color:var(--glass-brd)}
+.mi-nav-active,.mi-nav-item.mi-nav-active{background:var(--ac-dim);color:var(--ac);border-color:rgba(79,141,255,.3)}
+.mi-nav-icon{font-size:.95rem}
+.mi-nav-fee{font-size:.62rem;background:rgba(243,186,47,.15);color:var(--bnb);border-radius:4px;padding:1px 5px;font-family:var(--mono);font-weight:700}
+@media(max-width:480px){.mi-nav-label{display:none}.mi-nav-item{padding:8px 10px}}
+
+/* ── SECCIÓN PRINCIPAL (mi-section-card) ── */
+.mi-section-card{background:rgba(10,13,26,.80);backdrop-filter:blur(48px) saturate(1.8);-webkit-backdrop-filter:blur(48px) saturate(1.8);border:1px solid var(--glass-brd);border-radius:var(--r-2xl);padding:clamp(16px,4vw,24px);width:100%;box-shadow:var(--sh-lg),inset 0 1px 0 rgba(255,255,255,.05)}
+.mi-section-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+.mi-section-icon{font-size:1.8rem;flex-shrink:0;line-height:1}
+.mi-section-title{font-family:var(--logo-font);font-size:1.15rem;font-weight:800;color:var(--t1);letter-spacing:-.01em}
+.mi-section-sub{font-size:.78rem;color:var(--t3);margin-top:2px}
+
+/* ── CAMPOS DE FORMULARIO ── */
+.mi-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.mi-field-row{flex-direction:row;align-items:center}
+.mi-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:400px){.mi-field-grid{grid-template-columns:1fr}}
+.mi-label{font-size:.74rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.06em}
+.mi-input{background:var(--inset);border:1px solid var(--glass-brd);border-radius:var(--r-sm);padding:10px 14px;font-size:.90rem;font-family:var(--sans);color:var(--t1);outline:none;width:100%;transition:border-color var(--t)}
+.mi-input:focus{border-color:var(--ac)}
+.mi-input::placeholder{color:var(--t3)}
+.mi-select{background:var(--inset);border:1px solid var(--glass-brd);border-radius:var(--r-sm);padding:10px 14px;font-size:.88rem;font-family:var(--sans);color:var(--t1);outline:none;width:100%;cursor:pointer;transition:border-color var(--t)}
+.mi-select:focus{border-color:var(--ac)}
+.mi-textarea{background:var(--inset);border:1px solid var(--glass-brd);border-radius:var(--r-sm);padding:10px 14px;font-size:.86rem;font-family:var(--sans);color:var(--t1);outline:none;width:100%;resize:vertical;transition:border-color var(--t);line-height:1.55}
+.mi-textarea:focus{border-color:var(--ac)}
+.mi-hint{font-size:.70rem;color:var(--t3)}
+.mi-btns-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ── CHECKBOX ── */
+.mi-checkbox-wrap{display:flex;align-items:center;gap:8px;cursor:pointer}
+.mi-checkbox-wrap input[type=checkbox]{width:16px;height:16px;accent-color:var(--ac);cursor:pointer;flex-shrink:0}
+.mi-checkbox-label{font-size:.84rem;color:var(--t2)}
+
+/* ── NOTAS / AVISOS ── */
+.mi-notice{display:flex;align-items:flex-start;gap:8px;padding:10px 14px;border-radius:var(--r-sm);font-size:.80rem;line-height:1.5;margin-bottom:10px}
+.mi-notice-info{background:var(--ac-dim);border:1px solid rgba(79,141,255,.2);color:var(--t1)}
+.mi-notice-warn{background:var(--bnb-dim);border:1px solid rgba(243,186,47,.2);color:var(--bnb)}
+.mi-notice-err{background:var(--er-dim);border:1px solid rgba(247,108,108,.2);color:var(--er)}
+
+/* ── FEE BANNER ── */
+.mi-fee-banner{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--r-sm);background:var(--ok-dim);border:1px solid rgba(45,232,154,.18);font-size:.82rem;color:var(--t1);margin-bottom:16px;flex-wrap:wrap}
+.mi-fee-banner strong{color:var(--ok);font-family:var(--mono)}
+.mi-fee-note{font-size:.70rem;color:var(--t3)}
+
+/* ── STATUS MESSAGE ── */
+.mi-status{padding:10px 14px;border-radius:var(--r-sm);font-size:.82rem;line-height:1.5;margin-top:8px}
+.mi-status-info{background:var(--ac-dim);border:1px solid rgba(79,141,255,.2);color:var(--t1)}
+.mi-status-ok{background:var(--ok-dim);border:1px solid rgba(45,232,154,.2);color:var(--ok)}
+.mi-status-warn{background:var(--bnb-dim);border:1px solid rgba(243,186,47,.2);color:var(--bnb)}
+.mi-status-err{background:var(--er-dim);border:1px solid rgba(247,108,108,.2);color:var(--er)}
+
+/* ── CARGA DE ARCHIVO ── */
+.mi-file-wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mi-file-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--glass);border:1px solid var(--glass-brd);border-radius:var(--r-sm);color:var(--t2);font-size:.80rem;font-weight:600;cursor:pointer;transition:all var(--t)}
+.mi-file-btn:hover{background:var(--glass-h);color:var(--t1);border-color:var(--ac)}
+.mi-file-name{font-size:.75rem;color:var(--t3);font-family:var(--mono)}
+
+/* ── PREVIEW ICONO ── */
+.mi-icon-preview{margin-top:8px;display:flex;align-items:center;gap:10px}
+.tok-icon-preview{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--glass-brd);background:var(--inset)}
+
+/* ── CAMPO COLOR ── */
+.mi-color-wrap{display:flex;align-items:center;gap:8px}
+.mi-color-wrap input[type=color]{width:38px;height:38px;padding:2px;background:var(--inset);border:1px solid var(--glass-brd);border-radius:var(--r-sm);cursor:pointer}
+.mi-color-wrap .mi-input{flex:1}
+
+/* ── BRIDGE: SLIDER DE PORCENTAJE ── */
+.bridge-pct-wrap{display:flex;flex-direction:column;gap:8px}
+.bridge-slider{width:100%;accent-color:var(--ac);height:6px;cursor:pointer;appearance:none;-webkit-appearance:none;background:var(--inset);border-radius:99px;outline:none}
+.bridge-slider::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ac);cursor:pointer;box-shadow:0 0 0 3px var(--ac-dim)}
+.bridge-pct-row{display:flex;align-items:center;gap:10px}
+.bridge-pct-label{font-size:.80rem;font-family:var(--mono);color:var(--ac);min-width:36px;font-weight:700}
+.bridge-amt-inp{flex:1}
+.bridge-slip-row{display:flex;gap:6px;flex-wrap:wrap}
+.bridge-slip-btn{padding:5px 12px;background:var(--glass);border:1px solid var(--glass-brd);color:var(--t2);border-radius:var(--r-sm);font-size:.78rem;font-family:var(--mono);font-weight:700;cursor:pointer;transition:all var(--t)}
+.bridge-slip-btn:hover,.bridge-slip-btn.active{background:var(--ac-dim);color:var(--ac);border-color:rgba(79,141,255,.35)}
+
+/* ── BRIDGE: CAJA DE COTIZACIÓN ── */
+.bridge-quote-box{display:flex;flex-direction:column;gap:8px;padding:12px 14px;background:var(--inset);border:1px solid var(--glass-brd);border-radius:var(--r-sm);margin-bottom:10px}
+.bridge-quote-row{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;color:var(--t2)}
+.bridge-quote-val{color:var(--ok);font-family:var(--mono);font-weight:700}
+.bridge-quote-fee{color:var(--wa);font-family:var(--mono)}
+.bridge-quote-route{color:var(--t3);font-size:.72rem;font-family:var(--mono)}
+
+/* ── MIS TOKENS: GRID ── */
+.my-tokens-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:10px}
+@media(max-width:480px){.my-tokens-grid{grid-template-columns:1fr}}
+.my-tok-card{background:var(--raised);border:1px solid var(--glass-brd);border-radius:var(--r-lg);padding:14px;display:flex;flex-direction:column;gap:10px;transition:border-color var(--t)}
+.my-tok-card:hover{border-color:rgba(79,141,255,.3)}
+.my-tok-head{display:flex;align-items:center;gap:10px}
+.my-tok-icon{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid var(--glass-brd);flex-shrink:0}
+.my-tok-icon-placeholder{width:40px;height:40px;border-radius:50%;background:var(--ac-dim);border:1px solid rgba(79,141,255,.2);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:var(--ac);flex-shrink:0;font-family:var(--logo-font)}
+.my-tok-name{font-weight:700;font-size:.88rem;color:var(--t1)}
+.my-tok-sym{font-size:.72rem;color:var(--t3);font-family:var(--mono)}
+.my-tok-bal{font-size:.82rem;font-family:var(--mono);color:var(--bnb);font-weight:600}
+.my-tok-addr{font-size:.68rem;color:var(--t3);font-family:var(--mono);word-break:break-all}
+.my-tok-actions{display:flex;gap:5px;flex-wrap:wrap}
+.my-tok-actions .btn{font-size:.70rem;padding:4px 8px}
+
+/* ── TOKEN INFO ── */
+.mi-token-info{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--inset);border-radius:var(--r-sm);font-size:.80rem;margin-top:4px}
+.mi-token-name{color:var(--t1);font-weight:600}
+.mi-token-sym{color:var(--t3);font-family:var(--mono)}
+
+/* ── WALLET INFO SECTION ── */
+.wallet-info-grid{display:flex;flex-direction:column;gap:0}
+.wallet-info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--glass-brd);font-size:.84rem}
+.wallet-info-row:last-child{border-bottom:none}
+.wallet-info-label{color:var(--t3)}
+.wallet-info-val{color:var(--t1);font-family:var(--mono);font-weight:600;text-align:right}
+
+/* ── ABOUT ── */
+.about-text{font-size:.92rem;line-height:1.7;color:var(--t2);padding:4px 0}
+
+/* ── EMPTY STATE ── */
+.mi-empty{text-align:center;padding:32px 16px;color:var(--t3);font-size:.88rem;line-height:1.6}
+.mi-loading{text-align:center;padding:24px;color:var(--t2);font-size:.88rem}
+
+/* ── MODAL BODY ── */
+.mi-modal-body{font-size:.86rem;line-height:1.65;color:var(--t2);padding:8px 0 16px;max-height:40vh;overflow-y:auto;white-space:pre-wrap}
+
+/* ── RIESGO: ACEPTAR ── */
+.mi-risk-accept-wrap{display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--inset);border-radius:var(--r-sm);cursor:pointer;margin-top:8px}
+.mi-risk-accept-wrap input[type=checkbox]{margin-top:2px;accent-color:var(--ac);width:16px;height:16px;flex-shrink:0;cursor:pointer}
+
+/* ── FOOTER LINKS ── */
+.foot-link-btn{background:none;border:none;color:var(--t3);font-size:.72rem;cursor:pointer;padding:0;text-decoration:underline;font-family:var(--sans);transition:color var(--t)}
+.foot-link-btn:hover{color:var(--t1)}
+.foot-social-link,.foot-link{color:var(--t3);font-size:.72rem;text-decoration:none;transition:color var(--t)}
+.foot-social-link:hover,.foot-link:hover{color:var(--ac)}
