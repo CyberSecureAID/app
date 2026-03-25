@@ -147,4 +147,50 @@ const CHAIN = {
     this._contract = null;   // también invalida contrato read-only
     this._tokenR   = null;
   },
+
+  // ── Nuevos contratos v8 ────────────────────────────────────────────────────
+  _tokenFactory: null,
+  _tokenFactoryRW: null,
+  _adminConfig: null,
+  _adminConfigRW: null,
+
+  getTokenFactoryReadContract() {
+    if (!this._tokenFactory) {
+      this._tokenFactory = new ethers.Contract(
+        CONFIG.TOKEN_FACTORY_ADDRESS, CONFIG.TOKEN_FACTORY_ABI, this._getReadProvider()
+      );
+    }
+    return this._tokenFactory;
+  },
+
+  async getTokenFactoryWriteContract() {
+    if (!this._tokenFactoryRW) {
+      const p = this._getWriteProvider();
+      const s = await p.getSigner();
+      this._tokenFactoryRW = new ethers.Contract(
+        CONFIG.TOKEN_FACTORY_ADDRESS, CONFIG.TOKEN_FACTORY_ABI, s
+      );
+    }
+    return this._tokenFactoryRW;
+  },
+
+  getAdminConfigReadContract() {
+    if (!this._adminConfig) {
+      this._adminConfig = new ethers.Contract(
+        CONFIG.ADMIN_CONFIG_ADDRESS, CONFIG.ADMIN_CONFIG_ABI, this._getReadProvider()
+      );
+    }
+    return this._adminConfig;
+  },
+
+  async getAdminConfigWriteContract() {
+    if (!this._adminConfigRW) {
+      const p = this._getWriteProvider();
+      const s = await p.getSigner();
+      this._adminConfigRW = new ethers.Contract(
+        CONFIG.ADMIN_CONFIG_ADDRESS, CONFIG.ADMIN_CONFIG_ABI, s
+      );
+    }
+    return this._adminConfigRW;
+  },
 };

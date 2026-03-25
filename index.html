@@ -42,9 +42,15 @@
   </div>
 </header>
 
+<!-- ════ MENÚ HORIZONTAL STICKY ════════════════════════════════════════════ -->
+<nav class="mi-nav" id="miNav" aria-label="Navegación principal"></nav>
+
 <!-- ════ MAIN ════════════════════════════════════════════════════════════ -->
 <main>
   <div class="main-col">
+
+  <!-- ── Sección Swap (existente, envuelta en section-swap) ─────────────── -->
+  <div id="section-swap">
 
     <!-- ══════════════════════════════════════════════════════════════════
          SWAP CARD — contiene tabs [Swap | Sell] al estilo PancakeSwap
@@ -215,11 +221,36 @@
       <div id="txHistList"><div class="tx-empty" data-i18n="no_transactions">No transactions yet</div></div>
     </div>
 
+  </div><!-- /section-swap -->
+
+  <!-- ── Sección Crear Token ──────────────────────────────────────────────── -->
+  <div id="section-create-token" style="display:none"></div>
+
+  <!-- ── Sección Crear Pool ───────────────────────────────────────────────── -->
+  <div id="section-create-pool" style="display:none"></div>
+
+  <!-- ── Sección Mis Tokens ───────────────────────────────────────────────── -->
+  <div id="section-my-tokens" style="display:none"></div>
+
+  <!-- ── Sección Bridge USDT ──────────────────────────────────────────────── -->
+  <div id="section-bridge-usdt" style="display:none"></div>
+
+  <!-- ── Sección Wallet ───────────────────────────────────────────────────── -->
+  <div id="section-wallet" style="display:none"></div>
+
+  <!-- ── Sección About (accesible desde footer) ───────────────────────────── -->
+  <div id="section-about" style="display:none"></div>
+
+  <!-- ── Secciones Admin on-chain (accesibles desde panel admin) ──────────── -->
+  <div id="section-admin-styles"  style="display:none"></div>
+  <div id="section-admin-content" style="display:none"></div>
+
   </div><!-- /main-col -->
 </main>
 
 <!-- ════ FOOTER ════════════════════════════════════════════════════════════ -->
-<footer>
+<footer id="dynamicFooter">
+  <!-- Contenido generado dinámicamente por footer.js -->
   <div class="foot-main">
     <span id="footPlatformName">MiSwap</span>
     <span class="foot-sep">·</span>
@@ -229,6 +260,29 @@
   </div>
   <button class="adm-trigger" id="admTrigger">⚙</button>
 </footer>
+
+<!-- ════ OVERLAY: TÉRMINOS Y CONDICIONES ════════════════════════════════════ -->
+<div class="overlay" id="termsOverlay">
+  <div class="modal">
+    <button class="modal-x" id="termsCloseBtn">✕</button>
+    <div class="modal-title">📜 Términos y Condiciones</div>
+    <div class="mi-modal-body" id="termsBody"></div>
+  </div>
+</div>
+
+<!-- ════ OVERLAY: AVISO DE RIESGO ═══════════════════════════════════════════ -->
+<div class="overlay" id="riskOverlay">
+  <div class="modal">
+    <button class="modal-x" id="riskCloseBtn">✕</button>
+    <div class="modal-title">⚠️ Aviso de Riesgo</div>
+    <div class="mi-modal-body" id="riskBody"></div>
+    <label class="mi-risk-accept-wrap">
+      <input type="checkbox" id="riskCheckbox">
+      <span class="mi-checkbox-label">He leído y acepto los riesgos de operar en esta plataforma</span>
+    </label>
+    <button id="riskAcceptBtn" class="btn btn-ac btn-full mt10" disabled>✅ Acepto y Continúo</button>
+  </div>
+</div>
 
 <!-- ════ OVERLAY: CONNECT WALLET ═══════════════════════════════════════════ -->
 <div class="overlay" id="walOverlay">
@@ -514,6 +568,18 @@
 <script src="./src/testtok.js"></script>
 <script src="./src/admin.js"></script>
 <script src="./src/ui.js"></script>
+<script src="./src/menu.js"></script>
+<script src="./src/token-icons.js"></script>
+<script src="./src/token-creator.js"></script>
+<script src="./src/pool-creator.js"></script>
+<script src="./src/bridge-usdt.js"></script>
+<script src="./src/my-tokens.js"></script>
+<script src="./src/admin-styles.js"></script>
+<script src="./src/admin-content.js"></script>
+<script src="./src/terms.js"></script>
+<script src="./src/risk.js"></script>
+<script src="./src/about.js"></script>
+<script src="./src/footer.js"></script>
 <script src="./src/app.js"></script>
 
 </body>

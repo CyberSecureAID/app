@@ -242,4 +242,86 @@ const WALLET = {
       SWAP.updateBtn();
     } catch (_) {}
   },
+
+  /*
+   * renderWalletSection(): Muestra la info de wallet en la sección #section-wallet.
+   */
+  renderWalletSection() {
+    const sec = document.getElementById('section-wallet');
+    if (!sec) return;
+    if (!STATE.walletConnected) {
+      sec.innerHTML = `
+        <div class="mi-section-card">
+          <div class="mi-section-header">
+            <span class="mi-section-icon">🔗</span>
+            <div><div class="mi-section-title" data-i18n="connect_wallet">Conectar Wallet</div></div>
+          </div>
+          <div class="mi-empty">Conecta tu wallet para ver la información.</div>
+          <button id="walSectionConnectBtn" class="btn btn-ac btn-full mt10" data-i18n="connect_wallet">Conectar Wallet</button>
+        </div>`;
+      LANG.apply();
+      const btn = document.getElementById('walSectionConnectBtn');
+      if (btn) btn.addEventListener('click', () => WALLET.openOverlay());
+      return;
+    }
+    const addr  = STATE.walletAddress || STATE.account || '';
+    // Validate address format to prevent XSS in href
+    const safeAddr = /^0x[0-9a-fA-F]{40}$/.test(addr) ? addr : '';
+    const bnb   = STATE.bnbBalance   ? STATE.bnbBalance.toFixed(4)   : '—';
+    const emoji = STATE.walletType === 'trust' ? '🛡️' : STATE.walletType === 'walletconnect' ? '🔗' : '🦊';
+    sec.innerHTML = `
+      <div class="mi-section-card">
+        <div class="mi-section-header">
+          <span class="mi-section-icon">${emoji}</span>
+          <div>
+            <div class="mi-section-title" data-i18n="wallet_section_title">Mi Wallet</div>
+            <div class="mi-section-sub" id="walSecAddrSub"></div>
+          </div>
+        </div>
+        <div class="wallet-info-grid">
+          <div class="wallet-info-row">
+            <span class="wallet-info-label">Dirección</span>
+            <span class="wallet-info-val" id="walSecAddr"></span>
+          </div>
+          <div class="wallet-info-row">
+            <span class="wallet-info-label">Balance BNB</span>
+            <span class="wallet-info-val">${bnb} BNB</span>
+          </div>
+          <div class="wallet-info-row">
+            <span class="wallet-info-label">Red</span>
+            <span class="wallet-info-val">BNB Smart Chain</span>
+          </div>
+          <div class="wallet-info-row">
+            <span class="wallet-info-label">Tipo</span>
+            <span class="wallet-info-val" id="walSecType"></span>
+          </div>
+        </div>
+        <div class="mi-btns-row mt10" id="walSecBtns"></div>
+      </div>`;
+    LANG.apply();
+    // Populate text safely (avoid XSS via textContent)
+    const subEl = document.getElementById('walSecAddrSub');
+    if (subEl) subEl.textContent = addr.slice(0, 6) + '…' + addr.slice(-4);
+    const addrEl = document.getElementById('walSecAddr');
+    if (addrEl) { addrEl.textContent = addr.slice(0, 10) + '…' + addr.slice(-6); addrEl.title = addr; }
+    const typeEl = document.getElementById('walSecType');
+    if (typeEl) typeEl.textContent = STATE.walletType || '—';
+    const btnsEl = document.getElementById('walSecBtns');
+    if (btnsEl) {
+      if (safeAddr) {
+        const bscLink = document.createElement('a');
+        bscLink.href    = 'https://bscscan.com/address/' + safeAddr;
+        bscLink.target  = '_blank';
+        bscLink.rel     = 'noopener noreferrer';
+        bscLink.className = 'btn btn-gl btn-sm';
+        bscLink.textContent = '🔍 BscScan';
+        btnsEl.appendChild(bscLink);
+      }
+      const discBtn = document.createElement('button');
+      discBtn.className = 'btn btn-er btn-sm';
+      discBtn.textContent = 'Desconectar';
+      discBtn.addEventListener('click', () => this._disconnect());
+      btnsEl.appendChild(discBtn);
+    }
+  },
 };
