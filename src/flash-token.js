@@ -26,14 +26,15 @@ const FLASH_TOKEN = {
     sec.innerHTML = `
       <div class="mi-section-card">
         <div class="mi-section-header">
-          <div>
+          <div style="flex:1">
             <div class="mi-section-title" data-i18n="flash_token_title">Flash Tokens</div>
             <div class="mi-section-sub" data-i18n="flash_token_sub">Create temporary tokens with automatic expiration</div>
           </div>
+          <button class="info-btn" data-info="flash-token">ℹ Info</button>
         </div>
 
         <!-- ── How it works ── -->
-        <div class="mi-info-box" style="margin-bottom:16px">
+        <div class="mi-info-box" style="margin-bottom:20px">
           <div class="mi-info-title" data-i18n="flash_how_title">How Flash Tokens Work</div>
           <ol class="mi-steps">
             <li data-i18n="flash_step1">Choose an expiration mode: time-limited or transaction-limited.</li>

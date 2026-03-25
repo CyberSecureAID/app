@@ -44,6 +44,12 @@ const STATE = {
 
   // ── Modo de calculadora de precio admin ──
   pcMode: 'direct',       // 'direct' | 'ratio'
+
+  // ── Costos y tasas configurables desde admin ──
+  tokenCreationFee: null,     // BNB — null = usa CONFIG.TOKEN_CREATION_FEE_BNB
+  flashTokenFee:    null,     // BNB — null = usa 0.2
+  imageUploadFee:   null,     // BNB — null = usa 0.05
+  taxConfig: null,            // { receiverWallet, createToken, flashToken, swap, bridge, pool, sell, image }
 };
 
 

@@ -10,10 +10,11 @@ const MY_TOKENS = {
       <div class="mi-section-card">
         <div class="mi-section-header">
           <span class="mi-section-icon">👜</span>
-          <div>
+          <div style="flex:1">
             <div class="mi-section-title" data-i18n="my_tokens_title">Mis Tokens</div>
             <div class="mi-section-sub" data-i18n="my_tokens_sub">Tokens creados con tu wallet</div>
           </div>
+          <button class="info-btn" data-info="my-tokens">ℹ Info</button>
         </div>
         <div id="myTokensGrid" class="my-tokens-grid">
           <div class="mi-empty" data-i18n="my_tokens_empty">Conecta tu wallet para ver tus tokens.</div>
