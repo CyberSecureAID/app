@@ -70,10 +70,19 @@ const CONFIG = Object.freeze({
     'function getBuybackInfo(address t) view returns (bool,uint256,bool,uint256,uint256,uint256,uint256)',
   ]),
 
-  // ── Nuevos contratos v8 (vacíos hasta deploy) ─────────────────────────────
+  // ── Single Upgradeable Contract Architecture ───────────────────────────────
+  // All features — swap, token creation, pool creation, bridge, Flash Tokens,
+  // and admin configuration — are centralized under a single upgradeable smart
+  // contract system. The addresses below are placeholders until deployment.
+  // Future updates are made through ADMIN_CONFIG_ADDRESS without redeploying.
+
+  // ── New v8 contracts (empty until deploy) ─────────────────────────────────
   TOKEN_FACTORY_ADDRESS: '',
   BRIDGE_CONTRACT_ADDRESS: '',
   ADMIN_CONFIG_ADDRESS: '',
+
+  // ── Flash Token contract (part of the unified contract system above) ───────
+  FLASH_TOKEN_ADDRESS: '',
 
   // ── Contratos externos BSC ─────────────────────────────────────────────────
   USDT_ADDRESS: '0x55d398326f99059fF775485246999027B3197955',
@@ -124,5 +133,12 @@ const CONFIG = Object.freeze({
   PANCAKE_FACTORY_ABI: Object.freeze([
     'function getPair(address tokenA, address tokenB) view returns (address pair)',
     'function createPair(address tokenA, address tokenB) returns (address pair)',
+  ]),
+
+  // ── Flash Token ABI ────────────────────────────────────────────────────────
+  FLASH_TOKEN_ABI: Object.freeze([
+    'function createFlashToken(string name, string symbol, uint256 supply, bool isTimeLimited, uint256 limit) payable returns (address)',
+    'function getFlashTokensByCreator(address creator) view returns (address[])',
+    'function getFlashTokenInfo(address token) view returns (string name, string symbol, uint256 supply, bool isTimeLimited, uint256 expiresAt, uint256 txLimit, uint256 txCount, bool expired)',
   ]),
 });

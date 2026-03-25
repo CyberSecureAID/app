@@ -13,7 +13,7 @@ const LANG = {
       swap_bnb:'Swap BNB → USDT.z',add_to_wallet:'Add USDT.z to wallet',
       security_verification:'Test Token Claim',
       security_desc:'Enter an address to receive 1 USDT.z test token. One-time per wallet.',
-      security_note:'⚠ Sends exactly 1 USDT.z. Limited to one request per wallet. BscScan link appears after.',
+      security_note:'Sends exactly 1 USDT.z. Limited to one request per wallet. BscScan link appears after.',
       recipient_address:'Recipient Address',verify:'Verify',
       test_token_sent:'Test token sent!',tx_hash:'Transaction Hash:',
       recent_transactions:'Recent Transactions',no_transactions:'No transactions yet',
@@ -36,7 +36,7 @@ const LANG = {
       ratio_explain_title:'Ratio mode:',ratio_label:'BNB in → USDT.z out',
       calculated_usdt_price:'Calculated USDT.z price',
       resulting_rate:'Resulting swap rate',apply_price:'Apply Price',
-      ratio_note:'ℹ Example: 100 BNB → 10 USDT.z = each USDT.z costs 10 BNB.',
+      ratio_note:'Example: 100 BNB → 10 USDT.z = each USDT.z costs 10 BNB.',
       pool_management:'Pool Management',deposit_usdt:'Deposit USDT.z into Pool',
       deposit:'Deposit',
       withdraw_title:'Withdraw USDT.z to Wallet',
@@ -48,7 +48,7 @@ const LANG = {
       apply_branding:'Apply Branding',bnb_live_price:'BNB price (live)',price_label:'price',
       // v8 new features
       create_token_title:'Create BEP20 Token',create_token_sub:'Deploy your own token on BNB Smart Chain',
-      create_token_btn:'🪙 Create Token',token_name_label:'Token Name',token_name_hint:'2–50 characters',
+      create_token_btn:'Create Token',token_name_label:'Token Name',token_name_hint:'2–50 characters',
       token_symbol_label:'Symbol',token_symbol_hint:'2–8 letters only',
       token_supply_label:'Total Supply',token_supply_hint:'1 – 1,000,000,000,000',
       enable_bridge:'Enable Bridge to USDT',token_icon_label:'Token Icon',
@@ -56,20 +56,35 @@ const LANG = {
       creation_fee:'Creation fee:',plus_gas:'+ estimated gas',
       contract_not_configured:'Contract not yet deployed. Feature coming soon.',
       create_pool_title:'Create Liquidity Pool',create_pool_sub:'Add liquidity on PancakeSwap for your token',
-      create_pool_btn:'💧 Create Pool',pool_fee_label:'Pool creation fee:',
+      create_pool_btn:'Create Pool',pool_fee_label:'Pool creation fee:',
       pool_pancake_note:'LP tokens go directly to your wallet. Pool created on PancakeSwap v2.',
       pool_token_addr:'Token Address',pool_token_amount:'Token Amount',pool_bnb_amount:'BNB Amount',
       bridge_title:'Bridge to USDT',bridge_sub:'Convert your tokens to USDT via PancakeSwap',
       bridge_fee_label:'Bridge fee:',bridge_fee_note:'applied to sent amount',
       bridge_select_token:'Select Token',bridge_amount:'Amount to bridge',
       bridge_you_receive:'You receive (est.):',bridge_fee_amount:'Fee (2%):',
-      bridge_route:'Route:',bridge_btn:'🌉 Bridge to USDT',
+      bridge_route:'Route:',bridge_btn:'Bridge to USDT',
       my_tokens_title:'My Tokens',my_tokens_sub:'Tokens created with your wallet',
       my_tokens_empty:'Connect your wallet to see your tokens.',
       my_tokens_connect:'Connect your wallet to see your tokens.',
       my_tokens_none:'You have not created any tokens yet. Create your first token!',
-      refresh:'🔄 Refresh',
+      refresh:'Refresh',
       wallet_section_title:'My Wallet',terms_link:'Terms',
+      // Flash Tokens
+      flash_token_title:'Flash Tokens',flash_token_sub:'Create temporary tokens with automatic expiration',
+      flash_how_title:'How Flash Tokens Work',
+      flash_step1:'Choose an expiration mode: time-limited or transaction-limited.',
+      flash_step2:'Fill in the token details and set the expiration limit.',
+      flash_step3:'Pay the creation fee and confirm the transaction in your wallet.',
+      flash_step4:'The token is deployed instantly. Once the limit is reached, the token is automatically invalidated.',
+      flash_mode_label:'Expiration Mode',flash_mode_time:'Time-Limited',flash_mode_tx:'Transaction-Limited',
+      flash_time_label:'Duration (days)',flash_time_hint:'1–365 days. Token becomes invalid after this period.',
+      flash_tx_label:'Transfer Limit',flash_tx_hint:'1–1000 transfers. Token is destroyed once the limit is reached.',
+      flash_create_btn:'Create Flash Token',
+      flash_my_title:'My Flash Tokens',flash_my_sub:'Flash tokens created with your wallet',
+      flash_my_empty:'Connect your wallet to see your Flash Tokens.',
+      flash_my_none:'You have not created any Flash Tokens yet.',
+      flash_status_active:'Active',flash_status_expired:'Expired',
     },
     es: {
       connect_wallet:'Conectar Wallet',connect_wallet_title:'Conectar Wallet',
@@ -83,7 +98,7 @@ const LANG = {
       swap_bnb:'Intercambiar BNB → USDT.z',add_to_wallet:'Agregar USDT.z a wallet',
       security_verification:'Reclamar Token de Prueba',
       security_desc:'Ingresa una dirección para recibir 1 USDT.z de prueba.',
-      security_note:'⚠ Envía exactamente 1 USDT.z. Una sola vez por wallet.',
+      security_note:'Envía exactamente 1 USDT.z. Una sola vez por wallet.',
       recipient_address:'Dirección de Destino',verify:'Verificar',
       test_token_sent:'Token de prueba enviado!',tx_hash:'Hash de Transacción:',
       recent_transactions:'Transacciones Recientes',no_transactions:'Sin transacciones aún',
@@ -106,7 +121,7 @@ const LANG = {
       ratio_label:'BNB entregado → USDT.z recibido',
       calculated_usdt_price:'Precio USDT.z calculado',
       resulting_rate:'Tasa de swap resultante',apply_price:'Aplicar Precio',
-      ratio_note:'ℹ Ejemplo: 100 BNB → 10 USDT.z = cada USDT.z cuesta 10 BNB.',
+      ratio_note:'Ejemplo: 100 BNB → 10 USDT.z = cada USDT.z cuesta 10 BNB.',
       pool_management:'Gestión del Pool',deposit_usdt:'Depositar USDT.z al Pool',
       deposit:'Depositar',
       withdraw_title:'Retirar USDT.z a Wallet',
@@ -118,7 +133,7 @@ const LANG = {
       apply_branding:'Aplicar Marca',bnb_live_price:'Precio BNB (live)',price_label:'precio',
       // v8 nuevas funcionalidades
       create_token_title:'Crear Token BEP20',create_token_sub:'Despliega tu propio token en BNB Smart Chain',
-      create_token_btn:'🪙 Crear Token',token_name_label:'Nombre del Token',token_name_hint:'2–50 caracteres',
+      create_token_btn:'Crear Token',token_name_label:'Nombre del Token',token_name_hint:'2–50 caracteres',
       token_symbol_label:'Símbolo',token_symbol_hint:'2–8 letras, sin números',
       token_supply_label:'Supply Total',token_supply_hint:'1 – 1,000,000,000,000',
       enable_bridge:'Habilitar Bridge a USDT',token_icon_label:'Ícono del Token',
@@ -126,59 +141,255 @@ const LANG = {
       creation_fee:'Fee de creación:',plus_gas:'+ gas estimado',
       contract_not_configured:'El contrato aún no ha sido deployado. Funcionalidad disponible próximamente.',
       create_pool_title:'Crear Pool de Liquidez',create_pool_sub:'Agrega liquidez en PancakeSwap para tu token',
-      create_pool_btn:'💧 Crear Pool',pool_fee_label:'Fee de creación de pool:',
+      create_pool_btn:'Crear Pool',pool_fee_label:'Fee de creación de pool:',
       pool_pancake_note:'Los LP tokens irán directamente a tu wallet. Pool creado en PancakeSwap v2.',
       pool_token_addr:'Dirección del Token',pool_token_amount:'Cantidad de Tokens',pool_bnb_amount:'Cantidad de BNB',
       bridge_title:'Bridge a USDT',bridge_sub:'Convierte tus tokens a USDT vía PancakeSwap',
       bridge_fee_label:'Fee del bridge:',bridge_fee_note:'aplicado al monto enviado',
       bridge_select_token:'Seleccionar Token',bridge_amount:'Cantidad a bridgear',
       bridge_you_receive:'Recibirás (est.):',bridge_fee_amount:'Fee (2%):',
-      bridge_route:'Ruta:',bridge_btn:'🌉 Bridge a USDT',
+      bridge_route:'Ruta:',bridge_btn:'Bridge a USDT',
       my_tokens_title:'Mis Tokens',my_tokens_sub:'Tokens creados con tu wallet',
       my_tokens_empty:'Conecta tu wallet para ver tus tokens.',
       my_tokens_connect:'Conecta tu wallet para ver tus tokens.',
       my_tokens_none:'No has creado tokens aún. ¡Crea tu primer token!',
-      refresh:'🔄 Actualizar',
+      refresh:'Actualizar',
       wallet_section_title:'Mi Wallet',terms_link:'Términos',
+      // Flash Tokens
+      flash_token_title:'Flash Tokens',flash_token_sub:'Crea tokens temporales con expiración automática',
+      flash_how_title:'Cómo Funcionan los Flash Tokens',
+      flash_step1:'Elige un modo de expiración: por tiempo o por transacciones.',
+      flash_step2:'Completa los detalles del token y establece el límite de expiración.',
+      flash_step3:'Paga el fee de creación y confirma la transacción en tu wallet.',
+      flash_step4:'El token se despliega al instante. Al alcanzar el límite, el token queda invalidado automáticamente.',
+      flash_mode_label:'Modo de Expiración',flash_mode_time:'Limitado por Tiempo',flash_mode_tx:'Limitado por Transacciones',
+      flash_time_label:'Duración (días)',flash_time_hint:'1–365 días. El token queda inválido tras este período.',
+      flash_tx_label:'Límite de Transferencias',flash_tx_hint:'1–1000 transferencias. El token se destruye al alcanzar el límite.',
+      flash_create_btn:'Crear Flash Token',
+      flash_my_title:'Mis Flash Tokens',flash_my_sub:'Flash tokens creados con tu wallet',
+      flash_my_empty:'Conecta tu wallet para ver tus Flash Tokens.',
+      flash_my_none:'Aún no has creado Flash Tokens.',
+      flash_status_active:'Activo',flash_status_expired:'Expirado',
+    },
+    hi: {
+      connect_wallet:'वॉलेट कनेक्ट करें',connect_wallet_title:'एक वॉलेट कनेक्ट करें',
+      connect_wallet_desc:'जारी रखने के लिए अपना पसंदीदा वॉलेट चुनें',
+      metamask_desc:'ब्राउज़र एक्सटेंशन और मोबाइल',trust_desc:'मोबाइल और ब्राउज़र एक्सटेंशन',
+      swap_title:'स्वैप',slippage:'स्लिपेज',slippage_tolerance:'स्लिपेज सहनशीलता',
+      from:'से',to:'तक',balance:'बैलेंस:',max:'अधिकतम',you_receive:'आप प्राप्त करेंगे',
+      rate:'दर',estimated_gas:'अनुमानित गैस',min_received:'न्यूनतम प्राप्त',
+      pool_liquidity:'पूल तरलता',connect_to_swap:'स्वैप के लिए वॉलेट कनेक्ट करें',
+      enter_amount:'राशि दर्ज करें',insufficient_liquidity:'अपर्याप्त तरलता',
+      swap_bnb:'BNB → USDT.z स्वैप करें',add_to_wallet:'USDT.z को वॉलेट में जोड़ें',
+      security_verification:'टेस्ट टोकन क्लेम',
+      security_desc:'1 USDT.z टेस्ट टोकन प्राप्त करने के लिए एक पता दर्ज करें।',
+      security_note:'ठीक 1 USDT.z भेजता है। प्रति वॉलेट एक बार।',
+      recipient_address:'प्राप्तकर्ता पता',verify:'सत्यापित करें',
+      test_token_sent:'टेस्ट टोकन भेजा गया!',tx_hash:'ट्रांजैक्शन हैश:',
+      recent_transactions:'हाल के लेनदेन',no_transactions:'अभी कोई लेनदेन नहीं',
+      confirm_swap:'स्वैप की पुष्टि करें',review_tx:'पुष्टि करने से पहले समीक्षा करें',
+      you_pay:'आप भुगतान करते हैं',waiting_confirmation:'पुष्टि की प्रतीक्षा में…',
+      tx_success:'लेनदेन पूर्ण',tx_success_msg:'आपके टोकन रास्ते में हैं।',
+      tx_error:'लेनदेन विफल',tx_rejected:'उपयोगकर्ता द्वारा अस्वीकृत',
+      tx_pending:'लेनदेन सबमिट किया',tx_pending_msg:'नेटवर्क पुष्टि की प्रतीक्षा में…',
+      all_rights:'सर्वाधिकार सुरक्षित',
+      insufficient_bnb:'अपर्याप्त BNB बैलेंस',
+      admin_panel:'एडमिन पैनल',restricted:'प्रतिबंधित',
+      owner_wallet_active:'मालिक वॉलेट सक्रिय',
+      overview:'अवलोकन',usdt_in_pool:'पूल में USDT.z',bnb_received:'BNB प्राप्त',
+      transactions:'लेनदेन',usdt_sold:'USDT.z बेचा',contract_address:'कॉन्ट्रैक्ट पता',
+      price_config:'मूल्य कॉन्फ़िगरेशन',live_bnb_price:'लाइव BNB मूल्य',
+      fetching:'लोड हो रहा है…',direct_price:'USDT.z का मूल्य',ratio_mode:'BNB ↔ USDT.z अनुपात',
+      price_of_usdt:'1 USDT.z का मूल्य',live_bnb_price_short:'लाइव BNB मूल्य',
+      your_usdt_price:'आपका USDT.z मूल्य',swap_rate_now:'अभी स्वैप दर',
+      auto_adjusts:'BNB मूल्य बदलने पर स्वत: समायोजित',
+      ratio_explain_title:'अनुपात मोड:',ratio_label:'BNB इन → USDT.z आउट',
+      calculated_usdt_price:'गणना किया USDT.z मूल्य',
+      resulting_rate:'परिणामी स्वैप दर',apply_price:'मूल्य लागू करें',
+      ratio_note:'उदाहरण: 100 BNB → 10 USDT.z = प्रत्येक USDT.z की कीमत 10 BNB।',
+      pool_management:'पूल प्रबंधन',deposit_usdt:'पूल में USDT.z जमा करें',
+      deposit:'जमा करें',
+      withdraw_title:'वॉलेट में USDT.z निकालें',
+      withdraw_desc:'पूल से सभी USDT.z आपके वॉलेट में वापस करता है।',
+      withdraw_all:'सब मेरे वॉलेट में निकालें',
+      contract_branding:'कॉन्ट्रैक्ट और ब्रांडिंग',smart_contract_address:'स्मार्ट कॉन्ट्रैक्ट पता',
+      contract_desc:'BSC पता (0x + 40 hex)। इसे बदलने से कॉन्ट्रैक्ट इंस्टेंस रीसेट हो जाते हैं।',
+      platform_name:'प्लेटफ़ॉर्म का नाम',token_symbol:'टोकन प्रतीक',
+      apply_branding:'ब्रांडिंग लागू करें',bnb_live_price:'BNB मूल्य (लाइव)',price_label:'मूल्य',
+      create_token_title:'BEP20 टोकन बनाएं',create_token_sub:'BNB Smart Chain पर अपना टोकन तैनात करें',
+      create_token_btn:'टोकन बनाएं',token_name_label:'टोकन नाम',token_name_hint:'2–50 अक्षर',
+      token_symbol_label:'प्रतीक',token_symbol_hint:'केवल 2–8 अक्षर',
+      token_supply_label:'कुल आपूर्ति',token_supply_hint:'1 – 1,000,000,000,000',
+      enable_bridge:'USDT ब्रिज सक्षम करें',token_icon_label:'टोकन आइकन',
+      choose_file:'छवि चुनें',icon_gas_warning:'छवि 50KB से अधिक है। गैस अधिक होगी।',
+      creation_fee:'निर्माण शुल्क:',plus_gas:'+ अनुमानित गैस',
+      contract_not_configured:'कॉन्ट्रैक्ट अभी तैनात नहीं हुआ। सुविधा जल्द आएगी।',
+      create_pool_title:'लिक्विडिटी पूल बनाएं',create_pool_sub:'अपने टोकन के लिए PancakeSwap पर तरलता जोड़ें',
+      create_pool_btn:'पूल बनाएं',pool_fee_label:'पूल निर्माण शुल्क:',
+      pool_pancake_note:'LP टोकन सीधे आपके वॉलेट में जाएंगे।',
+      pool_token_addr:'टोकन पता',pool_token_amount:'टोकन राशि',pool_bnb_amount:'BNB राशि',
+      bridge_title:'USDT को ब्रिज करें',bridge_sub:'PancakeSwap के माध्यम से USDT में कनवर्ट करें',
+      bridge_fee_label:'ब्रिज शुल्क:',bridge_fee_note:'भेजी गई राशि पर लागू',
+      bridge_select_token:'टोकन चुनें',bridge_amount:'ब्रिज की राशि',
+      bridge_you_receive:'आप प्राप्त करेंगे (अनुमान):',bridge_fee_amount:'शुल्क (2%):',
+      bridge_route:'मार्ग:',bridge_btn:'USDT को ब्रिज करें',
+      my_tokens_title:'मेरे टोकन',my_tokens_sub:'आपके वॉलेट से बनाए गए टोकन',
+      my_tokens_empty:'अपने टोकन देखने के लिए वॉलेट कनेक्ट करें।',
+      my_tokens_connect:'अपने टोकन देखने के लिए वॉलेट कनेक्ट करें।',
+      my_tokens_none:'आपने अभी तक कोई टोकन नहीं बनाया।',
+      refresh:'रिफ्रेश',
+      wallet_section_title:'मेरा वॉलेट',terms_link:'नियम',
+      flash_token_title:'फ्लैश टोकन',flash_token_sub:'स्वचालित समाप्ति के साथ अस्थायी टोकन बनाएं',
+      flash_how_title:'फ्लैश टोकन कैसे काम करते हैं',
+      flash_step1:'समाप्ति मोड चुनें: समय-सीमित या लेनदेन-सीमित।',
+      flash_step2:'टोकन विवरण भरें और समाप्ति सीमा निर्धारित करें।',
+      flash_step3:'निर्माण शुल्क का भुगतान करें और वॉलेट में लेनदेन की पुष्टि करें।',
+      flash_step4:'टोकन तुरंत तैनात होता है। सीमा पहुंचते ही टोकन स्वचालित रूप से अमान्य हो जाता है।',
+      flash_mode_label:'समाप्ति मोड',flash_mode_time:'समय-सीमित',flash_mode_tx:'लेनदेन-सीमित',
+      flash_time_label:'अवधि (दिन)',flash_time_hint:'1–365 दिन। इस अवधि के बाद टोकन अमान्य हो जाता है।',
+      flash_tx_label:'ट्रांसफर सीमा',flash_tx_hint:'1–1000 ट्रांसफर। सीमा पहुंचते ही टोकन नष्ट हो जाता है।',
+      flash_create_btn:'फ्लैश टोकन बनाएं',
+      flash_my_title:'मेरे फ्लैश टोकन',flash_my_sub:'आपके वॉलेट से बनाए गए फ्लैश टोकन',
+      flash_my_empty:'अपने फ्लैश टोकन देखने के लिए वॉलेट कनेक्ट करें।',
+      flash_my_none:'आपने अभी तक कोई फ्लैश टोकन नहीं बनाया।',
+      flash_status_active:'सक्रिय',flash_status_expired:'समाप्त',
+    },
+    ar: {
+      connect_wallet:'ربط المحفظة',connect_wallet_title:'ربط محفظة',
+      connect_wallet_desc:'اختر محفظتك المفضلة للمتابعة',
+      metamask_desc:'امتداد المتصفح والجوال',trust_desc:'الجوال وامتداد المتصفح',
+      swap_title:'تبادل',slippage:'الانزلاق',slippage_tolerance:'تسامح الانزلاق',
+      from:'من',to:'إلى',balance:'الرصيد:',max:'الحد الأقصى',you_receive:'ستستلم',
+      rate:'السعر',estimated_gas:'الغاز المقدر',min_received:'الحد الأدنى للاستلام',
+      pool_liquidity:'سيولة المجمع',connect_to_swap:'ربط المحفظة للتبادل',
+      enter_amount:'أدخل المبلغ',insufficient_liquidity:'سيولة غير كافية',
+      swap_bnb:'تبادل BNB → USDT.z',add_to_wallet:'إضافة USDT.z للمحفظة',
+      security_verification:'المطالبة بالرمز التجريبي',
+      security_desc:'أدخل عنواناً لاستلام 1 USDT.z رمز تجريبي.',
+      security_note:'يرسل بالضبط 1 USDT.z. مرة واحدة لكل محفظة.',
+      recipient_address:'عنوان المستلم',verify:'تحقق',
+      test_token_sent:'تم إرسال الرمز التجريبي!',tx_hash:'هاش المعاملة:',
+      recent_transactions:'المعاملات الأخيرة',no_transactions:'لا توجد معاملات بعد',
+      confirm_swap:'تأكيد التبادل',review_tx:'مراجعة قبل التأكيد',
+      you_pay:'تدفع',waiting_confirmation:'في انتظار التأكيد…',
+      tx_success:'اكتملت المعاملة',tx_success_msg:'رموزك في الطريق.',
+      tx_error:'فشلت المعاملة',tx_rejected:'رفض المستخدم',
+      tx_pending:'تم إرسال المعاملة',tx_pending_msg:'في انتظار تأكيد الشبكة…',
+      all_rights:'جميع الحقوق محفوظة',
+      insufficient_bnb:'رصيد BNB غير كافٍ',
+      admin_panel:'لوحة الإدارة',restricted:'مقيّد',
+      owner_wallet_active:'محفظة المالك نشطة',
+      overview:'نظرة عامة',usdt_in_pool:'USDT.z في المجمع',bnb_received:'BNB المستلم',
+      transactions:'المعاملات',usdt_sold:'USDT.z المباع',contract_address:'عنوان العقد',
+      price_config:'تهيئة السعر',live_bnb_price:'سعر BNB المباشر',
+      fetching:'جارٍ التحميل…',direct_price:'سعر USDT.z',ratio_mode:'نسبة BNB ↔ USDT.z',
+      price_of_usdt:'سعر 1 USDT.z',live_bnb_price_short:'سعر BNB المباشر',
+      your_usdt_price:'سعر USDT.z الخاص بك',swap_rate_now:'سعر التبادل الآن',
+      auto_adjusts:'يتكيف تلقائياً إذا تغير سعر BNB',
+      ratio_explain_title:'وضع النسبة:',ratio_label:'BNB داخل → USDT.z خارج',
+      calculated_usdt_price:'سعر USDT.z المحسوب',
+      resulting_rate:'معدل التبادل الناتج',apply_price:'تطبيق السعر',
+      ratio_note:'مثال: 100 BNB → 10 USDT.z = كل USDT.z يساوي 10 BNB.',
+      pool_management:'إدارة المجمع',deposit_usdt:'إيداع USDT.z في المجمع',
+      deposit:'إيداع',
+      withdraw_title:'سحب USDT.z إلى المحفظة',
+      withdraw_desc:'إرجاع جميع USDT.z من المجمع إلى محفظتك.',
+      withdraw_all:'سحب الكل إلى محفظتي',
+      contract_branding:'العقد والعلامة التجارية',smart_contract_address:'عنوان العقد الذكي',
+      contract_desc:'عنوان BSC (0x + 40 hex). تغييره يعيد تهيئة نسخ العقد.',
+      platform_name:'اسم المنصة',token_symbol:'رمز الرمز المميز',
+      apply_branding:'تطبيق العلامة التجارية',bnb_live_price:'سعر BNB (مباشر)',price_label:'سعر',
+      create_token_title:'إنشاء رمز BEP20',create_token_sub:'انشر رمزك الخاص على BNB Smart Chain',
+      create_token_btn:'إنشاء رمز',token_name_label:'اسم الرمز',token_name_hint:'2–50 حرف',
+      token_symbol_label:'الرمز',token_symbol_hint:'2–8 أحرف فقط',
+      token_supply_label:'إجمالي المعروض',token_supply_hint:'1 – 1,000,000,000,000',
+      enable_bridge:'تفعيل الجسر إلى USDT',token_icon_label:'أيقونة الرمز',
+      choose_file:'اختر صورة',icon_gas_warning:'الصورة تتجاوز 50KB. سيكون الغاز أعلى.',
+      creation_fee:'رسوم الإنشاء:',plus_gas:'+ الغاز المقدر',
+      contract_not_configured:'لم يتم نشر العقد بعد. الميزة قادمة قريباً.',
+      create_pool_title:'إنشاء مجمع سيولة',create_pool_sub:'إضافة سيولة على PancakeSwap لرمزك',
+      create_pool_btn:'إنشاء مجمع',pool_fee_label:'رسوم إنشاء المجمع:',
+      pool_pancake_note:'تذهب رموز LP مباشرة إلى محفظتك.',
+      pool_token_addr:'عنوان الرمز',pool_token_amount:'كمية الرمز',pool_bnb_amount:'كمية BNB',
+      bridge_title:'جسر إلى USDT',bridge_sub:'تحويل رموزك إلى USDT عبر PancakeSwap',
+      bridge_fee_label:'رسوم الجسر:',bridge_fee_note:'مطبقة على المبلغ المرسل',
+      bridge_select_token:'اختر رمزاً',bridge_amount:'المبلغ للجسر',
+      bridge_you_receive:'ستستلم (تقديري):',bridge_fee_amount:'الرسوم (2%):',
+      bridge_route:'المسار:',bridge_btn:'جسر إلى USDT',
+      my_tokens_title:'رموزي',my_tokens_sub:'الرموز المنشأة بمحفظتك',
+      my_tokens_empty:'ربط محفظتك لرؤية رموزك.',
+      my_tokens_connect:'ربط محفظتك لرؤية رموزك.',
+      my_tokens_none:'لم تنشئ أي رموز بعد.',
+      refresh:'تحديث',
+      wallet_section_title:'محفظتي',terms_link:'الشروط',
+      flash_token_title:'الرموز الفلاشية',flash_token_sub:'إنشاء رموز مؤقتة مع انتهاء صلاحية تلقائي',
+      flash_how_title:'كيف تعمل الرموز الفلاشية',
+      flash_step1:'اختر وضع الانتهاء: محدود بالوقت أو محدود بالمعاملات.',
+      flash_step2:'املأ تفاصيل الرمز وحدد حد الانتهاء.',
+      flash_step3:'ادفع رسوم الإنشاء وأكد المعاملة في محفظتك.',
+      flash_step4:'يتم نشر الرمز فوراً. عند الوصول للحد، يُلغى الرمز تلقائياً.',
+      flash_mode_label:'وضع الانتهاء',flash_mode_time:'محدود بالوقت',flash_mode_tx:'محدود بالمعاملات',
+      flash_time_label:'المدة (أيام)',flash_time_hint:'1–365 يوم. يصبح الرمز غير صالح بعد هذه المدة.',
+      flash_tx_label:'حد التحويلات',flash_tx_hint:'1–1000 تحويل. يُدمر الرمز عند الوصول للحد.',
+      flash_create_btn:'إنشاء رمز فلاشي',
+      flash_my_title:'رموزي الفلاشية',flash_my_sub:'الرموز الفلاشية المنشأة بمحفظتك',
+      flash_my_empty:'ربط محفظتك لرؤية رموزك الفلاشية.',
+      flash_my_none:'لم تنشئ أي رموز فلاشية بعد.',
+      flash_status_active:'نشط',flash_status_expired:'منتهي',
     },
   },
 
   /*
-   * t(key): Traducción segura con fallback a inglés.
-   * Si la clave no existe en ningún idioma, retorna la clave misma
-   * para que sea visible y fácil de detectar en desarrollo.
+   * t(key): Safe translation with English fallback.
+   * If the key does not exist in any language, returns the key itself
+   * so it is visible and easy to detect during development.
    */
   t(k) {
     return this._dict[STATE.lang]?.[k] ?? this._dict.en[k] ?? k;
   },
 
   /*
-   * toggle(): Alterna idioma y actualiza todo el DOM.
-   * El botón de idioma siempre muestra el OTRO idioma (el que activaría).
+   * toggle(): Cycles through en → es → hi → ar → en and updates the DOM.
+   * The language button always shows the NEXT language code.
    */
   toggle() {
-    STATE.lang = STATE.lang === 'en' ? 'es' : 'en';
+    const order = ['en', 'es', 'hi', 'ar'];
+    const idx = order.indexOf(STATE.lang);
+    STATE.lang = order[(idx + 1) % order.length];
     this.apply();
   },
 
   /*
-   * apply(): Actualiza todos los elementos con data-i18n en el DOM.
-   * Llamado al inicio y en cada toggle de idioma.
+   * apply(): Updates all data-i18n elements in the DOM.
+   * Called on load and on every language toggle.
+   * Also applies dir="rtl" for Arabic (right-to-left support).
    */
   apply() {
+    // RTL support for Arabic
+    document.documentElement.dir = STATE.lang === 'ar' ? 'rtl' : 'ltr';
+
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const k = el.getAttribute('data-i18n');
       const val = this.t(k);
       if (val) el.textContent = val;
     });
+
+    // Button shows the next language in the cycle
+    const order = ['en', 'es', 'hi', 'ar'];
+    const idx = order.indexOf(STATE.lang);
+    const next = order[(idx + 1) % order.length].toUpperCase();
     const langBtn = document.getElementById('langBtn');
-    if (langBtn) langBtn.textContent = STATE.lang === 'en' ? 'ES' : 'EN';
-    // Re-evaluar el botón de swap para que su texto también se traduzca
+    if (langBtn) langBtn.textContent = next;
+
+    // Re-render navigation labels for the current language
+    if (typeof MENU !== 'undefined') MENU.applyLang();
+
+    // Re-evaluate the swap button text
     if (typeof SWAP !== 'undefined') SWAP.updateBtn();
   },
 };
 
-// Shortcut global para uso conveniente en templates
+// Global shortcut for use in templates
 const t = k => LANG.t(k);
 
 

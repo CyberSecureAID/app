@@ -12,18 +12,16 @@ const TOKEN_CREATOR = {
     sec.innerHTML = `
       <div class="mi-section-card">
         <div class="mi-section-header">
-          <span class="mi-section-icon">🪙</span>
           <div>
             <div class="mi-section-title" data-i18n="create_token_title">Crear Token BEP20</div>
             <div class="mi-section-sub" data-i18n="create_token_sub">Despliega tu propio token en BNB Smart Chain</div>
           </div>
         </div>
         <div id="tokenCreatorNotConfigured" class="mi-notice mi-notice-warn" style="display:none">
-          ⚠️ <span data-i18n="contract_not_configured">El contrato aún no ha sido deployado. Funcionalidad disponible próximamente.</span>
+          <span data-i18n="contract_not_configured">El contrato aún no ha sido deployado. Funcionalidad disponible próximamente.</span>
         </div>
         <div id="tokenCreatorForm">
           <div class="mi-fee-banner">
-            <span>💰</span>
             <span data-i18n="creation_fee">Fee de creación:</span>
             <strong>${CONFIG.TOKEN_CREATION_FEE_BNB} BNB</strong>
             <span class="mi-fee-note" data-i18n="plus_gas">+ gas estimado</span>
@@ -53,19 +51,19 @@ const TOKEN_CREATOR = {
             <label class="mi-label" data-i18n="token_icon_label">Ícono del Token</label>
             <div class="mi-file-wrap">
               <label class="mi-file-btn" for="tcIconFile">
-                📁 <span data-i18n="choose_file">Elegir imagen</span>
+                <span data-i18n="choose_file">Elegir imagen</span>
               </label>
               <input type="file" id="tcIconFile" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="display:none">
               <span id="tcIconFileName" class="mi-file-name">—</span>
             </div>
             <div id="tcIconWarn" class="mi-notice mi-notice-warn" style="display:none">
-              ⚠️ <span data-i18n="icon_gas_warning">La imagen supera 50KB. El gas será más alto.</span>
+              <span data-i18n="icon_gas_warning">La imagen supera 50KB. El gas será más alto.</span>
             </div>
             <div id="tcIconPreview" class="mi-icon-preview"></div>
           </div>
           <div id="tcValidationMsg" class="mi-notice mi-notice-err" style="display:none"></div>
           <button id="tcCreateBtn" class="btn btn-iris btn-full btn-lg mt10" data-i18n="create_token_btn">
-            🪙 Crear Token
+            Crear Token
           </button>
           <div id="tcStatusMsg" class="mi-status" style="display:none"></div>
         </div>

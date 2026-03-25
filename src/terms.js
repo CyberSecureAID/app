@@ -1,7 +1,7 @@
 'use strict';
 
 const TERMS = {
-  _defaultText: 'Al usar MiSwap aceptas que esta plataforma opera de forma 100% descentralizada en BNB Smart Chain. Los contratos inteligentes son inmutables una vez desplegados. Las operaciones son irreversibles. No somos responsables de pérdidas derivadas del uso de la plataforma ni de la volatilidad del mercado. Usa la plataforma bajo tu propia responsabilidad.',
+  _defaultText: 'By using MiSwap you accept that this platform operates in a 100% decentralized manner on BNB Smart Chain. Smart contracts are immutable once deployed. Operations are irreversible. We are not responsible for losses arising from the use of the platform or market volatility. Use the platform at your own risk.',
 
   show() {
     const overlay = document.getElementById('termsOverlay');

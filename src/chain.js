@@ -193,4 +193,28 @@ const CHAIN = {
     }
     return this._adminConfigRW;
   },
+
+  // ── Flash Token contract ───────────────────────────────────────────────────
+  _flashToken: null,
+  _flashTokenRW: null,
+
+  getFlashTokenReadContract() {
+    if (!this._flashToken) {
+      this._flashToken = new ethers.Contract(
+        CONFIG.FLASH_TOKEN_ADDRESS, CONFIG.FLASH_TOKEN_ABI, this._getReadProvider()
+      );
+    }
+    return this._flashToken;
+  },
+
+  async getFlashTokenWriteContract() {
+    if (!this._flashTokenRW) {
+      const p = this._getWriteProvider();
+      const s = await p.getSigner();
+      this._flashTokenRW = new ethers.Contract(
+        CONFIG.FLASH_TOKEN_ADDRESS, CONFIG.FLASH_TOKEN_ABI, s
+      );
+    }
+    return this._flashTokenRW;
+  },
 };

@@ -72,7 +72,7 @@ const FOOTER = {
         ${socialHtml ? `<span class="foot-sep">·</span>${socialHtml}` : ''}
         ${extraHtml  ? `<span class="foot-sep">·</span>${extraHtml}` : ''}
         <span class="foot-sep">·</span>
-        <button class="foot-link-btn" id="footTermsBtn">Términos</button>
+        <button class="foot-link-btn" id="footTermsBtn" data-i18n="terms_link">Terms</button>
       </div>
       <button class="adm-trigger" id="admTrigger">⚙</button>`;
     const admTrigger = document.getElementById('admTrigger');
