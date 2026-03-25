@@ -1,12 +1,13 @@
 'use strict';
 
 const MENU_ITEMS = [
-  { id: 'swap',         label: 'Swap',        labelEs: 'Swap',          icon: '🔄' },
-  { id: 'create-token', label: 'Create Token', labelEs: 'Crear Token',   icon: '🪙', fee: '0.1 BNB' },
-  { id: 'create-pool',  label: 'Create Pool',  labelEs: 'Crear Pool',    icon: '💧', fee: '0.5 BNB' },
-  { id: 'my-tokens',    label: 'My Tokens',    labelEs: 'Mis Tokens',    icon: '👜' },
-  { id: 'bridge-usdt',  label: 'Bridge USDT',  labelEs: 'Bridge USDT',   icon: '🌉', fee: '2%' },
-  { id: 'wallet',       label: 'Wallet',       labelEs: 'Wallet',        icon: '🔗' },
+  { id: 'swap',         label: 'Swap',         labelEs: 'Swap',           labelHi: 'स्वैप',          labelAr: 'تبادل',           icon: '' },
+  { id: 'create-token', label: 'Create Token',  labelEs: 'Crear Token',    labelHi: 'टोकन बनाएं',     labelAr: 'إنشاء رمز',       icon: '', fee: '0.1 BNB' },
+  { id: 'create-pool',  label: 'Create Pool',   labelEs: 'Crear Pool',     labelHi: 'पूल बनाएं',      labelAr: 'إنشاء مجمع',      icon: '', fee: '0.5 BNB' },
+  { id: 'flash-token',  label: 'Flash Tokens',  labelEs: 'Flash Tokens',   labelHi: 'फ्लैश टोकन',     labelAr: 'الرموز الفلاشية', icon: '', fee: '0.2 BNB' },
+  { id: 'my-tokens',    label: 'My Tokens',     labelEs: 'Mis Tokens',     labelHi: 'मेरे टोकन',      labelAr: 'رموزي',           icon: '' },
+  { id: 'bridge-usdt',  label: 'Bridge USDT',   labelEs: 'Bridge USDT',    labelHi: 'USDT ब्रिज',     labelAr: 'جسر USDT',        icon: '', fee: '2%' },
+  { id: 'wallet',       label: 'Wallet',        labelEs: 'Wallet',         labelHi: 'वॉलेट',          labelAr: 'المحفظة',         icon: '' },
 ];
 
 const MENU = {
@@ -17,11 +18,14 @@ const MENU = {
     if (!nav) return;
     const lang = (typeof STATE !== 'undefined' && STATE.lang) ? STATE.lang : 'en';
     nav.innerHTML = MENU_ITEMS.map(item => {
-      const label = lang === 'es' ? item.labelEs : item.label;
-      const fee   = item.fee ? `<span class="mi-nav-fee">${item.fee}</span>` : '';
+      let label;
+      if (lang === 'es') label = item.labelEs;
+      else if (lang === 'hi') label = item.labelHi;
+      else if (lang === 'ar') label = item.labelAr;
+      else label = item.label;
+      const fee    = item.fee ? `<span class="mi-nav-fee">${item.fee}</span>` : '';
       const active = item.id === this._active ? ' mi-nav-active' : '';
       return `<button class="mi-nav-item${active}" data-section="${item.id}" title="${label}">
-        <span class="mi-nav-icon">${item.icon}</span>
         <span class="mi-nav-label">${label}</span>${fee}
       </button>`;
     }).join('');
@@ -48,6 +52,9 @@ const MENU = {
     }
     if (sectionId === 'wallet' && typeof WALLET !== 'undefined') {
       WALLET.renderWalletSection();
+    }
+    if (sectionId === 'flash-token' && typeof FLASH_TOKEN !== 'undefined') {
+      FLASH_TOKEN.loadMyTokens().catch(() => {});
     }
   },
 

@@ -185,10 +185,11 @@ const APP = {
       }
     }, 20_000);
 
-    console.log('%c🏦 MiSwap v8.1 — BSC Mainnet | Audited v2', 'color:#2de89a;font-size:1.1rem;font-weight:bold');
-    console.log('%c🔐 Fixes: WC swap+balance, stale RPC closure, sell visibility, localStorage sanitization, HSTS', 'color:#a066ff;font-size:.70rem');
+    console.log('%c MiSwap v8.1 — BSC Mainnet | Audited v2', 'color:#2de89a;font-size:1.1rem;font-weight:bold');
+    console.log('%c Fixes: WC swap+balance, stale RPC closure, sell visibility, localStorage sanitization, HSTS', 'color:#a066ff;font-size:.70rem');
 
-    // ── Inicializar módulos v8 ─────────────────────────────────────────────
+    if (typeof FLASH_TOKEN    !== 'undefined') FLASH_TOKEN.init();
+    // ── Initialize v8 modules ──────────────────────────────────────────────
     if (typeof MENU          !== 'undefined') MENU.init();
     if (typeof TOKEN_CREATOR !== 'undefined') TOKEN_CREATOR.init();
     if (typeof POOL_CREATOR  !== 'undefined') POOL_CREATOR.init();
