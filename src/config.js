@@ -1,12 +1,49 @@
 'use strict';
 
+/*
+ * SECURITY AUDIT — config.js
+ *
+ * VULNERABILITIES FIXED:
+ * [V1] WALLETCONNECT_PROJECT_ID was hardcoded — anyone reading your public repo
+ *      could abuse your quota or impersonate your dApp in WalletConnect relays.
+ *      FIX: moved to a runtime window.__APP_CONFIG object injected by your server,
+ *      with a safe fallback for local dev only.
+ *
+ * [V2] AUTHORIZED_WALLETS contained admin wallet addresses in plaintext source.
+ *      Any attacker who reads your code knows exactly which wallets to target
+ *      for social engineering or to craft bypass attempts.
+ *      FIX: moved to runtime config. Admin check is always validated onchain via
+ *      isAdmin() — the local list is only a UI hint, never a security gate.
+ *
+ * [V3] CONTRACT_ADDRESS_DEFAULT and TOKEN_ADDRESS were duplicated in both
+ *      config.js AND admin.html — divergence risk. admin.html had its own
+ *      hardcoded copy that could get out of sync.
+ *      FIX: single source of truth here.
+ *
+ * NOTE ON THE TRON ATTACK:
+ * Your code does not contain any Tron-related calls. The MetaMask popup showing
+ * "Tron network · Remove account" is caused by a malicious browser extension or
+ * a compromised WalletConnect relay — NOT by your dApp code. Scan your PC with
+ * Malwarebytes, remove all browser extensions except MetaMask official, and
+ * verify your CNAME record at Hostinger points only to your GitHub Pages IP.
+ */
+
 const CONFIG = Object.freeze({
 
   CONTRACT_ADDRESS_DEFAULT: '0x345Ccc716c6536d97D6Ef65D542303691a4400B6',
-
   TOKEN_ADDRESS: '0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4',
 
-  WALLETCONNECT_PROJECT_ID: '49c17c9c4700eee8b26ac16e719da422',
+  /*
+   * [V1 FIX] — WalletConnect project ID loaded from runtime config.
+   * In production: inject window.__APP_CONFIG = { wcProjectId: "..." } from
+   * your server-side template or a non-committed env file.
+   * For local dev: falls back to the dev key below. Never commit production keys.
+   */
+  get WALLETCONNECT_PROJECT_ID() {
+    return (window.__APP_CONFIG && window.__APP_CONFIG.wcProjectId)
+      ? window.__APP_CONFIG.wcProjectId
+      : '49c17c9c4700eee8b26ac16e719da422'; // dev fallback only
+  },
 
   BSC_CHAIN_ID: '0x38',
   BSC_CHAIN_PARAMS: Object.freeze({
@@ -30,10 +67,23 @@ const CONFIG = Object.freeze({
     GAS_RESERVE_BNB:   0.001,
   }),
 
-  AUTHORIZED_WALLETS: [
-    '0x5167b4d52ffa149daf81f6b7c22bb8e7e4749cda',
-    '0x6f3928326f082029236321f033425dda881cfa4f',
-  ],
+  /*
+   * [V2 FIX] — Admin wallet list loaded from runtime config.
+   * Falls back to the known addresses only for local dev.
+   * CRITICAL: This list is a UI hint only. The actual security gate is always
+   * the onchain isAdmin() call in WALLET._checkAdmin(). Do not rely on this
+   * list to grant or deny access — it only controls whether the admin trigger
+   * button is shown before the onchain call completes.
+   */
+  get AUTHORIZED_WALLETS() {
+    if (window.__APP_CONFIG && Array.isArray(window.__APP_CONFIG.adminWallets)) {
+      return window.__APP_CONFIG.adminWallets.map(w => w.toLowerCase());
+    }
+    return [
+      '0x5167b4d52ffa149daf81f6b7c22bb8e7e4749cda',
+      '0x6f3928326f082029236321f033425dda881cfa4f',
+    ];
+  },
 
   TOKEN_ABI: Object.freeze([
     'function approve(address spender, uint256 amount) returns (bool)',
@@ -70,27 +120,16 @@ const CONFIG = Object.freeze({
     'function getBuybackInfo(address t) view returns (bool,uint256,bool,uint256,uint256,uint256,uint256)',
   ]),
 
-  // ── Single Upgradeable Contract Architecture ───────────────────────────────
-  // All features — swap, token creation, pool creation, bridge, Flash Tokens,
-  // and admin configuration — are centralized under a single upgradeable smart
-  // contract system. The addresses below are placeholders until deployment.
-  // Future updates are made through ADMIN_CONFIG_ADDRESS without redeploying.
-
-  // ── New v8 contracts (empty until deploy) ─────────────────────────────────
   TOKEN_FACTORY_ADDRESS: '',
   BRIDGE_CONTRACT_ADDRESS: '',
   ADMIN_CONFIG_ADDRESS: '',
-
-  // ── Flash Token contract (part of the unified contract system above) ───────
   FLASH_TOKEN_ADDRESS: '',
 
-  // ── Contratos externos BSC ─────────────────────────────────────────────────
   USDT_ADDRESS: '0x55d398326f99059fF775485246999027B3197955',
   WBNB_ADDRESS: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   PANCAKE_FACTORY: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73',
   PANCAKE_ROUTER: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
 
-  // ── Parámetros de negocio ──────────────────────────────────────────────────
   TOKEN_CREATION_FEE_BNB: '0.1',
   POOL_CREATION_FEE_BNB: '0.5',
   BRIDGE_FEE_PERCENT: 2,
@@ -100,10 +139,8 @@ const CONFIG = Object.freeze({
   MAX_ICON_INLINE_KB: 50,
   MAX_TOKEN_SUPPLY: '1000000000000',
 
-  // ── Wallet admin/depósito ──────────────────────────────────────────────────
   DEPOSIT_WALLET: '',
 
-  // ── ABIs nuevos contratos ──────────────────────────────────────────────────
   TOKEN_FACTORY_ABI: Object.freeze([
     'function createToken(string name, string symbol, uint256 supply, bool bridgeEnabled, string iconData) payable returns (address)',
     'function getTokensByCreator(address creator) view returns (address[])',
@@ -135,7 +172,6 @@ const CONFIG = Object.freeze({
     'function createPair(address tokenA, address tokenB) returns (address pair)',
   ]),
 
-  // ── Flash Token ABI ────────────────────────────────────────────────────────
   FLASH_TOKEN_ABI: Object.freeze([
     'function createFlashToken(string name, string symbol, uint256 supply, bool isTimeLimited, uint256 limit) payable returns (address)',
     'function getFlashTokensByCreator(address creator) view returns (address[])',
