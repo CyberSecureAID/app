@@ -2,22 +2,11 @@
 
 /*
  * FLASH_TOKEN module — Temporary tokens on BNB Smart Chain.
- *
- * Supports two expiration modes:
- *   Mode A — Time-Limited:        token becomes invalid after N days.
- *   Mode B — Transaction-Limited: token is destroyed after N transfers.
- *
- * All functionality is handled by the single centralized smart contract
- * at CONFIG.FLASH_TOKEN_ADDRESS (part of the unified upgradeable contract
- * architecture — see config.js for details).
- *
- * NOTE: Content configuration (fees, limits, text) can be managed from the
- * admin panel (ADMIN_CONFIG_ADDRESS) and updated in future versions without
- * redeploying.
+ * FIX: Sección "How Flash Tokens Work" correctamente centrada y espaciada.
  */
 
 const FLASH_TOKEN = {
-  _mode: 'time', // 'time' | 'tx'
+  _mode: 'time',
 
   render() {
     const sec = document.getElementById('section-flash-token');
@@ -33,8 +22,8 @@ const FLASH_TOKEN = {
           <button class="info-btn" data-info="flash-token">ℹ Info</button>
         </div>
 
-        <!-- ── How it works ── -->
-        <div class="mi-info-box" style="margin-bottom:20px">
+        <!-- FIX: "How Flash Tokens Work" — centrado, lista ordenada con buen espaciado -->
+        <div class="mi-info-box">
           <div class="mi-info-title" data-i18n="flash_how_title">How Flash Tokens Work</div>
           <ol class="mi-steps">
             <li data-i18n="flash_step1">Choose an expiration mode: time-limited or transaction-limited.</li>
@@ -44,43 +33,35 @@ const FLASH_TOKEN = {
           </ol>
         </div>
 
-        <!-- ── Not configured notice ── -->
         <div id="flashTokenNotConfigured" class="mi-notice mi-notice-warn" style="display:none">
           <span data-i18n="contract_not_configured">Contract not yet deployed. Feature coming soon.</span>
         </div>
 
-        <!-- ── Creation form ── -->
         <div id="flashTokenForm">
-
-          <!-- Fee banner -->
           <div class="mi-fee-banner">
             <span data-i18n="creation_fee">Creation fee:</span>
             <strong>0.2 BNB</strong>
             <span class="mi-fee-note" data-i18n="plus_gas">+ estimated gas</span>
           </div>
 
-          <!-- Token Name -->
           <div class="mi-field">
             <label class="mi-label" data-i18n="token_name_label">Token Name</label>
             <input type="text" id="ftName" class="mi-input" placeholder="e.g. Flash USD" maxlength="50">
             <div class="mi-hint" data-i18n="token_name_hint">2–50 characters</div>
           </div>
 
-          <!-- Symbol -->
           <div class="mi-field">
             <label class="mi-label" data-i18n="token_symbol_label">Symbol</label>
             <input type="text" id="ftSymbol" class="mi-input" placeholder="e.g. FUSD" maxlength="8" style="text-transform:uppercase">
             <div class="mi-hint" data-i18n="token_symbol_hint">2–8 letters only</div>
           </div>
 
-          <!-- Total Supply -->
           <div class="mi-field">
             <label class="mi-label" data-i18n="token_supply_label">Total Supply</label>
             <input type="number" id="ftSupply" class="mi-input" placeholder="e.g. 1000000" min="1" max="1000000000000">
             <div class="mi-hint" data-i18n="token_supply_hint">1 – 1,000,000,000,000</div>
           </div>
 
-          <!-- Expiration Mode -->
           <div class="mi-field">
             <label class="mi-label" data-i18n="flash_mode_label">Expiration Mode</label>
             <div class="mi-seg-ctrl" id="ftModeCtrl">
@@ -89,7 +70,6 @@ const FLASH_TOKEN = {
             </div>
           </div>
 
-          <!-- Time limit (shown when mode = time) -->
           <div class="mi-field" id="ftTimeLimitWrap">
             <label class="mi-label" data-i18n="flash_time_label">Duration (days)</label>
             <div class="mi-seg-ctrl">
@@ -102,7 +82,6 @@ const FLASH_TOKEN = {
             <div class="mi-hint" data-i18n="flash_time_hint">1–365 days. Token becomes invalid after this period.</div>
           </div>
 
-          <!-- Transaction limit (shown when mode = tx) -->
           <div class="mi-field" id="ftTxLimitWrap" style="display:none">
             <label class="mi-label" data-i18n="flash_tx_label">Transfer Limit</label>
             <div class="mi-seg-ctrl">
@@ -115,10 +94,8 @@ const FLASH_TOKEN = {
             <div class="mi-hint" data-i18n="flash_tx_hint">1–1000 transfers. Token is destroyed once the limit is reached.</div>
           </div>
 
-          <!-- Validation message -->
           <div id="ftValidationMsg" class="mi-notice mi-notice-err" style="display:none"></div>
 
-          <!-- Create button -->
           <button id="ftCreateBtn" class="btn btn-iris btn-full btn-lg mt10" data-i18n="flash_create_btn">
             Create Flash Token
           </button>
@@ -126,8 +103,7 @@ const FLASH_TOKEN = {
         </div>
       </div>
 
-      <!-- ── My Flash Tokens ── -->
-      <div class="mi-section-card" style="margin-top:16px">
+      <div class="mi-section-card" style="margin-top:0">
         <div class="mi-section-header">
           <div>
             <div class="mi-section-title" data-i18n="flash_my_title">My Flash Tokens</div>
@@ -135,7 +111,7 @@ const FLASH_TOKEN = {
           </div>
         </div>
         <div id="ftList">
-          <div class="tx-empty" data-i18n="flash_my_empty">Connect your wallet to see your Flash Tokens.</div>
+          <div class="mi-empty" data-i18n="flash_my_empty">Connect your wallet to see your Flash Tokens.</div>
         </div>
         <button id="ftRefreshBtn" class="btn btn-gl btn-full mt10" data-i18n="refresh">Refresh</button>
       </div>`;
@@ -145,13 +121,11 @@ const FLASH_TOKEN = {
   },
 
   _bindEvents() {
-    // Mode toggle
     const modeTime = document.getElementById('ftModeTime');
     const modeTx   = document.getElementById('ftModeTx');
     if (modeTime) modeTime.addEventListener('click', () => this._setMode('time'));
     if (modeTx)   modeTx.addEventListener('click',   () => this._setMode('tx'));
 
-    // Preset day buttons
     document.querySelectorAll('#ftTimeLimitWrap .mi-seg-btn[data-days]').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('#ftTimeLimitWrap .mi-seg-btn').forEach(b => b.classList.remove('mi-seg-active'));
@@ -161,7 +135,6 @@ const FLASH_TOKEN = {
       });
     });
 
-    // Preset tx buttons
     document.querySelectorAll('#ftTxLimitWrap .mi-seg-btn[data-txs]').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('#ftTxLimitWrap .mi-seg-btn').forEach(b => b.classList.remove('mi-seg-active'));
@@ -171,15 +144,12 @@ const FLASH_TOKEN = {
       });
     });
 
-    // Auto-uppercase symbol
     const symEl = document.getElementById('ftSymbol');
     if (symEl) symEl.addEventListener('input', function() { this.value = this.value.toUpperCase(); });
 
-    // Create button
     const createBtn = document.getElementById('ftCreateBtn');
     if (createBtn) createBtn.addEventListener('click', () => this.create());
 
-    // Refresh button
     const refreshBtn = document.getElementById('ftRefreshBtn');
     if (refreshBtn) refreshBtn.addEventListener('click', () => this.loadMyTokens());
   },
@@ -200,26 +170,16 @@ const FLASH_TOKEN = {
     const name   = (document.getElementById('ftName')   || {}).value || '';
     const symbol = (document.getElementById('ftSymbol') || {}).value || '';
     const supply = (document.getElementById('ftSupply') || {}).value || '';
-    if (name.trim().length < 2 || name.trim().length > 50) {
-      return LANG.t('token_name_hint');
-    }
-    if (!/^[A-Za-z]{2,8}$/.test(symbol)) {
-      return LANG.t('token_symbol_hint');
-    }
+    if (name.trim().length < 2 || name.trim().length > 50) return LANG.t('token_name_hint');
+    if (!/^[A-Za-z]{2,8}$/.test(symbol)) return LANG.t('token_symbol_hint');
     const supplyNum = Number(supply);
-    if (!Number.isFinite(supplyNum) || supplyNum < 1 || supplyNum > 1_000_000_000_000) {
-      return LANG.t('token_supply_hint');
-    }
+    if (!Number.isFinite(supplyNum) || supplyNum < 1 || supplyNum > 1_000_000_000_000) return LANG.t('token_supply_hint');
     if (this._mode === 'time') {
       const days = Number((document.getElementById('ftDays') || {}).value || 0);
-      if (!Number.isFinite(days) || days < 1 || days > 365) {
-        return LANG.t('flash_time_hint');
-      }
+      if (!Number.isFinite(days) || days < 1 || days > 365) return LANG.t('flash_time_hint');
     } else {
       const txs = Number((document.getElementById('ftTxs') || {}).value || 0);
-      if (!Number.isFinite(txs) || txs < 1 || txs > 1000) {
-        return LANG.t('flash_tx_hint');
-      }
+      if (!Number.isFinite(txs) || txs < 1 || txs > 1000) return LANG.t('flash_tx_hint');
     }
     return null;
   },
@@ -252,7 +212,6 @@ const FLASH_TOKEN = {
       RISK.show(() => this.create());
       return;
     }
-
     const errMsg = this._validate();
     if (errMsg) { this._setValidation(errMsg); return; }
     this._setValidation('');
@@ -272,13 +231,10 @@ const FLASH_TOKEN = {
     try {
       const contract = await CHAIN.getFlashTokenWriteContract();
       const fee = ethers.parseEther('0.2');
-      const tx  = await contract.createFlashToken(
-        name, symbol, supply, isTime, limit, { value: fee }
-      );
+      const tx  = await contract.createFlashToken(name, symbol, supply, isTime, limit, { value: fee });
       this._setStatus('Transaction submitted. Waiting for confirmation…', 'info');
       await tx.wait();
       this._setStatus(`Flash token ${symbol} created successfully!`, 'ok');
-      // Clear form
       ['ftName', 'ftSymbol', 'ftSupply', 'ftDays', 'ftTxs'].forEach(id => {
         const el = document.getElementById(id); if (el) el.value = '';
       });
@@ -300,28 +256,26 @@ const FLASH_TOKEN = {
   async loadMyTokens() {
     const listEl = document.getElementById('ftList');
     if (!listEl) return;
-
     if (!STATE.walletConnected || !STATE.walletAddr) {
-      listEl.innerHTML = `<div class="tx-empty" data-i18n="flash_my_empty">${LANG.t('flash_my_empty')}</div>`;
+      listEl.innerHTML = `<div class="mi-empty" data-i18n="flash_my_empty">${LANG.t('flash_my_empty')}</div>`;
       return;
     }
     if (!CONFIG.FLASH_TOKEN_ADDRESS) {
-      listEl.innerHTML = `<div class="tx-empty">${LANG.t('contract_not_configured')}</div>`;
+      listEl.innerHTML = `<div class="mi-empty">${LANG.t('contract_not_configured')}</div>`;
       return;
     }
-
-    listEl.innerHTML = '<div class="tx-empty">Loading…</div>';
+    listEl.innerHTML = '<div class="mi-empty">Loading…</div>';
     try {
       const contract = CHAIN.getFlashTokenReadContract();
       const tokens   = await contract.getFlashTokensByCreator(STATE.walletAddr);
       if (!tokens || tokens.length === 0) {
-        listEl.innerHTML = `<div class="tx-empty" data-i18n="flash_my_none">${LANG.t('flash_my_none')}</div>`;
+        listEl.innerHTML = `<div class="mi-empty" data-i18n="flash_my_none">${LANG.t('flash_my_none')}</div>`;
         return;
       }
       const items = await Promise.all(tokens.map(addr => this._fetchTokenInfo(contract, addr)));
       listEl.innerHTML = items.map(info => this._renderTokenRow(info)).join('');
     } catch (_) {
-      listEl.innerHTML = `<div class="tx-empty">${LANG.t('contract_not_configured')}</div>`;
+      listEl.innerHTML = `<div class="mi-empty">${LANG.t('contract_not_configured')}</div>`;
     }
   },
 
