@@ -8,13 +8,12 @@
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
 <title>MiSwap v8.0</title>
-<!-- FIX: Favicon 🏦 correctamente codificado -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- FIX: Tipografía profesional — Outfit + DM Sans + IBM Plex Mono -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="./src/styles.css">
+<link rel="stylesheet" href="./src/styles-patch.css">
 </head>
 <body>
 
@@ -27,7 +26,6 @@
     <span class="logo-name" id="logoName">MiSwap</span>
   </div>
 
-  <!-- FIX: Hamburger para móvil -->
   <button class="hdr-hamburger" id="hdrHamburger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -39,7 +37,6 @@
       <span class="btchg" id="btChg"></span>
     </div>
     <div class="net-pill" id="netPill"><div class="nd"></div>BSC</div>
-    <!-- FIX: Dropdown de idioma con lista desplegable -->
     <div class="lang-dropdown" id="langDropdown">
       <button class="lang-btn" id="langBtn" aria-haspopup="listbox" aria-expanded="false">EN ▾</button>
       <div class="lang-menu" id="langMenu" role="listbox">
@@ -49,10 +46,8 @@
         <button class="lang-opt" data-lang="ar">🇸🇦 العربية</button>
       </div>
     </div>
-    <!-- FIX: Chip de wallet con icono visible solo si está conectado -->
     <div class="wal-chip" id="walChip" style="display:none">
       <span class="wal-dot"></span>
-      <!-- FIX: walEmoji solo visible cuando wallet conectada -->
       <span id="walEmoji" class="wal-icon"></span>
       <span class="wal-addr" id="walAddr">—</span>
       <span class="wal-bal" id="walBal">—</span>
@@ -80,7 +75,6 @@
           </button>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <!-- FIX: Botón Info discreto en sección Swap -->
           <button class="info-btn" data-info="swap">ℹ Info</button>
           <div class="slip-toggle" id="slipToggle">
             <span data-i18n="slippage">Slippage</span>: <strong id="slipDisp">0.1%</strong>
@@ -239,12 +233,22 @@
 
 <!-- ════ FOOTER ════════════════════════════════════════════════════════════ -->
 <footer id="dynamicFooter">
-  <div class="foot-main">
-    <span id="footPlatformName">MiSwap</span>
-    <span class="foot-sep">·</span>
-    <span>BSC Mainnet</span>
-    <span class="foot-sep">·</span>
-    <span data-i18n="all_rights">All rights reserved</span>
+  <!-- Rendered by footer.js — compact mode with modal buttons only -->
+  <div class="foot-compact">
+    <div class="foot-compact-left">
+      <span class="foot-brand" id="footPlatformName">MiSwap</span>
+      <span class="foot-sep-dot">·</span>
+      <span class="foot-network">BSC Mainnet</span>
+      <span class="foot-sep-dot">·</span>
+      <span class="foot-copy">All rights reserved</span>
+    </div>
+    <div class="foot-compact-links">
+      <button class="foot-modal-btn" id="footAboutBtn">About Us</button>
+      <span class="foot-sep-dot">·</span>
+      <button class="foot-modal-btn" id="footDisclaimerBtn">Disclaimer</button>
+      <span class="foot-sep-dot">·</span>
+      <button class="foot-modal-btn" id="footTermsBtn">Terms</button>
+    </div>
   </div>
   <button class="adm-trigger" id="admTrigger">⚙</button>
 </footer>
@@ -253,7 +257,7 @@
 <div class="overlay" id="termsOverlay">
   <div class="modal">
     <button class="modal-x" id="termsCloseBtn">✕</button>
-    <div class="modal-title">📜 Términos y Condiciones</div>
+    <div class="modal-title">📜 Terms &amp; Conditions</div>
     <div class="mi-modal-body" id="termsBody"></div>
   </div>
 </div>
@@ -261,17 +265,17 @@
 <div class="overlay" id="riskOverlay">
   <div class="modal">
     <button class="modal-x" id="riskCloseBtn">✕</button>
-    <div class="modal-title">⚠️ Aviso de Riesgo</div>
+    <div class="modal-title">⚠️ Risk Disclaimer</div>
     <div class="mi-modal-body" id="riskBody"></div>
     <label class="mi-risk-accept-wrap">
       <input type="checkbox" id="riskCheckbox">
-      <span class="mi-checkbox-label">He leído y acepto los riesgos de operar en esta plataforma</span>
+      <span class="mi-checkbox-label">I have read and accept the risks of operating on this platform</span>
     </label>
-    <button id="riskAcceptBtn" class="btn btn-ac btn-full mt10" disabled>✅ Acepto y Continúo</button>
+    <button id="riskAcceptBtn" class="btn btn-ac btn-full mt10" disabled>✅ Accept &amp; Continue</button>
   </div>
 </div>
 
-<!-- FIX: Modal de conexión de wallet con iconos visibles -->
+<!-- Wallet connection modal — OKX icon fixed to 🆗 -->
 <div class="overlay" id="walOverlay">
   <div class="modal">
     <button class="modal-x">✕</button>
@@ -293,8 +297,9 @@
       <div class="woico woico-coinbase">🔵</div>
       <div><div class="woname">Coinbase Wallet</div><div class="wodesc">Browser extension &amp; mobile</div></div>
     </div>
+    <!-- FIX #4: OKX icon changed to 🆗 -->
     <div class="wal-opt" id="walOptOKX">
-      <div class="woico woico-okx">⬛</div>
+      <div class="woico woico-okx">🆗</div>
       <div><div class="woname">OKX Wallet</div><div class="wodesc">Browser extension &amp; mobile</div></div>
     </div>
   </div>
@@ -464,7 +469,7 @@
 
   <!-- ④ CONTRATO Y MARCA -->
   <div class="asec">
-    <div class="asec-title"><span class="asec-icon">⚙</span> <span data-i18n="contract_branding">Contract & Branding</span> <button class="info-btn" data-info="branding">ℹ Info</button></div>
+    <div class="asec-title"><span class="asec-icon">⚙</span> <span data-i18n="contract_branding">Contract &amp; Branding</span> <button class="info-btn" data-info="branding">ℹ Info</button></div>
     <div class="afld">
       <label class="albl" data-i18n="smart_contract_address">Smart Contract Address</label>
       <input type="text" class="ainp" id="brandContract" value="0x345Ccc716c6536d97D6Ef65D542303691a4400B6" placeholder="0x…">
@@ -511,41 +516,20 @@
       <input type="text" class="ainp" id="taxReceiverWallet" placeholder="0x…" maxlength="42">
     </div>
     <div class="tax-grid">
-      <div class="tax-row">
-        <span class="tax-lbl" data-i18n="admin_tax_create_token">Create Token (%)</span>
-        <div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxCreateToken" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div>
-      </div>
-      <div class="tax-row">
-        <span class="tax-lbl" data-i18n="admin_tax_flash_token">Create Flash Token (%)</span>
-        <div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxFlashToken" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div>
-      </div>
-      <div class="tax-row">
-        <span class="tax-lbl" data-i18n="admin_tax_swap">Swap (%)</span>
-        <div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxSwap" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div>
-      </div>
-      <div class="tax-row">
-        <span class="tax-lbl" data-i18n="admin_tax_bridge">Bridge USDT (%)</span>
-        <div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxBridge" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div>
-      </div>
-      <div class="tax-row">
-        <span class="tax-lbl" data-i18n="admin_tax_pool">Create Pool (%)</span>
-        <div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxPool" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div>
-      </div>
-      <div class="tax-row">
-        <span class="tax-lbl" data-i18n="admin_tax_sell">Sell Token (%)</span>
-        <div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxSell" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div>
-      </div>
-      <div class="tax-row">
-        <span class="tax-lbl" data-i18n="admin_tax_image">Upload Image (%)</span>
-        <div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxImage" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div>
-      </div>
+      <div class="tax-row"><span class="tax-lbl" data-i18n="admin_tax_create_token">Create Token (%)</span><div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxCreateToken" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div></div>
+      <div class="tax-row"><span class="tax-lbl" data-i18n="admin_tax_flash_token">Create Flash Token (%)</span><div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxFlashToken" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div></div>
+      <div class="tax-row"><span class="tax-lbl" data-i18n="admin_tax_swap">Swap (%)</span><div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxSwap" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div></div>
+      <div class="tax-row"><span class="tax-lbl" data-i18n="admin_tax_bridge">Bridge USDT (%)</span><div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxBridge" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div></div>
+      <div class="tax-row"><span class="tax-lbl" data-i18n="admin_tax_pool">Create Pool (%)</span><div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxPool" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div></div>
+      <div class="tax-row"><span class="tax-lbl" data-i18n="admin_tax_sell">Sell Token (%)</span><div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxSell" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div></div>
+      <div class="tax-row"><span class="tax-lbl" data-i18n="admin_tax_image">Upload Image (%)</span><div class="tax-inp-wrap"><input type="number" class="tax-inp" id="taxImage" value="0" min="0" max="100" step="0.1"><span class="tax-unit">%</span></div></div>
     </div>
     <button class="btn btn-ac btn-full btn-sm mt10" id="adminSaveTaxesBtn" data-i18n="admin_save_taxes">Save Taxes</button>
     <div id="adminTaxesStatus" class="mi-status" style="display:none;margin-top:8px"></div>
   </div>
 </div>
 
-<!-- ════ MODAL INFO ═════════════════════════════════════════════════════════ -->
+<!-- ════ MODAL INFO — what/how structure ════════════════════════════════════ -->
 <div class="info-modal-overlay" id="infoModalOverlay">
   <div class="info-modal">
     <button class="info-modal-x" id="infoModalX">✕</button>
@@ -567,7 +551,7 @@
   ];
   var idx = 0;
   function tryNext() {
-    if (idx >= CDNS.length) { console.warn('[WC] Todos los CDNs fallaron'); return; }
+    if (idx >= CDNS.length) { console.warn('[WC] All CDNs failed'); return; }
     var s = document.createElement('script');
     s.src = CDNS[idx++];
     s.onerror = function() { tryNext(); };
