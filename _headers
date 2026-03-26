@@ -7,3 +7,8 @@
   Cross-Origin-Resource-Policy: same-origin
   X-XSS-Protection: 1; mode=block
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; connect-src https://min-api.cryptocompare.com https://api.coingecko.com https://api.binance.com https://bsc-dataseed.binance.org https://bsc-dataseed1.binance.org https://bsc-dataseed2.binance.org https://bsc-dataseed3.binance.org https://bsc-dataseed4.binance.org https://relay.walletconnect.com https://relay.walletconnect.org wss://relay.walletconnect.com wss://relay.walletconnect.org wss: https:; img-src 'self' data: https:; form-action 'none'; base-uri 'self'; upgrade-insecure-requests;
+
+/admin.html
+  X-Robots-Tag: noindex, nofollow
+  X-Frame-Options: DENY
