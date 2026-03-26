@@ -4,13 +4,32 @@ function bindEvents() {
   const on  = (id, ev, fn) => { const e = document.getElementById(id); if (e) e.addEventListener(ev, fn); };
   const onQ = (sel, ev, fn) => document.querySelectorAll(sel).forEach(e => e.addEventListener(ev, fn));
 
-  on('langBtn', 'click', () => LANG.toggleDropdown());
+  // FIX: Header hamburger para móvil
+  on('hdrHamburger', 'click', function() {
+    const right = document.getElementById('hdrRight');
+    if (!right) return;
+    const isOpen = right.classList.toggle('mobile-open');
+    this.classList.toggle('open', isOpen);
+    this.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  // Cerrar header mobile al hacer click fuera
+  document.addEventListener('click', e => {
+    const hamburger = document.getElementById('hdrHamburger');
+    const right = document.getElementById('hdrRight');
+    if (hamburger && right && !hamburger.contains(e.target) && !right.contains(e.target)) {
+      right.classList.remove('mobile-open');
+      hamburger.classList.remove('open');
+    }
+  });
+
+  on('langBtn', 'click', (e) => { e.stopPropagation(); LANG.toggleDropdown(); });
   onQ('.lang-opt', 'click', btn => LANG.setLang(btn.dataset.lang));
-  // Close lang dropdown when clicking outside
   document.addEventListener('click', e => {
     const dd = document.getElementById('langDropdown');
     if (dd && !dd.contains(e.target)) LANG._closeDropdown();
   });
+
   on('connectBtn', 'click', () => WALLET.openOverlay());
 
   on('tabSwap', 'click', () => {
@@ -98,7 +117,6 @@ function bindEvents() {
   on('infoModalOverlay', 'click', e => ADMIN.closeInfoModal(e));
   on('infoModalX',       'click', () => ADMIN.closeInfoModal());
 
-  // ── Nuevos módulos v8 ──────────────────────────────────────────────────────
   on('termsCloseBtn', 'click', () => { if (typeof TERMS !== 'undefined') TERMS.close(); });
   on('termsOverlay',  'click', function(e) { if (e.target === this && typeof TERMS !== 'undefined') TERMS.close(); });
   on('riskCloseBtn',  'click', () => { if (typeof RISK !== 'undefined') RISK.close(); });
@@ -110,19 +128,6 @@ function bindEvents() {
   }
 }
 
-/*
- * FIX SECURITY 6: Sanitizador de entradas del historial de transacciones.
- *
- * El localStorage puede ser manipulado por scripts maliciosos que corran
- * en la misma origin (XSS, extensiones del browser). Sin validación,
- * un atacante podría:
- *   - Inyectar HTML en renderTxHist() via tx.time (campo de texto libre)
- *   - Contaminar STATE con tipos incorrectos
- *   - Insertar strings que rompan los cálculos numéricos
- *
- * Solución: reconstruir cada entrada con tipos y rangos estrictos.
- * Entradas inválidas se descartan silenciosamente.
- */
 function _sanitizeTxEntry(obj) {
   if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) return null;
   const bnb = Number(obj.bnb);
@@ -131,7 +136,6 @@ function _sanitizeTxEntry(obj) {
   if (!Number.isFinite(token) || token < 0 || token > 1e15) return null;
   const hash = typeof obj.hash === 'string' ? obj.hash : '';
   if (hash && !/^0x[0-9a-fA-F]{64}$/.test(hash)) return null;
-  // time: solo dígitos, ':', am/pm y espacios — sin HTML posible
   const rawTime = typeof obj.time === 'string' ? obj.time : '';
   const time = rawTime.replace(/[^0-9:apmAPM\s]/g, '').slice(0, 20);
   return { bnb, token, hash, time };
@@ -150,7 +154,6 @@ const APP = {
       if (document.visibilityState === 'visible') PRICE.refresh().catch(() => {});
     });
 
-    // FIX SECURITY 6: historial sanitizado antes de cargar en STATE
     try {
       const saved = localStorage.getItem('miswap_tx_history');
       if (saved) {
@@ -193,11 +196,9 @@ const APP = {
       }
     }, 20_000);
 
-    console.log('%c MiSwap v8.1 — BSC Mainnet | Audited v2', 'color:#2de89a;font-size:1.1rem;font-weight:bold');
-    console.log('%c Fixes: WC swap+balance, stale RPC closure, sell visibility, localStorage sanitization, HSTS', 'color:#a066ff;font-size:.70rem');
+    console.log('%c🏦 MiSwap v8.1 — BSC Mainnet', 'color:#2de89a;font-size:1.1rem;font-weight:bold');
 
     if (typeof FLASH_TOKEN    !== 'undefined') FLASH_TOKEN.init();
-    // ── Initialize v8 modules ──────────────────────────────────────────────
     if (typeof MENU          !== 'undefined') MENU.init();
     if (typeof TOKEN_CREATOR !== 'undefined') TOKEN_CREATOR.init();
     if (typeof POOL_CREATOR  !== 'undefined') POOL_CREATOR.init();
@@ -210,7 +211,6 @@ const APP = {
     if (typeof RISK          !== 'undefined') RISK.init();
     if (typeof FOOTER        !== 'undefined') FOOTER.init();
 
-    // Cargar estilos on-chain al inicio
     if (typeof ADMIN_STYLES !== 'undefined') ADMIN_STYLES.loadFromChain().catch(() => {});
   },
 };
