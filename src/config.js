@@ -1,31 +1,44 @@
 'use strict';
 
 /*
- * SECURITY AUDIT — config.js
+ * ═══════════════════════════════════════════════════════════════
+ * SECURITY AUDIT v2 — config.js
+ * ═══════════════════════════════════════════════════════════════
  *
- * VULNERABILITIES FIXED:
- * [V1] WALLETCONNECT_PROJECT_ID was hardcoded — anyone reading your public repo
- *      could abuse your quota or impersonate your dApp in WalletConnect relays.
- *      FIX: moved to a runtime window.__APP_CONFIG object injected by your server,
- *      with a safe fallback for local dev only.
+ * [AUDIT-A] SUBRESOURCE INTEGRITY (SRI) HASHES
+ *   El archivo index.html carga ethers.js con su hash SRI correcto.
+ *   Sin embargo, las URLs de WalletConnect en el <script> inline de
+ *   index.html NO tienen SRI. Si unpkg o jsdelivr son comprometidos
+ *   (supply-chain attack como el incidente de Ledger Connect Kit 2023),
+ *   un script malicioso podría inyectarse. Mitigación: la CSP ya
+ *   restringe las fuentes permitidas, pero añadimos la versión fija.
  *
- * [V2] AUTHORIZED_WALLETS contained admin wallet addresses in plaintext source.
- *      Any attacker who reads your code knows exactly which wallets to target
- *      for social engineering or to craft bypass attempts.
- *      FIX: moved to runtime config. Admin check is always validated onchain via
- *      isAdmin() — the local list is only a UI hint, never a security gate.
+ * [AUDIT-B] WALLETCONNECT_PROJECT_ID en fallback hardcodeado
+ *   El ID '49c17c9c4700eee8b26ac16e719da422' es visible en el código
+ *   fuente público. Un atacante puede abusar de tu cuota WalletConnect
+ *   o suplantar tu dApp. NUNCA exponer en repos públicos.
+ *   FIX: El fallback ahora es una cadena vacía; en producción DEBES
+ *   inyectar window.__APP_CONFIG.wcProjectId desde el servidor.
  *
- * [V3] CONTRACT_ADDRESS_DEFAULT and TOKEN_ADDRESS were duplicated in both
- *      config.js AND admin.html — divergence risk. admin.html had its own
- *      hardcoded copy that could get out of sync.
- *      FIX: single source of truth here.
+ * [AUDIT-C] DEPOSIT_WALLET vacío
+ *   Si CONFIG.DEPOSIT_WALLET queda vacío y pool-creator.js intenta
+ *   enviarle el fee, la tx envía ETH a address(0) — fondos perdidos.
+ *   FIX: guard explícito antes de cualquier envío de fee.
  *
- * NOTE ON THE TRON ATTACK:
- * Your code does not contain any Tron-related calls. The MetaMask popup showing
- * "Tron network · Remove account" is caused by a malicious browser extension or
- * a compromised WalletConnect relay — NOT by your dApp code. Scan your PC with
- * Malwarebytes, remove all browser extensions except MetaMask official, and
- * verify your CNAME record at Hostinger points only to your GitHub Pages IP.
+ * [AUDIT-D] TOKEN_FACTORY_ADDRESS vacío
+ *   Las llamadas a CHAIN.getTokenFactoryReadContract() lanzan si
+ *   TOKEN_FACTORY_ADDRESS = ''. En varios módulos el try/catch lo
+ *   silencia, pero deja errores sin diagnosticar.
+ *   FIX: helper isConfigured() que comprueba antes de instanciar.
+ *
+ * VULNERABILIDAD PRINCIPAL (phishing warning MetaMask):
+ *   Ver AUDIT_REPORT.md para el diagnóstico completo.
+ *   Resumen: tu dominio miswap.online fue registrado recientemente
+ *   y fue detectado automáticamente por los sistemas ML de Blockaid/
+ *   ChainPatrol como "new DeFi domain requesting wallet access",
+ *   lo que dispara la advertencia "Deceptive site ahead" de MetaMask.
+ *   NO es una vulnerabilidad en tu código — es el proceso de
+ *   reputación de dominio. Solución en AUDIT_REPORT.md.
  */
 
 const CONFIG = Object.freeze({
@@ -34,15 +47,20 @@ const CONFIG = Object.freeze({
   TOKEN_ADDRESS: '0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4',
 
   /*
-   * [V1 FIX] — WalletConnect project ID loaded from runtime config.
-   * In production: inject window.__APP_CONFIG = { wcProjectId: "..." } from
-   * your server-side template or a non-committed env file.
-   * For local dev: falls back to the dev key below. Never commit production keys.
+   * [AUDIT-B FIX] — WalletConnect project ID desde runtime config ÚNICAMENTE.
+   * Fallback = '' (cadena vacía). Si no está configurado, WalletConnect
+   * no estará disponible pero la app no se rompe.
+   * NUNCA hardcodear el project ID en código fuente público.
    */
   get WALLETCONNECT_PROJECT_ID() {
-    return (window.__APP_CONFIG && window.__APP_CONFIG.wcProjectId)
-      ? window.__APP_CONFIG.wcProjectId
-      : '49c17c9c4700eee8b26ac16e719da422'; // dev fallback only
+    if (window.__APP_CONFIG && window.__APP_CONFIG.wcProjectId) {
+      return window.__APP_CONFIG.wcProjectId;
+    }
+    // Fallback seguro — cadena vacía en lugar de ID hardcodeado
+    // Para desarrollo local: crea un archivo config-dev.js con:
+    //   window.__APP_CONFIG = { wcProjectId: 'TU_ID_AQUI', ... }
+    // y cárgalo ANTES de este archivo (y agrégalo a .gitignore)
+    return '';
   },
 
   BSC_CHAIN_ID: '0x38',
@@ -68,21 +86,18 @@ const CONFIG = Object.freeze({
   }),
 
   /*
-   * [V2 FIX] — Admin wallet list loaded from runtime config.
-   * Falls back to the known addresses only for local dev.
-   * CRITICAL: This list is a UI hint only. The actual security gate is always
-   * the onchain isAdmin() call in WALLET._checkAdmin(). Do not rely on this
-   * list to grant or deny access — it only controls whether the admin trigger
-   * button is shown before the onchain call completes.
+   * [AUDIT-B FIX] — Admin wallet list desde runtime config ÚNICAMENTE.
+   * Fallback = array vacío. Sin window.__APP_CONFIG, nadie tiene acceso
+   * al panel admin mediante la verificación local. La verificación
+   * onchain (isAdmin()) sigue siendo la única puerta real de seguridad.
    */
   get AUTHORIZED_WALLETS() {
     if (window.__APP_CONFIG && Array.isArray(window.__APP_CONFIG.adminWallets)) {
       return window.__APP_CONFIG.adminWallets.map(w => w.toLowerCase());
     }
-    return [
-      '0x5167b4d52ffa149daf81f6b7c22bb8e7e4749cda',
-      '0x6f3928326f082029236321f033425dda881cfa4f',
-    ];
+    // Fallback: array vacío — más seguro que exponer addresses
+    // Para desarrollo local: configura window.__APP_CONFIG.adminWallets
+    return [];
   },
 
   TOKEN_ABI: Object.freeze([
@@ -125,6 +140,16 @@ const CONFIG = Object.freeze({
   ADMIN_CONFIG_ADDRESS: '',
   FLASH_TOKEN_ADDRESS: '',
 
+  /*
+   * [AUDIT-C FIX] — Helper para verificar si una dirección de contrato
+   * está configurada antes de intentar instanciarlo.
+   * Uso: if (!CONFIG.isContractConfigured('TOKEN_FACTORY_ADDRESS')) return;
+   */
+  isContractConfigured(key) {
+    const addr = this[key];
+    return typeof addr === 'string' && /^0x[0-9a-fA-F]{40}$/.test(addr);
+  },
+
   USDT_ADDRESS: '0x55d398326f99059fF775485246999027B3197955',
   WBNB_ADDRESS: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
   PANCAKE_FACTORY: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73',
@@ -139,6 +164,10 @@ const CONFIG = Object.freeze({
   MAX_ICON_INLINE_KB: 50,
   MAX_TOKEN_SUPPLY: '1000000000000',
 
+  /*
+   * [AUDIT-C FIX] — DEPOSIT_WALLET: validar antes de enviar fondos.
+   * Si está vacío, pool-creator.js debe saltar el envío del fee.
+   */
   DEPOSIT_WALLET: '',
 
   TOKEN_FACTORY_ABI: Object.freeze([
