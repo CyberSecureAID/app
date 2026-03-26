@@ -1,32 +1,67 @@
 'use strict';
+
+/*
+ * SECURITY AUDIT — ui.js
+ *
+ * VULNERABILITIES FIXED:
+ *
+ * All BscScan link hrefs now use GUARDS.safeUrl() instead of
+ * direct string concatenation. Previously:
+ *   href="https://bscscan.com/tx/${hash}"
+ * was safe only if GUARDS.isValidHash() was called first.
+ * Using safeUrl() makes the validation inseparable from the URL.
+ *
+ * onclick handlers in notif() that constructed BscScan URLs
+ * from hashes via template literals in innerHTML have been
+ * replaced with DOM-constructed elements and addEventListener.
+ */
 const UI = {
   /*
-   * notif(type, title, msg, hash): Muestra una notificación toast.
+   * notif(type, title, msg, hash): Shows a toast notification.
    * type: 'ok' | 'err' | 'info'
-   * hash: opcional — si se provee, muestra link a BscScan
-   * Auto-descarta después de 5s (errores: 7s)
-   * Máximo 4 notificaciones simultáneas
+   * hash: optional — if valid, shows a BscScan link
    */
   notif(type, title, msg, hash) {
     const stack = document.getElementById('notifStack');
     if (!stack) return;
 
-    // Limitar stack a 4 notificaciones
     while (stack.children.length >= 4) stack.lastChild?.remove();
 
     const div = document.createElement('div');
-    div.className = `notif notif-${type}`;
+    div.className = 'notif notif-' + type;
 
-    const safeTitle = GUARDS.esc(String(title || ''));
-    const safeMsg = GUARDS.esc(String(msg || ''));
-    const safeHash = GUARDS.isValidHash(hash) ? hash : '';
+    // Close button — DOM, not innerHTML
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'notif-close';
+    closeBtn.textContent = '✕';
+    closeBtn.addEventListener('click', () => div.remove());
+    div.appendChild(closeBtn);
 
-    div.innerHTML = `
-      <button class="notif-close" onclick="this.parentElement.remove()">✕</button>
-      ${safeTitle ? `<div class="notif-title">${safeTitle}</div>` : ''}
-      ${safeMsg ? `<div>${safeMsg}</div>` : ''}
-      ${safeHash ? `<div class="notif-link" onclick="window.open('https://bscscan.com/tx/${GUARDS.esc(safeHash)}','_blank')">🔗 ${this.abbr(safeHash)}</div>` : ''}
-    `;
+    // Title — textContent only
+    if (title) {
+      const titleEl = document.createElement('div');
+      titleEl.className = 'notif-title';
+      titleEl.textContent = String(title);
+      div.appendChild(titleEl);
+    }
+
+    // Message — textContent only
+    if (msg) {
+      const msgEl = document.createElement('div');
+      msgEl.textContent = String(msg);
+      div.appendChild(msgEl);
+    }
+
+    // BscScan link — safeUrl() validates hash before building href
+    const txUrl = GUARDS.safeUrl(hash, 'bscscan-tx');
+    if (txUrl) {
+      const link = document.createElement('div');
+      link.className = 'notif-link';
+      link.textContent = '🔗 ' + this.abbr(hash);
+      link.style.cursor = 'pointer';
+      link.addEventListener('click', () => window.open(txUrl, '_blank', 'noopener,noreferrer'));
+      div.appendChild(link);
+    }
 
     stack.prepend(div);
     const delay = type === 'err' ? 7000 : 5000;
@@ -34,12 +69,12 @@ const UI = {
   },
 
   /*
-   * renderTicker(price, change): Actualiza el ticker de precio BNB en el header.
+   * renderTicker: Updates the BNB price ticker in the header.
    */
   renderTicker(price, change) {
-    const tick = document.getElementById('bnbTick');
+    const tick    = document.getElementById('bnbTick');
     const btPrice = document.getElementById('btPrice');
-    const btChg = document.getElementById('btChg');
+    const btChg   = document.getElementById('btChg');
     if (!tick || !btPrice || !btChg) return;
     btPrice.textContent = '$' + price.toFixed(2);
     const chgNum = Number(change) || 0;
@@ -49,74 +84,98 @@ const UI = {
   },
 
   /*
-   * renderLiqBar(): Actualiza la barra de liquidez del pool.
-   * Porcentaje = poolBalance / poolMax
-   * Si poolMax es 0 (nunca hubo balance), muestra 0%.
+   * renderLiqBar: Updates the pool liquidity bar.
    */
   renderLiqBar() {
-    const fill = document.getElementById('liqFill');
+    const fill    = document.getElementById('liqFill');
     const poolDisp = document.getElementById('poolDisp');
     if (!fill || !poolDisp) return;
-    const pct = STATE.poolMax > 0 ? Math.min(100, (STATE.poolBalance / STATE.poolMax) * 100) : 0;
+    const pct = STATE.poolMax > 0
+      ? Math.min(100, (STATE.poolBalance / STATE.poolMax) * 100)
+      : 0;
     fill.style.width = pct.toFixed(1) + '%';
-    poolDisp.textContent = STATE.poolBalance.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' ' + STATE.tokenSymbol;
+    // textContent — no user data
+    poolDisp.textContent = STATE.poolBalance.toLocaleString('en-US', { maximumFractionDigits: 2 })
+      + ' ' + STATE.tokenSymbol;
   },
 
   /*
-   * renderTxHist(): Renderiza el historial de transacciones.
-   * Usa GUARDS.esc() para todos los valores dinámicos.
-   * Links a BscScan solo si el hash es válido.
+   * renderTxHist: Renders the transaction history list.
+   * Uses DOM construction for all dynamic values.
    */
   renderTxHist() {
     const list = document.getElementById('txHistList');
     if (!list) return;
+
     if (!STATE.txHistory.length) {
-      list.innerHTML = `<div class="tx-empty" data-i18n="no_transactions">${t('no_transactions')}</div>`;
+      list.innerHTML = '';
+      const empty = document.createElement('div');
+      empty.className = 'tx-empty';
+      empty.setAttribute('data-i18n', 'no_transactions');
+      empty.textContent = typeof t === 'function' ? t('no_transactions') : 'No transactions yet';
+      list.appendChild(empty);
       return;
     }
-    list.innerHTML = STATE.txHistory.map(tx => {
-      const safeHash = GUARDS.isValidHash(tx.hash) ? tx.hash : '';
-      const safeBnb = GUARDS.safePositive(tx.bnb, 0).toFixed(4);
-      const safeTok = GUARDS.safePositive(tx.token, 0).toFixed(2);
-      const safeTime = GUARDS.esc(tx.time || '');
-      return `<div class="tx-item">
-        <span class="tx-amt">+${GUARDS.esc(safeTok)} ${GUARDS.esc(STATE.tokenSymbol)}</span>
-        <span style="color:var(--t3);font-family:var(--mono);font-size:.70rem">-${GUARDS.esc(safeBnb)} BNB</span>
-        <span class="tx-time">${safeTime}</span>
-        ${safeHash ? `<a href="https://bscscan.com/tx/${GUARDS.esc(safeHash)}" target="_blank" rel="noopener noreferrer">${this.abbr(safeHash)}</a>` : ''}
-      </div>`;
-    }).join('');
+
+    list.innerHTML = '';
+
+    STATE.txHistory.forEach(tx => {
+      const safeBnb  = GUARDS.safePositive(tx.bnb,   0).toFixed(4);
+      const safeTok  = GUARDS.safePositive(tx.token, 0).toFixed(2);
+      const safeTime = String(tx.time || '').replace(/[^0-9:apmAPM\s]/g, '').slice(0, 20);
+
+      const item = document.createElement('div');
+      item.className = 'tx-item';
+
+      const amt = document.createElement('span');
+      amt.className = 'tx-amt';
+      amt.textContent = '+' + safeTok + ' ' + STATE.tokenSymbol;
+
+      const bnbSpan = document.createElement('span');
+      bnbSpan.style.cssText = 'color:var(--t3);font-family:var(--mono);font-size:.70rem';
+      bnbSpan.textContent = '-' + safeBnb + ' BNB';
+
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'tx-time';
+      timeSpan.textContent = safeTime;
+
+      item.appendChild(amt);
+      item.appendChild(bnbSpan);
+      item.appendChild(timeSpan);
+
+      // Link — only if hash validates
+      const txUrl = GUARDS.safeUrl(tx.hash, 'bscscan-tx');
+      if (txUrl) {
+        const link = document.createElement('a');
+        link.href   = txUrl;
+        link.target = '_blank';
+        link.rel    = 'noopener noreferrer';
+        link.textContent = this.abbr(tx.hash);
+        item.appendChild(link);
+      }
+
+      list.appendChild(item);
+    });
   },
 
   /*
-   * abbr(addr): Abrevia una dirección o hash para mostrar.
-   * Ejemplo: 0x1234...5678
+   * abbr: Abbreviates an address or hash for display.
    */
   abbr(addr) {
     const s = String(addr || '');
-    if (s.length < 10) return GUARDS.esc(s);
-    return GUARDS.esc(s.slice(0, 6) + '…' + s.slice(-4));
+    if (s.length < 10) return s;
+    return s.slice(0, 6) + '…' + s.slice(-4);
   },
 
   /*
-   * fmtRate(r): Formatea la tasa de intercambio con precisión adaptativa.
-   * Tasas altas (>100): 0 decimales
-   * Tasas bajas (<0.01): 8 decimales
+   * fmtRate: Formats an exchange rate with adaptive precision.
    */
   fmtRate(r) {
     const n = Number(r);
     if (!Number.isFinite(n) || n <= 0) return '—';
     if (n >= 100) return n.toFixed(0);
-    if (n >= 1) return n.toFixed(2);
+    if (n >= 1)   return n.toFixed(2);
     if (n >= 0.01) return n.toFixed(4);
     return n.toFixed(8);
   },
 };
-
-
-/* ══════════════════════════════════════════════════════════════
-   MÓDULO: APP
-   Propósito: Inicialización y orquestación de todos los módulos.
-   Invariante: init() se llama UNA vez cuando el DOM está listo.
-   Dependencias: Todos los módulos.
-══════════════════════════════════════════════════════════════ */
