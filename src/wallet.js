@@ -107,7 +107,6 @@ const WALLET = {
     STATE.walletAddress   = addr;
     CHAIN.reset();
 
-    // [T12] Cambiar a BSC ANTES de leer balance
     await CHAIN.switchToBSC();
 
     try {
@@ -122,7 +121,6 @@ const WALLET = {
     this._renderConnected(addr, type);
     SWAP.updateBtn();
 
-    // Verificar buyback al conectar
     SELL.checkBuybackStatus().catch(() => {});
 
     if (!silent) {
@@ -156,16 +154,13 @@ const WALLET = {
     if (chip) chip.style.display = 'flex';
     const wa = document.getElementById('walAddr'); if (wa) wa.textContent = UI.abbr(addr);
     const wb = document.getElementById('walBal');  if (wb) wb.textContent = `${STATE.bnbBalance.toFixed(4)} BNB`;
-    const emojiMap = { trust:'🛡️', metamask:'🦊', walletconnect:'🔗', coinbase:'🔵', okx:'⬛' };
+    // FIX: OKX icon changed to 🆗 as requested
+    const emojiMap = { trust:'🛡️', metamask:'🦊', walletconnect:'🔗', coinbase:'🔵', okx:'🆗' };
     const we = document.getElementById('walEmoji'); if (we) we.textContent = emojiMap[type] || '👛';
     const bd = document.getElementById('bnbBalDisp'); if (bd) bd.textContent = STATE.bnbBalance.toFixed(4);
     const np = document.getElementById('netPill');    if (np) np.style.display = 'flex';
   },
 
-  /*
-   * FIX BUG 2: _disconnect() ahora es async para poder usar await.
-   * En la versión anterior era síncrona pero usaba await → SyntaxError.
-   */
   async _disconnect() {
     STATE.walletConnected = false;
     STATE.walletAddress   = null;
@@ -173,8 +168,8 @@ const WALLET = {
     STATE.bnbBalance      = 0;
 
     ADMIN.showAdminTrigger(false);
-    STATE.adminTokenBalance        = 0;
-    STATE.adminTokenBalanceLoaded  = false;
+    STATE.adminTokenBalance       = 0;
+    STATE.adminTokenBalanceLoaded = false;
     CHAIN.reset();
 
     document.getElementById('connectBtn').style.display = 'inline-flex';
@@ -188,7 +183,6 @@ const WALLET = {
     this._activeProvider = null;
 
     SWAP.updateBtn();
-    // Resetear UI de venta al desconectar
     SELL._renderStatus(false, 0n);
     ADMIN.close();
     UI.notif('info', 'Wallet Disconnected', 'Connect your wallet to continue');
@@ -237,15 +231,12 @@ const WALLET = {
         method: 'eth_getBalance', params: [STATE.walletAddress, 'latest'],
       });
       STATE.bnbBalance = Number(ethers.formatEther(BigInt(h)));
-      const wb = document.getElementById('walBal');    if (wb) wb.textContent = `${STATE.bnbBalance.toFixed(4)} BNB`;
+      const wb = document.getElementById('walBal');     if (wb) wb.textContent = `${STATE.bnbBalance.toFixed(4)} BNB`;
       const bd = document.getElementById('bnbBalDisp'); if (bd) bd.textContent = STATE.bnbBalance.toFixed(4);
       SWAP.updateBtn();
     } catch (_) {}
   },
 
-  /*
-   * renderWalletSection(): Muestra la info de wallet en la sección #section-wallet.
-   */
   renderWalletSection() {
     const sec = document.getElementById('section-wallet');
     if (!sec) return;
@@ -264,11 +255,13 @@ const WALLET = {
       if (btn) btn.addEventListener('click', () => WALLET.openOverlay());
       return;
     }
-    const addr  = STATE.walletAddress || STATE.account || '';
-    // Validate address format to prevent XSS in href
+    const addr  = STATE.walletAddress || '';
     const safeAddr = /^0x[0-9a-fA-F]{40}$/.test(addr) ? addr : '';
-    const bnb   = STATE.bnbBalance   ? STATE.bnbBalance.toFixed(4)   : '—';
-    const emoji = STATE.walletType === 'trust' ? '🛡️' : STATE.walletType === 'walletconnect' ? '🔗' : '🦊';
+    const bnb   = STATE.bnbBalance ? STATE.bnbBalance.toFixed(4) : '—';
+    // FIX: OKX icon 🆗
+    const emojiMap = { trust:'🛡️', metamask:'🦊', walletconnect:'🔗', coinbase:'🔵', okx:'🆗' };
+    const emoji = emojiMap[STATE.walletType] || '👛';
+
     sec.innerHTML = `
       <div class="mi-section-card">
         <div class="mi-section-header">
@@ -298,18 +291,20 @@ const WALLET = {
         </div>
         <div class="mi-btns-row mt10" id="walSecBtns"></div>
       </div>`;
+
     LANG.apply();
-    // Populate text safely (avoid XSS via textContent)
+
     const subEl = document.getElementById('walSecAddrSub');
     if (subEl) subEl.textContent = addr.slice(0, 6) + '…' + addr.slice(-4);
     const addrEl = document.getElementById('walSecAddr');
     if (addrEl) { addrEl.textContent = addr.slice(0, 10) + '…' + addr.slice(-6); addrEl.title = addr; }
     const typeEl = document.getElementById('walSecType');
     if (typeEl) typeEl.textContent = STATE.walletType || '—';
+
     const btnsEl = document.getElementById('walSecBtns');
     if (btnsEl) {
       if (safeAddr) {
-        const bscLink = document.createElement('a');
+        const bscLink   = document.createElement('a');
         bscLink.href    = 'https://bscscan.com/address/' + safeAddr;
         bscLink.target  = '_blank';
         bscLink.rel     = 'noopener noreferrer';
