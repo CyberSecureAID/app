@@ -27,7 +27,7 @@ const ADMIN = {
     document.getElementById('admPanel').classList.add('open');
     document.getElementById('admOverlay').classList.add('open');
     const ob = document.getElementById('ownBanner');
-    if (ob) { ob.classList.add('show'); }
+    if (ob) ob.classList.add('show');
     const oa = document.getElementById('ownAddr');
     if (oa) oa.textContent = UI.abbr(STATE.walletAddress);
 
@@ -38,16 +38,7 @@ const ADMIN = {
     this.loadCostsIntoForm();
   },
 
-  /*
-   * FIX BUG 4: _switchView ahora es un no-op seguro.
-   * El panel admin en index.html es un drawer estático, no un dashboard
-   * con vistas. Los intentos de cambiar vistas fallaban silenciosamente.
-   * Esta función se mantiene para compatibilidad pero no hace nada
-   * perjudicial si se llama con una vista inexistente.
-   */
   _switchView(view) {
-    // El panel admin de index.html usa secciones fijas (no views dinámicas).
-    // En admin.html (panel completo) sí existen las vistas — no aplica aquí.
     console.debug('[ADMIN._switchView] view:', view, '(static panel — no-op)');
   },
 
@@ -294,18 +285,11 @@ const ADMIN = {
     se('adminBnbPrice', STATE.bnbPriceUSD ? STATE.bnbPriceUSD.toFixed(2) : '—');
   },
 
-  /*
-   * FIX BUG 4 & 5: updateAnalytics() con null-checks completos.
-   * Los elementos kpiPool, kpiBnb, chartTxHist, etc. solo existen en
-   * admin.html (panel completo), no en index.html (panel drawer).
-   * Todos los getElementById son null-safe ahora.
-   */
   updateAnalytics() {
     const fmt = (n, dec = 2) =>
       Number.isFinite(n) && n > 0 ? n.toLocaleString('en-US', { maximumFractionDigits: dec }) : '0';
     const el = id => document.getElementById(id);
 
-    // KPIs — solo existen en admin.html, null-safe en index.html
     if (el('kpiPool'))       el('kpiPool').textContent       = fmt(STATE.poolBalance) + ' ' + STATE.tokenSymbol;
     if (el('kpiBnb'))        el('kpiBnb').textContent        = fmt(STATE.bnbCollected, 4) + ' BNB';
     if (el('kpiSold'))       el('kpiSold').textContent       = fmt(STATE.tokensSold)  + ' ' + STATE.tokenSymbol;
@@ -320,7 +304,6 @@ const ADMIN = {
     if (el('kpiPoolBar')) el('kpiPoolBar').style.width = pct.toFixed(1) + '%';
     if (el('wdAmtDisp'))  el('wdAmtDisp').textContent  = fmt(STATE.poolBalance) + ' ' + STATE.tokenSymbol + ' disponibles';
 
-    // Recent txs list — solo en admin.html
     const txList = el('dashTxList');
     if (txList) {
       txList.innerHTML = !STATE.txHistory.length
@@ -333,8 +316,6 @@ const ADMIN = {
           </div>`).join('');
     }
 
-    // Charts — FIX BUG 5: Chart.js no está cargado en index.html
-    // Solo renderizar si typeof Chart !== 'undefined' (admin.html lo tiene)
     if (typeof Chart === 'undefined') return;
 
     const acColor   = '#2de89a';
@@ -356,9 +337,7 @@ const ADMIN = {
         },
         options: {
           responsive: true,
-          plugins: { legend: { display: false },
-            tooltip: { backgroundColor: '#1a1d26', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
-              callbacks: { label: ctx => `${ctx.parsed.y.toFixed(2)} ${STATE.tokenSymbol}` } } },
+          plugins: { legend: { display: false } },
           scales: {
             x: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
             y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
@@ -380,51 +359,229 @@ const ADMIN = {
         },
         options: {
           responsive: true, cutout: '68%',
-          plugins: { legend: { display: false },
-            tooltip: { backgroundColor: '#1a1d26', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
-              callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed.toLocaleString('en-US', { maximumFractionDigits: 2 })} ${STATE.tokenSymbol}` } } },
+          plugins: { legend: { display: false } },
         },
       });
     }
   },
 
-  // ── Info modales ───────────────────────────────────────────────────────────
+  // ── Info modales — FIX #1: Contenido rico con "Qué es" y "Cómo usar" ─────
   _infoContent: {
     price: {
-      en: { title: '💱 Price Configuration', body: `<ul><li><strong>Direct mode:</strong> Set the price of 1 {sym} in USD.</li><li><strong>Ratio mode:</strong> Specify BNB in → {sym} out.</li><li>Formula: <code>Rate = BNB Price ÷ Token Price</code></li></ul>` },
-      es: { title: '💱 Configuración de Precio', body: `<ul><li><strong>Modo directo:</strong> Define el precio de 1 {sym} en USD.</li><li><strong>Modo ratio:</strong> BNB entregado → {sym} recibido.</li><li>Fórmula: <code>Tasa = Precio BNB ÷ Precio Token</code></li></ul>` },
+      en: {
+        title: '💱 Price Configuration',
+        what: 'This section lets you control the token price visible to users. The price you set determines how many tokens users receive per BNB they send.',
+        how: [
+          '1. Direct mode: Enter the price of 1 token in USD (e.g. $0.0112).',
+          '2. Ratio mode: Enter BNB amount → Token amount (e.g. 100 BNB → 10 tokens).',
+          '3. Review the live swap rate shown in the preview panel.',
+          '4. Click "Apply Price" — confirm in your wallet.',
+          '5. The new rate takes effect immediately onchain.',
+        ],
+      },
+      es: {
+        title: '💱 Configuración de Precio',
+        what: 'Esta sección te permite controlar el precio del token visible para los usuarios. El precio que establezcas determina cuántos tokens recibirán por cada BNB que envíen.',
+        how: [
+          '1. Modo directo: Ingresa el precio de 1 token en USD (ej: $0.0112).',
+          '2. Modo ratio: Ingresa monto BNB → monto Token (ej: 100 BNB → 10 tokens).',
+          '3. Revisa la tasa de swap live en el panel de preview.',
+          '4. Haz click en "Aplicar Precio" — confirma en tu wallet.',
+          '5. La nueva tasa entra en efecto inmediatamente onchain.',
+        ],
+      },
     },
     pool: {
-      en: { title: '💧 Pool Management', body: `<ul><li><strong>Deposit:</strong> Calls <code>approve()</code> then <code>depositTokens()</code>. Two confirmations.</li><li><strong>Withdraw:</strong> Returns all unsold tokens. Owner only.</li></ul>` },
-      es: { title: '💧 Gestión del Pool', body: `<ul><li><strong>Depositar:</strong> <code>approve()</code> luego <code>depositTokens()</code>. Dos confirmaciones.</li><li><strong>Retirar:</strong> Devuelve todos los tokens no vendidos. Solo el owner.</li></ul>` },
+      en: {
+        title: '💧 Pool Management',
+        what: 'The pool is the reservoir of tokens available for users to buy. Depositing tokens makes them purchasable. Withdrawing recovers unsold tokens to your wallet.',
+        how: [
+          '1. To deposit: Enter the amount of tokens you want to add.',
+          '2. Click "+ Deposit" — two wallet confirmations: approve + deposit.',
+          '3. To withdraw: Click "Withdraw All to My Wallet".',
+          '4. The withdrawal is subject to the daily limit set in Configuration.',
+          '5. Monitor the pool level in the Overview section.',
+        ],
+      },
+      es: {
+        title: '💧 Gestión del Pool',
+        what: 'El pool es el reservorio de tokens disponibles para que los usuarios compren. Depositar tokens los hace comprables. Retirar recupera los tokens no vendidos a tu wallet.',
+        how: [
+          '1. Para depositar: Ingresa la cantidad de tokens que quieres agregar.',
+          '2. Haz click en "+ Depositar" — dos confirmaciones: approve + deposit.',
+          '3. Para retirar: Haz click en "Retirar Todo a Mi Wallet".',
+          '4. El retiro está sujeto al límite diario en Configuración.',
+          '5. Monitorea el nivel del pool en la sección Resumen.',
+        ],
+      },
     },
     branding: {
-      en: { title: '⚙ Contract & Branding', body: `<ul><li><strong>Contract:</strong> Changing reinitializes all connections.</li><li><strong>Platform name & Token symbol:</strong> Visual only.</li></ul>` },
-      es: { title: '⚙ Contrato y Marca', body: `<ul><li><strong>Contrato:</strong> Cambiarla reinicia todas las conexiones.</li><li><strong>Nombre y símbolo:</strong> Solo visual.</li></ul>` },
+      en: {
+        title: '⚙ Contract & Branding',
+        what: 'Configure the smart contract address and visual branding of your platform. The contract address points to where all swap logic runs onchain.',
+        how: [
+          '1. Contract: Paste the BSC address of your deployed contract.',
+          '2. Platform name: Shown in the header and footer (visual only).',
+          '3. Token symbol: Shown throughout the UI (visual only).',
+          '4. Click "Apply Branding" to apply changes immediately.',
+          '5. Changing the contract reinitializes all blockchain connections.',
+        ],
+      },
+      es: {
+        title: '⚙ Contrato y Marca',
+        what: 'Configura la dirección del smart contract y el branding visual de tu plataforma. La dirección del contrato apunta donde corre toda la lógica de swap onchain.',
+        how: [
+          '1. Contrato: Pega la dirección BSC de tu contrato deployado.',
+          '2. Nombre de plataforma: Se muestra en header y footer (solo visual).',
+          '3. Símbolo del token: Se muestra en toda la UI (solo visual).',
+          '4. Haz click en "Aplicar Marca" para aplicar cambios inmediatamente.',
+          '5. Cambiar el contrato reinicia todas las conexiones blockchain.',
+        ],
+      },
     },
     swap: {
-      en: { title: '🔄 Swap', body: `<ul><li>Exchange BNB for {sym} at the current platform rate.</li><li>Adjust slippage tolerance to avoid failed transactions on volatile markets.</li><li>MAX fills in your full available balance.</li><li>Est. Gas is approximate; actual gas depends on network congestion.</li></ul>` },
-      es: { title: '🔄 Swap', body: `<ul><li>Intercambia BNB por {sym} a la tasa actual de la plataforma.</li><li>Ajusta la tolerancia de slippage para evitar transacciones fallidas.</li><li>MÁX llena tu saldo disponible completo.</li><li>El gas estimado es aproximado; el gas real depende de la red.</li></ul>` },
+      en: {
+        title: '🔄 Swap',
+        what: 'The Swap section lets users exchange BNB for your platform token at the current rate set by administrators.',
+        how: [
+          '1. Enter the BNB amount you want to swap.',
+          '2. The estimated token output updates live.',
+          '3. Adjust slippage tolerance (default 0.1%) if needed.',
+          '4. Click "Swap BNB → Token" to open the confirmation modal.',
+          '5. Review the details and confirm in your wallet.',
+        ],
+      },
+      es: {
+        title: '🔄 Swap',
+        what: 'La sección Swap permite a los usuarios intercambiar BNB por el token de tu plataforma a la tasa actual establecida por los administradores.',
+        how: [
+          '1. Ingresa la cantidad de BNB que quieres intercambiar.',
+          '2. La estimación de tokens se actualiza en tiempo real.',
+          '3. Ajusta la tolerancia de slippage (por defecto 0.1%) si es necesario.',
+          '4. Haz click en "Swap BNB → Token" para abrir el modal de confirmación.',
+          '5. Revisa los detalles y confirma en tu wallet.',
+        ],
+      },
     },
     'create-token': {
-      en: { title: '🪙 Create BEP-20 Token', body: `<ul><li>Deploy your own token on BNB Smart Chain in seconds.</li><li>Set the <strong>name</strong>, <strong>symbol</strong> (2–8 letters), and <strong>total supply</strong>.</li><li>Optionally enable bridging to USDT and add a token icon.</li><li><strong>Token Icon:</strong> The image is stored on-chain — this adds extra gas cost. Keep images under 50 KB for lower fees.</li><li>A creation fee of <strong>${CONFIG.TOKEN_CREATION_FEE_BNB} BNB</strong> applies plus estimated gas.</li></ul>` },
-      es: { title: '🪙 Crear Token BEP-20', body: `<ul><li>Despliega tu propio token en BNB Smart Chain en segundos.</li><li>Define el <strong>nombre</strong>, <strong>símbolo</strong> (2–8 letras) y <strong>supply total</strong>.</li><li>Opcionalmente activa el bridge a USDT y agrega un ícono al token.</li><li><strong>Ícono del Token:</strong> La imagen se almacena on-chain — esto genera un costo adicional en gas. Mantén imágenes bajo 50 KB para menores tarifas.</li><li>Se aplica una tarifa de creación de <strong>${CONFIG.TOKEN_CREATION_FEE_BNB} BNB</strong> más gas estimado.</li></ul>` },
+      en: {
+        title: '🪙 Create BEP-20 Token',
+        what: 'Deploy your own custom token on BNB Smart Chain in seconds. The token is fully owned by you and can be used, traded, or listed anywhere.',
+        how: [
+          '1. Enter the token name (e.g. "My Token").',
+          '2. Enter the symbol (2–8 letters, e.g. "MTK").',
+          '3. Set the total supply (max 1 trillion).',
+          '4. Optionally enable USDT bridge and upload an icon.',
+          '5. Pay the creation fee and confirm in your wallet.',
+        ],
+      },
+      es: {
+        title: '🪙 Crear Token BEP-20',
+        what: 'Despliega tu propio token personalizado en BNB Smart Chain en segundos. El token es tuyo completamente y puede ser usado, comercializado o listado en cualquier lugar.',
+        how: [
+          '1. Ingresa el nombre del token (ej: "Mi Token").',
+          '2. Ingresa el símbolo (2–8 letras, ej: "MTK").',
+          '3. Establece el supply total (máx 1 billón).',
+          '4. Opcionalmente habilita el bridge a USDT y sube un ícono.',
+          '5. Paga el fee de creación y confirma en tu wallet.',
+        ],
+      },
     },
     'flash-token': {
-      en: { title: '⚡ Flash Tokens', body: `<ul><li>Flash tokens are <strong>temporary tokens</strong> that automatically expire.</li><li><strong>Time-Limited:</strong> Token becomes invalid after a set number of days (1–365).</li><li><strong>Transaction-Limited:</strong> Token is destroyed after a set number of transfers (1–1000).</li><li>Useful for promotions, airdrops, or controlled-supply experiments.</li><li>Creation fee: <strong>0.2 BNB</strong> + gas.</li></ul>` },
-      es: { title: '⚡ Flash Tokens', body: `<ul><li>Los Flash Tokens son <strong>tokens temporales</strong> que expiran automáticamente.</li><li><strong>Limitado por Tiempo:</strong> El token se invalida después de N días (1–365).</li><li><strong>Limitado por Transacciones:</strong> El token se destruye tras N transferencias (1–1000).</li><li>Útil para promociones, airdrops o experimentos de supply controlado.</li><li>Tarifa de creación: <strong>0.2 BNB</strong> + gas.</li></ul>` },
+      en: {
+        title: '⚡ Flash Tokens',
+        what: 'Flash tokens are temporary tokens that automatically expire after a set time or number of transfers. Perfect for promotions, limited airdrops, or controlled-supply events.',
+        how: [
+          '1. Choose expiration mode: Time-limited or Transaction-limited.',
+          '2. Fill in name, symbol, and total supply.',
+          '3. Set the duration (days) or transfer limit.',
+          '4. Pay 0.2 BNB creation fee and confirm.',
+          '5. The token deploys instantly and expires automatically.',
+        ],
+      },
+      es: {
+        title: '⚡ Flash Tokens',
+        what: 'Los Flash Tokens son tokens temporales que expiran automáticamente tras un tiempo o número de transferencias. Perfectos para promociones, airdrops limitados o eventos de supply controlado.',
+        how: [
+          '1. Elige el modo de expiración: por Tiempo o por Transacciones.',
+          '2. Completa nombre, símbolo y supply total.',
+          '3. Establece la duración (días) o el límite de transferencias.',
+          '4. Paga 0.2 BNB de fee y confirma.',
+          '5. El token se despliega al instante y expira automáticamente.',
+        ],
+      },
     },
     'bridge-usdt': {
-      en: { title: '🌉 Bridge USDT', body: `<ul><li>Swap any of your tokens for USDT via PancakeSwap routing.</li><li>Select the token, set the amount, and choose your slippage tolerance.</li><li>A <strong>${CONFIG.BRIDGE_FEE_PERCENT}% fee</strong> is applied to the input amount.</li><li>The route is: <em>Your Token → WBNB → USDT</em> (or direct if pair exists).</li><li>Connect your wallet first to load your token balances.</li></ul>` },
-      es: { title: '🌉 Bridge USDT', body: `<ul><li>Intercambia cualquiera de tus tokens por USDT vía PancakeSwap.</li><li>Selecciona el token, define el monto y elige tu tolerancia de slippage.</li><li>Se aplica una <strong>tarifa del ${CONFIG.BRIDGE_FEE_PERCENT}%</strong> al monto enviado.</li><li>La ruta es: <em>Tu Token → WBNB → USDT</em> (o directa si existe el par).</li><li>Conecta tu wallet primero para cargar tus balances.</li></ul>` },
+      en: {
+        title: '🌉 Bridge to USDT',
+        what: 'Convert any of your tokens into USDT using PancakeSwap routing. A small fee is charged on the output amount.',
+        how: [
+          '1. Select the token you want to convert.',
+          '2. Use the slider or enter the amount manually.',
+          '3. Choose your slippage tolerance.',
+          '4. Review the estimated USDT output and fee.',
+          '5. Click "Bridge to USDT" — two wallet steps: approve + swap.',
+        ],
+      },
+      es: {
+        title: '🌉 Bridge a USDT',
+        what: 'Convierte cualquiera de tus tokens a USDT usando el enrutamiento de PancakeSwap. Se cobra una pequeña tarifa sobre el monto de salida.',
+        how: [
+          '1. Selecciona el token que quieres convertir.',
+          '2. Usa el slider o ingresa el monto manualmente.',
+          '3. Elige tu tolerancia de slippage.',
+          '4. Revisa la estimación de USDT y la tarifa.',
+          '5. Haz click en "Bridge a USDT" — dos pasos: approve + swap.',
+        ],
+      },
     },
     'create-pool': {
-      en: { title: '💧 Create Liquidity Pool', body: `<ul><li>Add a token/BNB liquidity pair on <strong>PancakeSwap v2</strong>.</li><li>Enter the token address, the amount of tokens, and the BNB amount to pair.</li><li>LP tokens are sent directly to your wallet.</li><li>A pool creation fee of <strong>${CONFIG.POOL_CREATION_FEE_BNB} BNB</strong> applies plus gas.</li><li>You must hold the tokens you want to add as liquidity.</li></ul>` },
-      es: { title: '💧 Crear Pool de Liquidez', body: `<ul><li>Agrega un par token/BNB en <strong>PancakeSwap v2</strong>.</li><li>Ingresa la dirección del token, la cantidad de tokens y el monto de BNB a emparejar.</li><li>Los LP tokens van directamente a tu wallet.</li><li>Se aplica una tarifa de creación de <strong>${CONFIG.POOL_CREATION_FEE_BNB} BNB</strong> más gas.</li><li>Debes tener los tokens que quieres agregar como liquidez.</li></ul>` },
+      en: {
+        title: '💧 Create Liquidity Pool',
+        what: 'Add a token/BNB liquidity pair on PancakeSwap v2. This enables decentralized trading of your token. LP tokens representing your share are sent to your wallet.',
+        how: [
+          '1. Enter the token contract address.',
+          '2. Enter how many tokens to add as liquidity.',
+          '3. Enter how much BNB to pair with those tokens.',
+          '4. Pay the pool creation fee and confirm.',
+          '5. LP tokens will appear in your wallet after confirmation.',
+        ],
+      },
+      es: {
+        title: '💧 Crear Pool de Liquidez',
+        what: 'Agrega un par token/BNB de liquidez en PancakeSwap v2. Esto permite el trading descentralizado de tu token. Los LP tokens que representan tu participación se envían a tu wallet.',
+        how: [
+          '1. Ingresa la dirección del contrato del token.',
+          '2. Ingresa cuántos tokens agregar como liquidez.',
+          '3. Ingresa cuánto BNB emparejar con esos tokens.',
+          '4. Paga el fee de creación del pool y confirma.',
+          '5. Los LP tokens aparecerán en tu wallet tras la confirmación.',
+        ],
+      },
     },
     'my-tokens': {
-      en: { title: '👜 My Tokens', body: `<ul><li>View all tokens you have created with the connected wallet.</li><li>Each card shows the token name, symbol, supply, and contract address.</li><li>Connect your wallet to load your tokens.</li><li>Tokens are loaded from the on-chain factory contract.</li></ul>` },
-      es: { title: '👜 Mis Tokens', body: `<ul><li>Visualiza todos los tokens que has creado con la wallet conectada.</li><li>Cada tarjeta muestra el nombre, símbolo, supply y dirección del contrato.</li><li>Conecta tu wallet para cargar tus tokens.</li><li>Los tokens se cargan desde el contrato factory on-chain.</li></ul>` },
+      en: {
+        title: '👜 My Tokens',
+        what: 'View all BEP-20 tokens you have created using this platform. Each token is permanently recorded onchain and linked to your wallet address.',
+        how: [
+          '1. Connect your wallet to load your tokens.',
+          '2. Each card shows name, symbol, supply, and your balance.',
+          '3. Click "Bridge" to convert that token to USDT.',
+          '4. Click "Pool" to add liquidity for that token on PancakeSwap.',
+          '5. Click "Icon" to update the token\'s visual icon.',
+        ],
+      },
+      es: {
+        title: '👜 Mis Tokens',
+        what: 'Visualiza todos los tokens BEP-20 que has creado usando esta plataforma. Cada token está registrado permanentemente onchain y vinculado a tu dirección de wallet.',
+        how: [
+          '1. Conecta tu wallet para cargar tus tokens.',
+          '2. Cada tarjeta muestra nombre, símbolo, supply y tu balance.',
+          '3. Haz click en "Bridge" para convertir ese token a USDT.',
+          '4. Haz click en "Pool" para agregar liquidez en PancakeSwap.',
+          '5. Haz click en "Ícono" para actualizar el ícono visual del token.',
+        ],
+      },
     },
   },
 
@@ -432,16 +589,48 @@ const ADMIN = {
     const lang = this._infoContent[key]?.[STATE.lang] ? STATE.lang : 'en';
     const c = this._infoContent[key]?.[lang];
     if (!c) return;
-    const title = document.getElementById('infoModalTitle');
-    const body  = document.getElementById('infoModalBody');
-    if (title) title.textContent = c.title;
-    if (body)  body.innerHTML   = c.body.replace(/\{sym\}/g, GUARDS.esc(STATE.tokenSymbol));
-    document.getElementById('infoModalOverlay').classList.add('open');
+
+    const overlay  = document.getElementById('infoModalOverlay');
+    const titleEl  = document.getElementById('infoModalTitle');
+    const bodyEl   = document.getElementById('infoModalBody');
+    if (!overlay || !titleEl || !bodyEl) return;
+
+    titleEl.textContent = c.title;
+
+    // FIX #1: Rich content con dos secciones: Qué es + Cómo usar
+    bodyEl.innerHTML = `
+      <div style="margin-bottom:14px">
+        <div style="font-size:.68rem;font-weight:800;color:var(--ac);text-transform:uppercase;letter-spacing:.10em;margin-bottom:7px">
+          📌 What is this?
+        </div>
+        <div style="font-size:.82rem;color:var(--t2);line-height:1.65">${GUARDS.esc(c.what)}</div>
+      </div>
+      <div style="height:1px;background:var(--glass-brd);margin-bottom:14px"></div>
+      <div>
+        <div style="font-size:.68rem;font-weight:800;color:var(--ok);text-transform:uppercase;letter-spacing:.10em;margin-bottom:7px">
+          🚀 How to use it
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${(c.how || []).map(step => `
+            <div style="display:flex;align-items:flex-start;gap:8px;background:var(--glass);border-radius:var(--r-sm);padding:8px 11px;font-size:.80rem;color:var(--t2);line-height:1.55">
+              ${GUARDS.esc(step)}
+            </div>`).join('')}
+        </div>
+      </div>`;
+
+    overlay.classList.add('open');
   },
 
   closeInfoModal(e) {
     if (!e || e.target === e.currentTarget)
       document.getElementById('infoModalOverlay').classList.remove('open');
+  },
+
+  // ── Footer modal helper (para botones del footer pre-FOOTER module) ────────
+  showFooterModal(type) {
+    if (typeof FOOTER !== 'undefined') {
+      FOOTER.showModal(type);
+    }
   },
 
   showAdminTrigger(show) {
@@ -474,7 +663,7 @@ const ADMIN = {
     }, { passive: false });
   },
 
-  // ── Costs & Taxes (stored in STATE for runtime use; persisted in AdminConfig when available) ──
+  // ── Costs & Taxes ──────────────────────────────────────────────────────────
   _costsStatus(msg, type) {
     const el = document.getElementById('adminCostsStatus');
     if (!el) return;
