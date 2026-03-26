@@ -1,52 +1,92 @@
 'use strict';
 
+/* FIX: Menú sin emojis (solo texto limpio), bien distribuido y con hamburger móvil */
 const MENU_ITEMS = [
-  { id: 'swap',         label: 'Swap',         labelEs: 'Swap',           labelHi: 'स्वैप',          labelAr: 'تبادل',           icon: '' },
-  { id: 'create-token', label: 'Create Token',  labelEs: 'Crear Token',    labelHi: 'टोकन बनाएं',     labelAr: 'إنشاء رمز',       icon: '', fee: '0.1 BNB' },
-  { id: 'create-pool',  label: 'Create Pool',   labelEs: 'Crear Pool',     labelHi: 'पूल बनाएं',      labelAr: 'إنشاء مجمع',      icon: '', fee: '0.5 BNB' },
-  { id: 'flash-token',  label: 'Flash Tokens',  labelEs: 'Flash Tokens',   labelHi: 'फ्लैश टोकन',     labelAr: 'الرموز الفلاشية', icon: '', fee: '0.2 BNB' },
-  { id: 'my-tokens',    label: 'My Tokens',     labelEs: 'Mis Tokens',     labelHi: 'मेरे टोकन',      labelAr: 'رموزي',           icon: '' },
-  { id: 'bridge-usdt',  label: 'Bridge USDT',   labelEs: 'Bridge USDT',    labelHi: 'USDT ब्रिज',     labelAr: 'جسر USDT',        icon: '', fee: '2%' },
-  { id: 'wallet',       label: 'Wallet',        labelEs: 'Wallet',         labelHi: 'वॉलेट',          labelAr: 'المحفظة',         icon: '' },
+  { id: 'swap',         label: 'Swap',         labelEs: 'Swap',           labelHi: 'स्वैप',         labelAr: 'تبادل',           fee: null },
+  { id: 'create-token', label: 'Create Token',  labelEs: 'Crear Token',    labelHi: 'टोकन बनाएं',    labelAr: 'إنشاء رمز',       fee: '0.1 BNB' },
+  { id: 'create-pool',  label: 'Create Pool',   labelEs: 'Crear Pool',     labelHi: 'पूल बनाएं',     labelAr: 'إنشاء مجمع',      fee: '0.5 BNB' },
+  { id: 'flash-token',  label: 'Flash Tokens',  labelEs: 'Flash Tokens',   labelHi: 'फ्लैश टोकन',    labelAr: 'رموز فلاشية',     fee: '0.2 BNB' },
+  { id: 'my-tokens',    label: 'My Tokens',     labelEs: 'Mis Tokens',     labelHi: 'मेरे टोकन',     labelAr: 'رموزي',           fee: null },
+  { id: 'bridge-usdt',  label: 'Bridge USDT',   labelEs: 'Bridge USDT',    labelHi: 'USDT ब्रिज',    labelAr: 'جسر USDT',        fee: '2%' },
+  { id: 'wallet',       label: 'Wallet',        labelEs: 'Wallet',         labelHi: 'वॉलेट',         labelAr: 'المحفظة',         fee: null },
 ];
 
 const MENU = {
   _active: 'swap',
+  _hamburgerInNav: null,
 
   render() {
     const nav = document.getElementById('miNav');
     if (!nav) return;
     const lang = (typeof STATE !== 'undefined' && STATE.lang) ? STATE.lang : 'en';
-    nav.innerHTML = MENU_ITEMS.map(item => {
+
+    // Hamburger button
+    const hamburger = document.createElement('button');
+    hamburger.className = 'mi-nav-hamburger';
+    hamburger.id = 'miNavHamburger';
+    hamburger.setAttribute('aria-label', 'Menu');
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.innerHTML = '☰ <span style="font-size:.76rem;font-weight:600">Menu</span>';
+    hamburger.addEventListener('click', () => this._toggleMobile());
+    this._hamburgerInNav = hamburger;
+
+    nav.innerHTML = '';
+    nav.appendChild(hamburger);
+
+    MENU_ITEMS.forEach(item => {
       let label;
       if (lang === 'es') label = item.labelEs;
       else if (lang === 'hi') label = item.labelHi;
       else if (lang === 'ar') label = item.labelAr;
       else label = item.label;
-      const fee    = item.fee ? `<span class="mi-nav-fee">${item.fee}</span>` : '';
-      const active = item.id === this._active ? ' mi-nav-active' : '';
-      return `<button class="mi-nav-item${active}" data-section="${item.id}" title="${label}">
-        <span class="mi-nav-label">${label}</span>${fee}
-      </button>`;
-    }).join('');
 
-    nav.querySelectorAll('.mi-nav-item').forEach(btn => {
-      btn.addEventListener('click', () => this.show(btn.dataset.section));
+      const btn = document.createElement('button');
+      btn.className = 'mi-nav-item' + (item.id === this._active ? ' mi-nav-active' : '');
+      btn.dataset.section = item.id;
+      btn.title = label;
+
+      const labelSpan = document.createElement('span');
+      labelSpan.className = 'mi-nav-label';
+      labelSpan.textContent = label;
+      btn.appendChild(labelSpan);
+
+      if (item.fee) {
+        const feeSpan = document.createElement('span');
+        feeSpan.className = 'mi-nav-fee';
+        feeSpan.textContent = item.fee;
+        btn.appendChild(feeSpan);
+      }
+
+      btn.addEventListener('click', () => {
+        this.show(item.id);
+        // Cerrar menú móvil al seleccionar
+        nav.classList.remove('mobile-open');
+        if (this._hamburgerInNav) this._hamburgerInNav.setAttribute('aria-expanded', 'false');
+      });
+
+      nav.appendChild(btn);
     });
+  },
+
+  _toggleMobile() {
+    const nav = document.getElementById('miNav');
+    if (!nav) return;
+    const isOpen = nav.classList.toggle('mobile-open');
+    if (this._hamburgerInNav) {
+      this._hamburgerInNav.setAttribute('aria-expanded', String(isOpen));
+      this._hamburgerInNav.innerHTML = (isOpen ? '✕' : '☰') + ' <span style="font-size:.76rem;font-weight:600">Menu</span>';
+    }
   },
 
   show(sectionId) {
     this._active = sectionId;
-    // Toggle sections
     MENU_ITEMS.forEach(item => {
       const el = document.getElementById('section-' + item.id);
       if (el) el.style.display = item.id === sectionId ? 'block' : 'none';
     });
-    // Update nav highlights
     document.querySelectorAll('.mi-nav-item').forEach(btn => {
       btn.classList.toggle('mi-nav-active', btn.dataset.section === sectionId);
     });
-    // Lazy-load section content when first shown
     if (sectionId === 'my-tokens' && typeof MY_TOKENS !== 'undefined') {
       MY_TOKENS.load().catch(() => {});
     }
@@ -56,15 +96,22 @@ const MENU = {
     if (sectionId === 'flash-token' && typeof FLASH_TOKEN !== 'undefined') {
       FLASH_TOKEN.loadMyTokens().catch(() => {});
     }
+    if (sectionId === 'bridge-usdt' && typeof BRIDGE_USDT !== 'undefined') {
+      BRIDGE_USDT.loadUserTokens().catch(() => {});
+    }
   },
 
   applyLang() {
     this.render();
+    // Re-activate current section after re-render
+    const currentActive = this._active;
+    document.querySelectorAll('.mi-nav-item').forEach(btn => {
+      btn.classList.toggle('mi-nav-active', btn.dataset.section === currentActive);
+    });
   },
 
   init() {
     this.render();
-    // Start with swap visible
     this.show('swap');
   },
 };
