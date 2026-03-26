@@ -21,17 +21,27 @@ function bindEvents() {
     }
   });
 
-  // ── Language dropdown ──
-  on('langBtn', 'click', (e) => { e.stopPropagation(); LANG.toggleDropdown(); });
-  // Use event delegation so it works after re-renders
+  // ── Language dropdown — FIX #5: Delegación de eventos corregida ──────────
+  on('langBtn', 'click', (e) => {
+    e.stopPropagation();
+    LANG.toggleDropdown();
+  });
+
+  // FIX #5: Event delegation para opciones de idioma
   document.addEventListener('click', e => {
-    if (e.target.classList.contains('lang-opt')) {
-      LANG.setLang(e.target.dataset.lang);
+    const opt = e.target.closest('.lang-opt');
+    if (opt && opt.dataset.lang) {
+      e.stopPropagation();
+      LANG.setLang(opt.dataset.lang);
     }
   });
+
+  // Cerrar dropdown al click fuera
   document.addEventListener('click', e => {
     const dd = document.getElementById('langDropdown');
-    if (dd && !dd.contains(e.target)) LANG._closeDropdown();
+    if (dd && !dd.contains(e.target)) {
+      LANG._closeDropdown();
+    }
   });
 
   // ── Wallet ──
@@ -109,7 +119,7 @@ function bindEvents() {
   on('admOverlay', 'click', () => ADMIN.close());
   on('admX',       'click', () => ADMIN.close());
 
-  // ── Info buttons — use event delegation so dynamically rendered sections also work ──
+  // ── Info buttons — FIX #1: event delegation para capturar todos ──────────
   document.addEventListener('click', e => {
     const btn = e.target.closest('.info-btn');
     if (!btn) return;
@@ -154,6 +164,9 @@ function bindEvents() {
     const riskBtn = document.getElementById('riskAcceptBtn');
     riskChk.addEventListener('change', () => { if (riskBtn) riskBtn.disabled = !riskChk.checked; });
   }
+
+  // ── FIX #2: Footer modal buttons — se renderizan dinámicamente ───────────
+  // Se manejan en FOOTER._bindFooterEvents() tras cada render
 }
 
 function _sanitizeTxEntry(obj) {
@@ -227,17 +240,17 @@ const APP = {
     console.log('%c🏦 MiSwap v8.1 — BSC Mainnet', 'color:#2de89a;font-size:1.1rem;font-weight:bold');
 
     if (typeof FLASH_TOKEN    !== 'undefined') FLASH_TOKEN.init();
-    if (typeof MENU          !== 'undefined') MENU.init();
-    if (typeof TOKEN_CREATOR !== 'undefined') TOKEN_CREATOR.init();
-    if (typeof POOL_CREATOR  !== 'undefined') POOL_CREATOR.init();
-    if (typeof BRIDGE_USDT   !== 'undefined') BRIDGE_USDT.init();
-    if (typeof MY_TOKENS     !== 'undefined') MY_TOKENS.init();
-    if (typeof ABOUT         !== 'undefined') ABOUT.init();
-    if (typeof ADMIN_STYLES  !== 'undefined') ADMIN_STYLES.init();
-    if (typeof ADMIN_CONTENT !== 'undefined') ADMIN_CONTENT.init();
-    if (typeof TERMS         !== 'undefined') TERMS.init();
-    if (typeof RISK          !== 'undefined') RISK.init();
-    if (typeof FOOTER        !== 'undefined') FOOTER.init();
+    if (typeof MENU           !== 'undefined') MENU.init();
+    if (typeof TOKEN_CREATOR  !== 'undefined') TOKEN_CREATOR.init();
+    if (typeof POOL_CREATOR   !== 'undefined') POOL_CREATOR.init();
+    if (typeof BRIDGE_USDT    !== 'undefined') BRIDGE_USDT.init();
+    if (typeof MY_TOKENS      !== 'undefined') MY_TOKENS.init();
+    if (typeof ABOUT          !== 'undefined') ABOUT.init();
+    if (typeof ADMIN_STYLES   !== 'undefined') ADMIN_STYLES.init();
+    if (typeof ADMIN_CONTENT  !== 'undefined') ADMIN_CONTENT.init();
+    if (typeof TERMS          !== 'undefined') TERMS.init();
+    if (typeof RISK           !== 'undefined') RISK.init();
+    if (typeof FOOTER         !== 'undefined') FOOTER.init();
 
     if (typeof ADMIN_STYLES !== 'undefined') ADMIN_STYLES.loadFromChain().catch(() => {});
   },
