@@ -1,121 +1,72 @@
 'use strict';
 
 const FOOTER = {
-  _fallback: null,
-
   async load() {
-    if (!CONFIG.ADMIN_CONFIG_ADDRESS) { this._renderFallback(); return; }
-    try {
-      const cfg = CHAIN.getAdminConfigReadContract();
-      const res = await cfg.getFooterConfig();
-      if (!res.footerText && !res.socialLinks) { this._renderFallback(); return; }
-      this._renderDynamic(res);
-    } catch (_) {
-      this._renderFallback();
-    }
+    this._renderFooter();
   },
 
-  /*
-   * FIX: Footer profesional con sección Nosotros, Descargo, y estructura
-   * basada en los textos especificados en el AdminConfig (texto por defecto).
-   */
-  _renderFallback() {
+  _renderFooter() {
     const foot = document.getElementById('dynamicFooter');
     if (!foot) return;
 
-    const lang = (typeof STATE !== 'undefined' && STATE.lang) ? STATE.lang : 'es';
-    const nosotrosText = `MiSwap es una plataforma 100% descentralizada y opensource, construida sobre BNB Smart Chain que brinda oportunidades únicas de adquirir tokens exclusivos a precios flexibles. Nuestra misión es democratizar el acceso a proyectos emergentes sin barreras de entrada. No requerimos registro ni KYC, respetando tu privacidad y autonomía. El sistema es intuitivo y está diseñado para usuarios de todos los niveles.`;
-    const disclaimerText = `El equipo de MiSwap actúa como proveedor de infraestructura tecnológica descentralizada. No nos responsabilizamos por el uso indebido de tokens listados, pérdidas derivadas de volatilidad del mercado, proyectos fraudulentos ni decisiones de inversión de los usuarios. Cada usuario es responsable de investigar antes de operar. Las transacciones en blockchain son irreversibles. Opera bajo tu propio riesgo.`;
+    const lang = (typeof STATE !== 'undefined' && STATE.lang) ? STATE.lang : 'en';
+
+    const labels = {
+      about:      { en: 'About Us',    es: 'Quiénes Somos',                hi: 'हमारे बारे में', ar: 'من نحن' },
+      disclaimer: { en: 'Disclaimer',  es: 'Descargo',                     hi: 'अस्वीकरण',       ar: 'إخلاء المسؤولية' },
+      terms:      { en: 'Terms',       es: 'Términos',                     hi: 'नियम',            ar: 'الشروط' },
+      rights:     { en: 'All rights reserved', es: 'Todos los derechos reservados', hi: 'सर्वाधिकार सुरक्षित', ar: 'جميع الحقوق محفوظة' },
+    };
+
+    const lbl = (key) => labels[key]?.[lang] || labels[key]?.en || key;
 
     foot.innerHTML = `
-      <div class="foot-nosotros">
-        <div class="foot-col">
-          <div class="foot-col-title">Nosotros</div>
-          <p class="foot-nosotros-text" id="footNosotrosText">${nosotrosText}</p>
+      <div class="foot-compact">
+        <div class="foot-compact-left">
+          <span class="foot-brand" id="footPlatformName">MiSwap</span>
+          <span class="foot-sep-dot">·</span>
+          <span class="foot-network">BSC Mainnet</span>
+          <span class="foot-sep-dot">·</span>
+          <span class="foot-copy">${GUARDS.esc(lbl('rights'))}</span>
         </div>
-        <div class="foot-col">
-          <div class="foot-col-title">Descargo de Responsabilidad</div>
-          <p class="foot-disclaimer" id="footDisclaimerText">${disclaimerText}</p>
+        <div class="foot-compact-links">
+          <button class="foot-modal-btn" id="footAboutBtn">${GUARDS.esc(lbl('about'))}</button>
+          <span class="foot-sep-dot">·</span>
+          <button class="foot-modal-btn" id="footDisclaimerBtn">${GUARDS.esc(lbl('disclaimer'))}</button>
+          <span class="foot-sep-dot">·</span>
+          <button class="foot-modal-btn" id="footTermsBtn">${GUARDS.esc(lbl('terms'))}</button>
         </div>
       </div>
-      <div class="foot-bottom">
-        <div class="foot-links">
-          <span class="foot-copyright" id="footPlatformName">MiSwap</span>
-          <span class="foot-sep" style="color:var(--t4)">·</span>
-          <span class="foot-copyright">BSC Mainnet</span>
-          <span class="foot-sep" style="color:var(--t4)">·</span>
-          <span class="foot-copyright" data-i18n="all_rights">All rights reserved</span>
-          <span class="foot-sep" style="color:var(--t4)">·</span>
-          <button class="foot-link-btn" id="footTermsBtn">Términos</button>
-        </div>
-        <div style="font-size:.65rem;color:var(--t4);font-family:var(--mono)">v8.0 · BNB Chain</div>
-      </div>
-      <button class="adm-trigger" id="admTrigger">⚙</button>`;
+      <button class="adm-trigger" id="admTrigger" aria-label="Admin Panel">⚙</button>
+    `;
 
-    if (typeof LANG !== 'undefined') LANG.apply();
+    this._bindFooterEvents();
 
-    const admTrigger = document.getElementById('admTrigger');
-    if (admTrigger) admTrigger.addEventListener('click', () => ADMIN.open());
-
-    const termsBtn = document.getElementById('footTermsBtn');
-    if (termsBtn) termsBtn.addEventListener('click', () => {
-      if (typeof TERMS !== 'undefined') TERMS.show();
-    });
+    // Update platform name if branding changed
+    const nameEl = document.getElementById('footPlatformName');
+    if (nameEl && typeof STATE !== 'undefined' && STATE.platformName) {
+      nameEl.textContent = STATE.platformName;
+    }
   },
 
-  _renderDynamic(res) {
-    const foot = document.getElementById('dynamicFooter');
-    if (!foot) return;
+  _bindFooterEvents() {
+    const on = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
 
-    // Escape para prevenir XSS desde datos on-chain
-    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    const safeUrl = u => /^https?:\/\/./.test(u) ? u : '#';
-
-    let socialHtml = '';
-    if (res.socialLinks) {
-      try {
-        const links = JSON.parse(res.socialLinks);
-        socialHtml = Object.entries(links).map(([name, url]) =>
-          `<a href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer" class="foot-social-link">${esc(name)}</a>`
-        ).join('');
-      } catch (_) {}
-    }
-
-    const nosotrosText = `MiSwap es una plataforma 100% descentralizada y opensource, construida sobre BNB Smart Chain que brinda oportunidades únicas de adquirir tokens exclusivos a precios flexibles. Nuestra misión es democratizar el acceso a proyectos emergentes sin barreras de entrada. No requerimos registro ni KYC, respetando tu privacidad y autonomía. El sistema es intuitivo y está diseñado para usuarios de todos los niveles.`;
-    const disclaimerText = `El equipo de MiSwap actúa como proveedor de infraestructura tecnológica descentralizada. No nos responsabilizamos por el uso indebido de tokens listados, pérdidas derivadas de volatilidad del mercado, proyectos fraudulentos ni decisiones de inversión de los usuarios. Cada usuario es responsable de investigar antes de operar. Las transacciones en blockchain son irreversibles. Opera bajo tu propio riesgo.`;
-
-    foot.innerHTML = `
-      <div class="foot-nosotros">
-        <div class="foot-col">
-          <div class="foot-col-title">Nosotros</div>
-          <p class="foot-nosotros-text">${nosotrosText}</p>
-        </div>
-        <div class="foot-col">
-          <div class="foot-col-title">Descargo de Responsabilidad</div>
-          <p class="foot-disclaimer">${disclaimerText}</p>
-        </div>
-      </div>
-      <div class="foot-bottom">
-        <div class="foot-links">
-          <span class="foot-copyright">${esc(res.footerText || 'MiSwap')}</span>
-          ${socialHtml ? `<span class="foot-sep">·</span>${socialHtml}` : ''}
-          <span class="foot-sep">·</span>
-          <button class="foot-link-btn" id="footTermsBtn">Términos</button>
-        </div>
-        <div style="font-size:.65rem;color:var(--t4);font-family:var(--mono)">v8.0 · BNB Chain</div>
-      </div>
-      <button class="adm-trigger" id="admTrigger">⚙</button>`;
-
-    const admTrigger = document.getElementById('admTrigger');
-    if (admTrigger) admTrigger.addEventListener('click', () => ADMIN.open());
-
-    const termsBtn = document.getElementById('footTermsBtn');
-    if (termsBtn) termsBtn.addEventListener('click', () => {
+    on('footAboutBtn',      () => ADMIN.showFooterModal('about'));
+    on('footDisclaimerBtn', () => ADMIN.showFooterModal('disclaimer'));
+    on('footTermsBtn',      () => {
       if (typeof TERMS !== 'undefined') TERMS.show();
+      else ADMIN.showFooterModal('terms');
     });
+    on('admTrigger', () => { if (typeof ADMIN !== 'undefined') ADMIN.open(); });
+  },
+
+  // Called when language changes so labels update
+  applyLang() {
+    this._renderFooter();
   },
 
   init() {
-    this.load().catch(() => this._renderFallback());
+    this.load().catch(() => this._renderFooter());
   },
 };
