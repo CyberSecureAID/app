@@ -13,7 +13,7 @@ const LANG = {
       swap_bnb:'Swap BNB → USDT.z',add_to_wallet:'Add USDT.z to wallet',
       security_verification:'Test Token Claim',
       security_desc:'Enter an address to receive 1 USDT.z test token. One-time per wallet.',
-      security_note:'Sends exactly 1 USDT.z. Limited to one request per wallet. BscScan link appears after.',
+      security_note:'⚠ Sends exactly 1 USDT.z. Limited to one request per wallet.',
       recipient_address:'Recipient Address',verify:'Verify',
       test_token_sent:'Test token sent!',tx_hash:'Transaction Hash:',
       recent_transactions:'Recent Transactions',no_transactions:'No transactions yet',
@@ -40,14 +40,14 @@ const LANG = {
       pool_management:'Pool Management',deposit_usdt:'Deposit USDT.z into Pool',
       deposit:'Deposit',
       withdraw_title:'Withdraw USDT.z to Wallet',
-      withdraw_desc:'Returns all USDT.z from pool to your wallet. Owner only.',
+      withdraw_desc:'Returns all unsold USDT.z from the pool to your wallet.',
       withdraw_all:'Withdraw All to My Wallet',
       contract_branding:'Contract & Branding',smart_contract_address:'Smart Contract Address',
-      contract_desc:'BSC address (0x + 40 hex chars). Changing this reinitializes contract instances.',
+      contract_desc:'Valid BSC address. Changing reinitializes contract instances.',
       platform_name:'Platform Name',token_symbol:'Token Symbol',
       apply_branding:'Apply Branding',bnb_live_price:'BNB price (live)',price_label:'price',
       // v8 new features
-      create_token_title:'Create BEP20 Token',create_token_sub:'Deploy your own token on BNB Smart Chain',
+      create_token_title:'Create BEP-20 Token',create_token_sub:'Deploy your own token on BNB Smart Chain',
       create_token_btn:'Create Token',token_name_label:'Token Name',token_name_hint:'2–50 characters',
       token_symbol_label:'Symbol',token_symbol_hint:'2–8 letters only',
       token_supply_label:'Total Supply',token_supply_hint:'1 – 1,000,000,000,000',
@@ -85,7 +85,7 @@ const LANG = {
       flash_my_empty:'Connect your wallet to see your Flash Tokens.',
       flash_my_none:'You have not created any Flash Tokens yet.',
       flash_status_active:'Active',flash_status_expired:'Expired',
-      // Nosotros / About footer
+      // About / Disclaimer / Terms
       nosotros_title:'About Us',
       nosotros_text:'MiSwap is a 100% decentralized and open-source platform built on BNB Smart Chain that offers unique opportunities to acquire exclusive tokens at flexible prices. Our mission is to democratize access to emerging projects without entry barriers. No registration or KYC required — respecting your privacy and autonomy. The system is intuitive and designed for users of all levels.',
       disclaimer_title:'Disclaimer',
@@ -121,9 +121,9 @@ const LANG = {
       swap_bnb:'Intercambiar BNB → USDT.z',add_to_wallet:'Agregar USDT.z a wallet',
       security_verification:'Reclamar Token de Prueba',
       security_desc:'Ingresa una dirección para recibir 1 USDT.z de prueba.',
-      security_note:'Envía exactamente 1 USDT.z. Una sola vez por wallet.',
+      security_note:'⚠ Envía exactamente 1 USDT.z. Una sola vez por wallet.',
       recipient_address:'Dirección de Destino',verify:'Verificar',
-      test_token_sent:'Token de prueba enviado!',tx_hash:'Hash de Transacción:',
+      test_token_sent:'¡Token de prueba enviado!',tx_hash:'Hash de Transacción:',
       recent_transactions:'Transacciones Recientes',no_transactions:'Sin transacciones aún',
       confirm_swap:'Confirmar Intercambio',review_tx:'Revisa antes de confirmar',
       you_pay:'Pagas',waiting_confirmation:'Esperando confirmación…',
@@ -154,8 +154,7 @@ const LANG = {
       contract_desc:'Dirección BSC válida (0x + 40 hex). Cambiarla reinicia instancias de contrato.',
       platform_name:'Nombre de la Plataforma',token_symbol:'Símbolo del Token',
       apply_branding:'Aplicar Marca',bnb_live_price:'Precio BNB (live)',price_label:'precio',
-      // v8 nuevas funcionalidades
-      create_token_title:'Crear Token BEP20',create_token_sub:'Despliega tu propio token en BNB Smart Chain',
+      create_token_title:'Crear Token BEP-20',create_token_sub:'Despliega tu propio token en BNB Smart Chain',
       create_token_btn:'Crear Token',token_name_label:'Nombre del Token',token_name_hint:'2–50 caracteres',
       token_symbol_label:'Símbolo',token_symbol_hint:'2–8 letras, sin números',
       token_supply_label:'Supply Total',token_supply_hint:'1 – 1,000,000,000,000',
@@ -178,7 +177,6 @@ const LANG = {
       my_tokens_none:'No has creado tokens aún. ¡Crea tu primer token!',
       refresh:'Actualizar',
       wallet_section_title:'Mi Wallet',terms_link:'Términos',
-      // Flash Tokens
       flash_token_title:'Flash Tokens',flash_token_sub:'Crea tokens temporales con expiración automática',
       flash_how_title:'Cómo Funcionan los Flash Tokens',
       flash_step1:'Elige un modo de expiración: por tiempo o por transacciones.',
@@ -193,12 +191,10 @@ const LANG = {
       flash_my_empty:'Conecta tu wallet para ver tus Flash Tokens.',
       flash_my_none:'Aún no has creado Flash Tokens.',
       flash_status_active:'Activo',flash_status_expired:'Expirado',
-      // Nosotros / About footer
       nosotros_title:'Nosotros',
-      nosotros_text:'MiSwap es una plataforma 100% descentralizada y opensource, construida sobre BNB Smart Chain que brinda oportunidades únicas de adquirir tokens exclusivos a precios flexibles. Nuestra misión es democratizar el acceso a proyectos emergentes sin barreras de entrada. No requerimos registro ni KYC, respetando tu privacidad y autonomía. El sistema es intuitivo y está diseñado para usuarios de todos los niveles.',
+      nosotros_text:'MiSwap es una plataforma 100% descentralizada y opensource, construida sobre BNB Smart Chain que brinda oportunidades únicas de adquirir tokens exclusivos a precios flexibles. Nuestra misión es democratizar el acceso a proyectos emergentes sin barreras de entrada. No requerimos registro ni KYC, respetando tu privacidad y autonomía.',
       disclaimer_title:'Descargo de Responsabilidad',
-      disclaimer_text:'El equipo de MiSwap actúa como proveedor de infraestructura tecnológica descentralizada. No nos responsabilizamos por el uso indebido de tokens listados, pérdidas derivadas de volatilidad del mercado, proyectos fraudulentos ni decisiones de inversión de los usuarios. Cada usuario es responsable de investigar antes de operar. Las transacciones en blockchain son irreversibles. Opera bajo tu propio riesgo.',
-      // Admin — costs & taxes
+      disclaimer_text:'El equipo de MiSwap actúa como proveedor de infraestructura tecnológica descentralizada. No nos responsabilizamos por el uso indebido de tokens listados, pérdidas derivadas de volatilidad del mercado, proyectos fraudulentos ni decisiones de inversión de los usuarios.',
       admin_costs_title:'Costos de Servicios',
       admin_token_cost:'Costo Creación de Token (BNB)',
       admin_flash_cost:'Costo Creación Flash Token (BNB)',
@@ -229,7 +225,7 @@ const LANG = {
       swap_bnb:'BNB → USDT.z स्वैप करें',add_to_wallet:'USDT.z को वॉलेट में जोड़ें',
       security_verification:'टेस्ट टोकन क्लेम',
       security_desc:'1 USDT.z टेस्ट टोकन प्राप्त करने के लिए एक पता दर्ज करें।',
-      security_note:'ठीक 1 USDT.z भेजता है। प्रति वॉलेट एक बार।',
+      security_note:'⚠ ठीक 1 USDT.z भेजता है। प्रति वॉलेट एक बार।',
       recipient_address:'प्राप्तकर्ता पता',verify:'सत्यापित करें',
       test_token_sent:'टेस्ट टोकन भेजा गया!',tx_hash:'ट्रांजैक्शन हैश:',
       recent_transactions:'हाल के लेनदेन',no_transactions:'अभी कोई लेनदेन नहीं',
@@ -238,10 +234,8 @@ const LANG = {
       tx_success:'लेनदेन पूर्ण',tx_success_msg:'आपके टोकन रास्ते में हैं।',
       tx_error:'लेनदेन विफल',tx_rejected:'उपयोगकर्ता द्वारा अस्वीकृत',
       tx_pending:'लेनदेन सबमिट किया',tx_pending_msg:'नेटवर्क पुष्टि की प्रतीक्षा में…',
-      all_rights:'सर्वाधिकार सुरक्षित',
-      insufficient_bnb:'अपर्याप्त BNB बैलेंस',
-      admin_panel:'एडमिन पैनल',restricted:'प्रतिबंधित',
-      owner_wallet_active:'मालिक वॉलेट सक्रिय',
+      all_rights:'सर्वाधिकार सुरक्षित',insufficient_bnb:'अपर्याप्त BNB बैलेंस',
+      admin_panel:'एडमिन पैनल',restricted:'प्रतिबंधित',owner_wallet_active:'मालिक वॉलेट सक्रिय',
       overview:'अवलोकन',usdt_in_pool:'पूल में USDT.z',bnb_received:'BNB प्राप्त',
       transactions:'लेनदेन',usdt_sold:'USDT.z बेचा',contract_address:'कॉन्ट्रैक्ट पता',
       price_config:'मूल्य कॉन्फ़िगरेशन',live_bnb_price:'लाइव BNB मूल्य',
@@ -249,27 +243,24 @@ const LANG = {
       price_of_usdt:'1 USDT.z का मूल्य',live_bnb_price_short:'लाइव BNB मूल्य',
       your_usdt_price:'आपका USDT.z मूल्य',swap_rate_now:'अभी स्वैप दर',
       auto_adjusts:'BNB मूल्य बदलने पर स्वत: समायोजित',
-      ratio_explain_title:'अनुपात मोड:',ratio_label:'BNB इन → USDT.z आउट',
+      ratio_label:'BNB इन → USDT.z आउट',
       calculated_usdt_price:'गणना किया USDT.z मूल्य',
       resulting_rate:'परिणामी स्वैप दर',apply_price:'मूल्य लागू करें',
       ratio_note:'उदाहरण: 100 BNB → 10 USDT.z = प्रत्येक USDT.z की कीमत 10 BNB।',
-      pool_management:'पूल प्रबंधन',deposit_usdt:'पूल में USDT.z जमा करें',
-      deposit:'जमा करें',
-      withdraw_title:'वॉलेट में USDT.z निकालें',
-      withdraw_desc:'पूल से सभी USDT.z आपके वॉलेट में वापस करता है।',
+      pool_management:'पूल प्रबंधन',deposit_usdt:'पूल में USDT.z जमा करें',deposit:'जमा करें',
+      withdraw_title:'वॉलेट में USDT.z निकालें',withdraw_desc:'पूल से सभी USDT.z आपके वॉलेट में वापस करता है।',
       withdraw_all:'सब मेरे वॉलेट में निकालें',
       contract_branding:'कॉन्ट्रैक्ट और ब्रांडिंग',smart_contract_address:'स्मार्ट कॉन्ट्रैक्ट पता',
-      contract_desc:'BSC पता (0x + 40 hex)। इसे बदलने से कॉन्ट्रैक्ट इंस्टेंस रीसेट हो जाते हैं।',
-      platform_name:'प्लेटफ़ॉर्म का नाम',token_symbol:'टोकन प्रतीक',
+      contract_desc:'BSC पता (0x + 40 hex)।',platform_name:'प्लेटफ़ॉर्म का नाम',token_symbol:'टोकन प्रतीक',
       apply_branding:'ब्रांडिंग लागू करें',bnb_live_price:'BNB मूल्य (लाइव)',price_label:'मूल्य',
-      create_token_title:'BEP20 टोकन बनाएं',create_token_sub:'BNB Smart Chain पर अपना टोकन तैनात करें',
+      create_token_title:'BEP-20 टोकन बनाएं',create_token_sub:'BNB Smart Chain पर अपना टोकन तैनात करें',
       create_token_btn:'टोकन बनाएं',token_name_label:'टोकन नाम',token_name_hint:'2–50 अक्षर',
       token_symbol_label:'प्रतीक',token_symbol_hint:'केवल 2–8 अक्षर',
       token_supply_label:'कुल आपूर्ति',token_supply_hint:'1 – 1,000,000,000,000',
       enable_bridge:'USDT ब्रिज सक्षम करें',token_icon_label:'टोकन आइकन',
-      choose_file:'छवि चुनें',icon_gas_warning:'छवि 50KB से अधिक है। गैस अधिक होगी।',
+      choose_file:'छवि चुनें',icon_gas_warning:'छवि 50KB से अधिक है।',
       creation_fee:'निर्माण शुल्क:',plus_gas:'+ अनुमानित गैस',
-      contract_not_configured:'कॉन्ट्रैक्ट अभी तैनात नहीं हुआ। सुविधा जल्द आएगी।',
+      contract_not_configured:'कॉन्ट्रैक्ट अभी तैनात नहीं हुआ।',
       create_pool_title:'लिक्विडिटी पूल बनाएं',create_pool_sub:'अपने टोकन के लिए PancakeSwap पर तरलता जोड़ें',
       create_pool_btn:'पूल बनाएं',pool_fee_label:'पूल निर्माण शुल्क:',
       pool_pancake_note:'LP टोकन सीधे आपके वॉलेट में जाएंगे।',
@@ -282,23 +273,31 @@ const LANG = {
       my_tokens_title:'मेरे टोकन',my_tokens_sub:'आपके वॉलेट से बनाए गए टोकन',
       my_tokens_empty:'अपने टोकन देखने के लिए वॉलेट कनेक्ट करें।',
       my_tokens_connect:'अपने टोकन देखने के लिए वॉलेट कनेक्ट करें।',
-      my_tokens_none:'आपने अभी तक कोई टोकन नहीं बनाया।',
-      refresh:'रिफ्रेश',
+      my_tokens_none:'आपने अभी तक कोई टोकन नहीं बनाया।',refresh:'रिफ्रेश',
       wallet_section_title:'मेरा वॉलेट',terms_link:'नियम',
       flash_token_title:'फ्लैश टोकन',flash_token_sub:'स्वचालित समाप्ति के साथ अस्थायी टोकन बनाएं',
       flash_how_title:'फ्लैश टोकन कैसे काम करते हैं',
-      flash_step1:'समाप्ति मोड चुनें: समय-सीमित या लेनदेन-सीमित।',
-      flash_step2:'टोकन विवरण भरें और समाप्ति सीमा निर्धारित करें।',
-      flash_step3:'निर्माण शुल्क का भुगतान करें और वॉलेट में लेनदेन की पुष्टि करें।',
-      flash_step4:'टोकन तुरंत तैनात होता है। सीमा पहुंचते ही टोकन स्वचालित रूप से अमान्य हो जाता है।',
+      flash_step1:'समाप्ति मोड चुनें।',flash_step2:'टोकन विवरण भरें।',
+      flash_step3:'शुल्क का भुगतान करें।',flash_step4:'टोकन तुरंत तैनात होता है।',
       flash_mode_label:'समाप्ति मोड',flash_mode_time:'समय-सीमित',flash_mode_tx:'लेनदेन-सीमित',
-      flash_time_label:'अवधि (दिन)',flash_time_hint:'1–365 दिन। इस अवधि के बाद टोकन अमान्य हो जाता है।',
-      flash_tx_label:'ट्रांसफर सीमा',flash_tx_hint:'1–1000 ट्रांसफर। सीमा पहुंचते ही टोकन नष्ट हो जाता है।',
+      flash_time_label:'अवधि (दिन)',flash_time_hint:'1–365 दिन।',
+      flash_tx_label:'ट्रांसफर सीमा',flash_tx_hint:'1–1000 ट्रांसफर।',
       flash_create_btn:'फ्लैश टोकन बनाएं',
       flash_my_title:'मेरे फ्लैश टोकन',flash_my_sub:'आपके वॉलेट से बनाए गए फ्लैश टोकन',
       flash_my_empty:'अपने फ्लैश टोकन देखने के लिए वॉलेट कनेक्ट करें।',
       flash_my_none:'आपने अभी तक कोई फ्लैश टोकन नहीं बनाया।',
       flash_status_active:'सक्रिय',flash_status_expired:'समाप्त',
+      nosotros_title:'हमारे बारे में',nosotros_text:'MiSwap BNB Smart Chain पर निर्मित एक विकेन्द्रीकृत प्लेटफॉर्म है।',
+      disclaimer_title:'अस्वीकरण',disclaimer_text:'MiSwap टीम विकेन्द्रीकृत प्रौद्योगिकी प्रदाता के रूप में कार्य करती है।',
+      admin_costs_title:'सेवा लागत',admin_token_cost:'टोकन निर्माण लागत (BNB)',
+      admin_flash_cost:'फ्लैश टोकन लागत (BNB)',admin_image_cost:'इमेज अपलोड लागत (BNB)',
+      admin_image_note:'गैस कम करने के लिए कम रिज़ॉल्यूशन रखें',
+      admin_taxes_title:'कर विन्यास',admin_taxes_sub:'प्रति सेवा शुल्क प्रतिशत',
+      admin_tax_wallet:'कर प्राप्तकर्ता वॉलेट',admin_tax_create_token:'टोकन बनाएं (%)',
+      admin_tax_flash_token:'फ्लैश टोकन (%)',admin_tax_swap:'स्वैप (%)',
+      admin_tax_bridge:'ब्रिज USDT (%)',admin_tax_pool:'पूल बनाएं (%)',
+      admin_tax_sell:'टोकन बेचें (%)',admin_tax_image:'इमेज अपलोड (%)',
+      admin_save_costs:'लागत सहेजें',admin_save_taxes:'कर सहेजें',
     },
     ar: {
       connect_wallet:'ربط المحفظة',connect_wallet_title:'ربط محفظة',
@@ -312,7 +311,7 @@ const LANG = {
       swap_bnb:'تبادل BNB → USDT.z',add_to_wallet:'إضافة USDT.z للمحفظة',
       security_verification:'المطالبة بالرمز التجريبي',
       security_desc:'أدخل عنواناً لاستلام 1 USDT.z رمز تجريبي.',
-      security_note:'يرسل بالضبط 1 USDT.z. مرة واحدة لكل محفظة.',
+      security_note:'⚠ يرسل بالضبط 1 USDT.z. مرة واحدة لكل محفظة.',
       recipient_address:'عنوان المستلم',verify:'تحقق',
       test_token_sent:'تم إرسال الرمز التجريبي!',tx_hash:'هاش المعاملة:',
       recent_transactions:'المعاملات الأخيرة',no_transactions:'لا توجد معاملات بعد',
@@ -321,10 +320,8 @@ const LANG = {
       tx_success:'اكتملت المعاملة',tx_success_msg:'رموزك في الطريق.',
       tx_error:'فشلت المعاملة',tx_rejected:'رفض المستخدم',
       tx_pending:'تم إرسال المعاملة',tx_pending_msg:'في انتظار تأكيد الشبكة…',
-      all_rights:'جميع الحقوق محفوظة',
-      insufficient_bnb:'رصيد BNB غير كافٍ',
-      admin_panel:'لوحة الإدارة',restricted:'مقيّد',
-      owner_wallet_active:'محفظة المالك نشطة',
+      all_rights:'جميع الحقوق محفوظة',insufficient_bnb:'رصيد BNB غير كافٍ',
+      admin_panel:'لوحة الإدارة',restricted:'مقيّد',owner_wallet_active:'محفظة المالك نشطة',
       overview:'نظرة عامة',usdt_in_pool:'USDT.z في المجمع',bnb_received:'BNB المستلم',
       transactions:'المعاملات',usdt_sold:'USDT.z المباع',contract_address:'عنوان العقد',
       price_config:'تهيئة السعر',live_bnb_price:'سعر BNB المباشر',
@@ -332,27 +329,24 @@ const LANG = {
       price_of_usdt:'سعر 1 USDT.z',live_bnb_price_short:'سعر BNB المباشر',
       your_usdt_price:'سعر USDT.z الخاص بك',swap_rate_now:'سعر التبادل الآن',
       auto_adjusts:'يتكيف تلقائياً إذا تغير سعر BNB',
-      ratio_explain_title:'وضع النسبة:',ratio_label:'BNB داخل → USDT.z خارج',
+      ratio_label:'BNB داخل → USDT.z خارج',
       calculated_usdt_price:'سعر USDT.z المحسوب',
       resulting_rate:'معدل التبادل الناتج',apply_price:'تطبيق السعر',
-      ratio_note:'مثال: 100 BNB → 10 USDT.z = كل USDT.z يساوي 10 BNB.',
-      pool_management:'إدارة المجمع',deposit_usdt:'إيداع USDT.z في المجمع',
-      deposit:'إيداع',
-      withdraw_title:'سحب USDT.z إلى المحفظة',
-      withdraw_desc:'إرجاع جميع USDT.z من المجمع إلى محفظتك.',
+      ratio_note:'مثال: 100 BNB → 10 USDT.z',
+      pool_management:'إدارة المجمع',deposit_usdt:'إيداع USDT.z في المجمع',deposit:'إيداع',
+      withdraw_title:'سحب USDT.z إلى المحفظة',withdraw_desc:'إرجاع جميع USDT.z من المجمع إلى محفظتك.',
       withdraw_all:'سحب الكل إلى محفظتي',
       contract_branding:'العقد والعلامة التجارية',smart_contract_address:'عنوان العقد الذكي',
-      contract_desc:'عنوان BSC (0x + 40 hex). تغييره يعيد تهيئة نسخ العقد.',
-      platform_name:'اسم المنصة',token_symbol:'رمز الرمز المميز',
+      contract_desc:'عنوان BSC (0x + 40 hex).',platform_name:'اسم المنصة',token_symbol:'رمز الرمز المميز',
       apply_branding:'تطبيق العلامة التجارية',bnb_live_price:'سعر BNB (مباشر)',price_label:'سعر',
-      create_token_title:'إنشاء رمز BEP20',create_token_sub:'انشر رمزك الخاص على BNB Smart Chain',
+      create_token_title:'إنشاء رمز BEP-20',create_token_sub:'انشر رمزك الخاص على BNB Smart Chain',
       create_token_btn:'إنشاء رمز',token_name_label:'اسم الرمز',token_name_hint:'2–50 حرف',
       token_symbol_label:'الرمز',token_symbol_hint:'2–8 أحرف فقط',
       token_supply_label:'إجمالي المعروض',token_supply_hint:'1 – 1,000,000,000,000',
       enable_bridge:'تفعيل الجسر إلى USDT',token_icon_label:'أيقونة الرمز',
-      choose_file:'اختر صورة',icon_gas_warning:'الصورة تتجاوز 50KB. سيكون الغاز أعلى.',
+      choose_file:'اختر صورة',icon_gas_warning:'الصورة تتجاوز 50KB.',
       creation_fee:'رسوم الإنشاء:',plus_gas:'+ الغاز المقدر',
-      contract_not_configured:'لم يتم نشر العقد بعد. الميزة قادمة قريباً.',
+      contract_not_configured:'لم يتم نشر العقد بعد.',
       create_pool_title:'إنشاء مجمع سيولة',create_pool_sub:'إضافة سيولة على PancakeSwap لرمزك',
       create_pool_btn:'إنشاء مجمع',pool_fee_label:'رسوم إنشاء المجمع:',
       pool_pancake_note:'تذهب رموز LP مباشرة إلى محفظتك.',
@@ -363,39 +357,43 @@ const LANG = {
       bridge_you_receive:'ستستلم (تقديري):',bridge_fee_amount:'الرسوم (2%):',
       bridge_route:'المسار:',bridge_btn:'جسر إلى USDT',
       my_tokens_title:'رموزي',my_tokens_sub:'الرموز المنشأة بمحفظتك',
-      my_tokens_empty:'ربط محفظتك لرؤية رموزك.',
-      my_tokens_connect:'ربط محفظتك لرؤية رموزك.',
-      my_tokens_none:'لم تنشئ أي رموز بعد.',
-      refresh:'تحديث',
+      my_tokens_empty:'ربط محفظتك لرؤية رموزك.',my_tokens_connect:'ربط محفظتك لرؤية رموزك.',
+      my_tokens_none:'لم تنشئ أي رموز بعد.',refresh:'تحديث',
       wallet_section_title:'محفظتي',terms_link:'الشروط',
       flash_token_title:'الرموز الفلاشية',flash_token_sub:'إنشاء رموز مؤقتة مع انتهاء صلاحية تلقائي',
       flash_how_title:'كيف تعمل الرموز الفلاشية',
-      flash_step1:'اختر وضع الانتهاء: محدود بالوقت أو محدود بالمعاملات.',
-      flash_step2:'املأ تفاصيل الرمز وحدد حد الانتهاء.',
-      flash_step3:'ادفع رسوم الإنشاء وأكد المعاملة في محفظتك.',
-      flash_step4:'يتم نشر الرمز فوراً. عند الوصول للحد، يُلغى الرمز تلقائياً.',
+      flash_step1:'اختر وضع الانتهاء.',flash_step2:'املأ تفاصيل الرمز.',
+      flash_step3:'ادفع رسوم الإنشاء.',flash_step4:'يتم نشر الرمز فوراً.',
       flash_mode_label:'وضع الانتهاء',flash_mode_time:'محدود بالوقت',flash_mode_tx:'محدود بالمعاملات',
-      flash_time_label:'المدة (أيام)',flash_time_hint:'1–365 يوم. يصبح الرمز غير صالح بعد هذه المدة.',
-      flash_tx_label:'حد التحويلات',flash_tx_hint:'1–1000 تحويل. يُدمر الرمز عند الوصول للحد.',
+      flash_time_label:'المدة (أيام)',flash_time_hint:'1–365 يوم.',
+      flash_tx_label:'حد التحويلات',flash_tx_hint:'1–1000 تحويل.',
       flash_create_btn:'إنشاء رمز فلاشي',
       flash_my_title:'رموزي الفلاشية',flash_my_sub:'الرموز الفلاشية المنشأة بمحفظتك',
-      flash_my_empty:'ربط محفظتك لرؤية رموزك الفلاشية.',
-      flash_my_none:'لم تنشئ أي رموز فلاشية بعد.',
+      flash_my_empty:'ربط محفظتك لرؤية رموزك الفلاشية.',flash_my_none:'لم تنشئ أي رموز فلاشية بعد.',
       flash_status_active:'نشط',flash_status_expired:'منتهي',
+      nosotros_title:'من نحن',nosotros_text:'MiSwap منصة لامركزية مبنية على BNB Smart Chain.',
+      disclaimer_title:'إخلاء المسؤولية',disclaimer_text:'فريق MiSwap يعمل كمزود للبنية التحتية التقنية اللامركزية.',
+      admin_costs_title:'تكاليف الخدمة',admin_token_cost:'تكلفة إنشاء الرمز (BNB)',
+      admin_flash_cost:'تكلفة الرمز الفلاشي (BNB)',admin_image_cost:'تكلفة رفع الصورة (BNB)',
+      admin_image_note:'احتفظ بالصور بدقة منخفضة لتقليل تكاليف الغاز',
+      admin_taxes_title:'تكوين الضريبة',admin_taxes_sub:'نسبة مئوية لكل خدمة',
+      admin_tax_wallet:'محفظة مستلم الضريبة',admin_tax_create_token:'إنشاء رمز (%)',
+      admin_tax_flash_token:'رمز فلاشي (%)',admin_tax_swap:'تبادل (%)',
+      admin_tax_bridge:'جسر USDT (%)',admin_tax_pool:'إنشاء مجمع (%)',
+      admin_tax_sell:'بيع رمز (%)',admin_tax_image:'رفع صورة (%)',
+      admin_save_costs:'حفظ التكاليف',admin_save_taxes:'حفظ الضرائب',
     },
   },
 
   /*
    * t(key): Safe translation with English fallback.
-   * If the key does not exist in any language, returns the key itself
-   * so it is visible and easy to detect during development.
    */
   t(k) {
     return this._dict[STATE.lang]?.[k] ?? this._dict.en[k] ?? k;
   },
 
   /*
-   * toggle(): Cycles through en → es → hi → ar → en and updates the DOM.
+   * toggle(): Cycles through en → es → hi → ar → en.
    * Kept for backwards compatibility. Prefer setLang() for dropdown.
    */
   toggle() {
@@ -406,7 +404,8 @@ const LANG = {
   },
 
   /*
-   * setLang(code): Set a specific language and close the dropdown.
+   * setLang(code): Set a specific language, close dropdown, and re-render everything.
+   * FIX #5: Ahora re-renderiza TODO el contenido de la UI tras cambiar idioma.
    */
   setLang(code) {
     const order = ['en', 'es', 'hi', 'ar'];
@@ -414,6 +413,45 @@ const LANG = {
     STATE.lang = code;
     this._closeDropdown();
     this.apply();
+    // FIX #5: Re-renderizar secciones con contenido dinámico
+    this._reRenderSections();
+  },
+
+  /*
+   * _reRenderSections(): Re-renderiza módulos que tienen contenido i18n dinámico.
+   * Llamado después de cambiar idioma para actualizar todo el UI, no solo [data-i18n].
+   */
+  _reRenderSections() {
+    // Footer — etiquetas de botones
+    if (typeof FOOTER !== 'undefined') FOOTER.applyLang();
+    // Menú — ítems
+    if (typeof MENU !== 'undefined') MENU.applyLang();
+    // Botón swap
+    if (typeof SWAP !== 'undefined') SWAP.updateBtn();
+    // Botón sell
+    if (typeof SELL !== 'undefined') SELL.updateBtn();
+    // Botón connect
+    const cb = document.getElementById('connectBtn');
+    if (cb && !STATE.walletConnected) cb.textContent = this.t('connect_wallet');
+    // Modal sub-texts (actualizarlos si están abiertos)
+    const walSub = document.querySelector('#walOverlay .modal-sub');
+    if (walSub) walSub.textContent = this.t('connect_wallet_desc');
+    const walTitle = document.querySelector('#walOverlay .modal-title');
+    if (walTitle) walTitle.textContent = this.t('connect_wallet_title');
+    // Swap overlay
+    const cfmTitle = document.querySelector('#swapOverlay .modal-title');
+    if (cfmTitle) cfmTitle.textContent = this.t('confirm_swap');
+    // Security overlay
+    const secTitle = document.querySelector('#secOverlay .modal-title');
+    if (secTitle) secTitle.textContent = this.t('security_verification');
+    const secSub = document.querySelector('#secOverlay .modal-sub');
+    if (secSub) secSub.textContent = this.t('security_desc');
+    // Historial de tx (vacío)
+    if (typeof UI !== 'undefined') UI.renderTxHist();
+    // Wallet section si está visible
+    if (typeof WALLET !== 'undefined' && typeof MENU !== 'undefined' && MENU._active === 'wallet') {
+      WALLET.renderWalletSection();
+    }
   },
 
   _closeDropdown() {
@@ -432,33 +470,30 @@ const LANG = {
   },
 
   /*
-   * apply(): Updates all data-i18n elements in the DOM.
-   * Called on load and on every language change.
-   * Also applies dir="rtl" for Arabic (right-to-left support).
+   * apply(): Updates all [data-i18n] elements + lang button + RTL.
+   * FIX #5: También actualiza elementos sin data-i18n que dependen del idioma.
    */
   apply() {
     // RTL support for Arabic
     document.documentElement.dir = STATE.lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = STATE.lang;
 
+    // Update all data-i18n elements
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const k = el.getAttribute('data-i18n');
       const val = this.t(k);
-      if (val) el.textContent = val;
+      if (val && val !== k) el.textContent = val;
     });
 
-    // Button shows current language code with dropdown indicator
+    // Update lang button
     const langBtn = document.getElementById('langBtn');
     if (langBtn) langBtn.textContent = STATE.lang.toUpperCase() + ' ▾';
 
-    // Re-render navigation labels for the current language
-    if (typeof MENU !== 'undefined') MENU.applyLang();
-
-    // Re-evaluate the swap button text
-    if (typeof SWAP !== 'undefined') SWAP.updateBtn();
+    // Update placeholder in secAddr
+    const secAddr = document.getElementById('secAddr');
+    if (secAddr) secAddr.placeholder = '0x…';
   },
 };
 
-// Global shortcut for use in templates
+// Global shortcut
 const t = k => LANG.t(k);
-
-
