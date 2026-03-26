@@ -8,10 +8,12 @@
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
 <title>MiSwap v8.0</title>
+<!-- FIX: Favicon 🏦 correctamente codificado -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<!-- FIX: Tipografía profesional — Outfit + DM Sans + IBM Plex Mono -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="./src/styles.css">
 </head>
 <body>
@@ -21,28 +23,37 @@
 <!-- ════ HEADER ════════════════════════════════════════════════════════════ -->
 <header>
   <div class="logo">
-    <span class="logo-icon">M</span>
+    <span class="logo-icon">🏦</span>
     <span class="logo-name" id="logoName">MiSwap</span>
   </div>
-  <div class="hdr-right">
+
+  <!-- FIX: Hamburger para móvil -->
+  <button class="hdr-hamburger" id="hdrHamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="hdr-right" id="hdrRight">
     <div class="bnb-tick" id="bnbTick">
       <span class="btlbl">BNB</span>
       <span class="btprice" id="btPrice">—</span>
       <span class="btchg" id="btChg"></span>
     </div>
     <div class="net-pill" id="netPill"><div class="nd"></div>BSC</div>
+    <!-- FIX: Dropdown de idioma con lista desplegable -->
     <div class="lang-dropdown" id="langDropdown">
       <button class="lang-btn" id="langBtn" aria-haspopup="listbox" aria-expanded="false">EN ▾</button>
       <div class="lang-menu" id="langMenu" role="listbox">
-        <button class="lang-opt" data-lang="en">🇺🇸 EN</button>
-        <button class="lang-opt" data-lang="es">🇪🇸 ES</button>
-        <button class="lang-opt" data-lang="hi">🇮🇳 HI</button>
-        <button class="lang-opt" data-lang="ar">🇸🇦 AR</button>
+        <button class="lang-opt" data-lang="en">🇺🇸 English</button>
+        <button class="lang-opt" data-lang="es">🇪🇸 Español</button>
+        <button class="lang-opt" data-lang="hi">🇮🇳 हिन्दी</button>
+        <button class="lang-opt" data-lang="ar">🇸🇦 العربية</button>
       </div>
     </div>
+    <!-- FIX: Chip de wallet con icono visible solo si está conectado -->
     <div class="wal-chip" id="walChip" style="display:none">
       <span class="wal-dot"></span>
-      <span id="walEmoji"></span>
+      <!-- FIX: walEmoji solo visible cuando wallet conectada -->
+      <span id="walEmoji" class="wal-icon"></span>
       <span class="wal-addr" id="walAddr">—</span>
       <span class="wal-bal" id="walBal">—</span>
     </div>
@@ -57,26 +68,19 @@
 <main>
   <div class="main-col">
 
-  <!-- ── Sección Swap (existente, envuelta en section-swap) ─────────────── -->
+  <!-- ── Sección Swap ─────────────────────────────────────────────────── -->
   <div id="section-swap">
-
-    <!-- ══════════════════════════════════════════════════════════════════
-         SWAP CARD — contiene tabs [Swap | Sell] al estilo PancakeSwap
-    ══════════════════════════════════════════════════════════════════ -->
     <div class="swap-card">
-
-      <!-- FIX BUG 7: Tab switcher Swap | Sell dentro de la card -->
       <div class="swap-card-top">
         <div class="swap-tabs">
-          <button class="swap-tab active" id="tabSwap">
-            <span>Swap</span>
-          </button>
+          <button class="swap-tab active" id="tabSwap"><span>Swap</span></button>
           <button class="swap-tab tab-disabled" id="tabSell">
             <span>Sell</span>
             <span class="sell-tab-badge-off" id="sellTabBadge">Off</span>
           </button>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
+          <!-- FIX: Botón Info discreto en sección Swap -->
           <button class="info-btn" data-info="swap">ℹ Info</button>
           <div class="slip-toggle" id="slipToggle">
             <span data-i18n="slippage">Slippage</span>: <strong id="slipDisp">0.1%</strong>
@@ -84,7 +88,6 @@
         </div>
       </div>
 
-      <!-- Panel slippage (compartido) -->
       <div class="slip-panel" id="slipPanel">
         <div style="font-size:.72rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.08em" data-i18n="slippage_tolerance">Slippage Tolerance</div>
         <div class="slip-row">
@@ -95,10 +98,8 @@
         </div>
       </div>
 
-      <!-- ════════════════════ PANEL SWAP ════════════════════════════ -->
+      <!-- PANEL SWAP -->
       <div id="panelSwap">
-
-        <!-- INPUT BNB -->
         <div class="tok-box">
           <div class="tok-top">
             <span class="tok-lbl" data-i18n="from">From</span>
@@ -117,7 +118,6 @@
 
         <div class="arr-wrap"><div class="arr-btn">↓</div></div>
 
-        <!-- OUTPUT TOKEN -->
         <div class="tok-box">
           <div class="tok-top">
             <span class="tok-lbl" data-i18n="you_receive">You receive</span>
@@ -129,7 +129,6 @@
           <div class="tok-usd" id="usdtzUsd"></div>
         </div>
 
-        <!-- Detalles colapsables -->
         <div class="details-toggle" id="detailsToggle">
           <div class="details-toggle-left">
             <span data-i18n="rate">Rate:</span>
@@ -147,24 +146,17 @@
           <div class="liq-track"><div class="liq-fill" id="liqFill" style="width:0%"></div></div>
         </div>
 
-        <!-- Botón swap -->
         <button id="swapBtn" disabled>
           <span data-i18n="connect_to_swap">Connect wallet to swap</span>
         </button>
 
-        <!-- Agregar token a wallet -->
         <button class="btn btn-gl btn-full add-tok-btn" id="addTokBtn">
           <span data-i18n="add_to_wallet">Add USDT.z to wallet</span>
         </button>
       </div><!-- /panelSwap -->
 
-      <!-- ════════════════════ PANEL SELL ════════════════════════════
-           FIX BUG 6 & 7: El panel de venta está dentro de la
-           misma card, oculto inicialmente, visible al activar el tab.
-      ══════════════════════════════════════════════════════════════ -->
+      <!-- PANEL SELL -->
       <div id="panelSell" style="display:none">
-
-        <!-- Estado bloqueado (buyback inactivo) -->
         <div class="sell-locked" id="sellLocked">
           <div class="sell-locked-ico">LOCKED</div>
           <div class="sell-locked-msg">
@@ -172,11 +164,7 @@
             This feature is enabled by administrators when the contract is ready to buy tokens.
           </div>
         </div>
-
-        <!-- Cuerpo activo (buyback activo) -->
         <div class="sell-body" id="sellBody" style="display:none">
-
-          <!-- INPUT TOKEN -->
           <div class="tok-box">
             <div class="tok-top">
               <span class="tok-lbl">You sell</span>
@@ -190,10 +178,7 @@
               <div class="tok-badge"><div class="ticon ticon-usdt">$</div><span id="sellTokBadge">USDT.z</span></div>
             </div>
           </div>
-
           <div class="arr-wrap"><div class="arr-btn">↓</div></div>
-
-          <!-- OUTPUT BNB -->
           <div class="tok-box">
             <div class="tok-top"><span class="tok-lbl">You receive (estimated)</span></div>
             <div class="tok-main">
@@ -201,60 +186,51 @@
               <div class="tok-badge"><div class="ticon ticon-bnb">B</div>BNB</div>
             </div>
           </div>
-
-          <!-- Detalles estimación -->
           <div class="sell-est-row" id="sellEstRow" style="display:none">
             <div>Buy price<br><span class="val" id="sellEstPrice">—</span></div>
             <div style="text-align:center">BNB liquidity<br><span class="val" id="sellEstLiq">—</span></div>
             <div style="text-align:right">Min. BNB out<br><span class="val" id="sellEstMin">—</span></div>
           </div>
-
-          <!-- Botón sell -->
           <button id="sellBtn" disabled>Connect wallet to sell</button>
-
           <div class="sell-approve-note" id="sellApproveNote">
             You need to approve the contract to spend your tokens first. Click Sell to approve.
           </div>
-        </div><!-- /sellBody -->
+        </div>
       </div><!-- /panelSell -->
-
     </div><!-- /swap-card -->
 
-    <!-- TEST TOKEN -->
     <button class="sec-btn" id="secBtn">
       <span data-i18n="security_verification">Test Token Claim</span>
     </button>
 
-    <!-- HISTORIAL -->
     <div class="tx-hist" id="txHistContainer">
       <div class="txh-title" data-i18n="recent_transactions">Recent Transactions</div>
       <div id="txHistList"><div class="tx-empty" data-i18n="no_transactions">No transactions yet</div></div>
     </div>
-
   </div><!-- /section-swap -->
 
-  <!-- ── Sección Crear Token ──────────────────────────────────────────────── -->
+  <!-- ── Sección Crear Token ─────────────────────────────────────────── -->
   <div id="section-create-token" style="display:none"></div>
 
-  <!-- ── Sección Crear Pool ───────────────────────────────────────────────── -->
+  <!-- ── Sección Crear Pool ──────────────────────────────────────────── -->
   <div id="section-create-pool" style="display:none"></div>
 
-  <!-- ── Sección Flash Tokens ─────────────────────────────────────────────── -->
+  <!-- ── Sección Flash Tokens ────────────────────────────────────────── -->
   <div id="section-flash-token" style="display:none"></div>
 
-  <!-- ── Sección Mis Tokens ───────────────────────────────────────────────── -->
+  <!-- ── Sección Mis Tokens ──────────────────────────────────────────── -->
   <div id="section-my-tokens" style="display:none"></div>
 
-  <!-- ── Sección Bridge USDT ──────────────────────────────────────────────── -->
+  <!-- ── Sección Bridge USDT ─────────────────────────────────────────── -->
   <div id="section-bridge-usdt" style="display:none"></div>
 
-  <!-- ── Sección Wallet ───────────────────────────────────────────────────── -->
+  <!-- ── Sección Wallet ──────────────────────────────────────────────── -->
   <div id="section-wallet" style="display:none"></div>
 
-  <!-- ── Sección About (accesible desde footer) ───────────────────────────── -->
+  <!-- ── Sección About ───────────────────────────────────────────────── -->
   <div id="section-about" style="display:none"></div>
 
-  <!-- ── Secciones Admin on-chain (accesibles desde panel admin) ──────────── -->
+  <!-- ── Secciones Admin on-chain ────────────────────────────────────── -->
   <div id="section-admin-styles"  style="display:none"></div>
   <div id="section-admin-content" style="display:none"></div>
 
@@ -263,7 +239,6 @@
 
 <!-- ════ FOOTER ════════════════════════════════════════════════════════════ -->
 <footer id="dynamicFooter">
-  <!-- Contenido generado dinámicamente por footer.js -->
   <div class="foot-main">
     <span id="footPlatformName">MiSwap</span>
     <span class="foot-sep">·</span>
@@ -274,7 +249,7 @@
   <button class="adm-trigger" id="admTrigger">⚙</button>
 </footer>
 
-<!-- ════ OVERLAY: TÉRMINOS Y CONDICIONES ════════════════════════════════════ -->
+<!-- ════ OVERLAYS ══════════════════════════════════════════════════════════ -->
 <div class="overlay" id="termsOverlay">
   <div class="modal">
     <button class="modal-x" id="termsCloseBtn">✕</button>
@@ -283,7 +258,6 @@
   </div>
 </div>
 
-<!-- ════ OVERLAY: AVISO DE RIESGO ═══════════════════════════════════════════ -->
 <div class="overlay" id="riskOverlay">
   <div class="modal">
     <button class="modal-x" id="riskCloseBtn">✕</button>
@@ -297,21 +271,35 @@
   </div>
 </div>
 
-<!-- ════ OVERLAY: CONNECT WALLET ═══════════════════════════════════════════ -->
+<!-- FIX: Modal de conexión de wallet con iconos visibles -->
 <div class="overlay" id="walOverlay">
   <div class="modal">
     <button class="modal-x">✕</button>
     <div class="modal-title" data-i18n="connect_wallet_title">Connect a Wallet</div>
     <div class="modal-sub" data-i18n="connect_wallet_desc">Choose your preferred wallet to continue</div>
-    <div class="wal-opt" id="walOptMetamask"><div class="woico">🦊</div><div><div class="woname">MetaMask</div><div class="wodesc">Browser extension &amp; mobile</div></div></div>
-    <div class="wal-opt" id="walOptTrust"><div class="woico">🛡️</div><div><div class="woname">Trust Wallet</div><div class="wodesc">Mobile &amp; browser extension</div></div></div>
-    <div class="wal-opt" id="walOptWC"><div class="woico">🔗</div><div><div class="woname">WalletConnect</div><div class="wodesc">300+ wallets — scan QR code</div></div></div>
-    <div class="wal-opt" id="walOptCoinbase"><div class="woico">🔵</div><div><div class="woname">Coinbase Wallet</div><div class="wodesc">Browser extension &amp; mobile</div></div></div>
-    <div class="wal-opt" id="walOptOKX"><div class="woico">⬛</div><div><div class="woname">OKX Wallet</div><div class="wodesc">Browser extension &amp; mobile</div></div></div>
+    <div class="wal-opt" id="walOptMetamask">
+      <div class="woico woico-metamask">🦊</div>
+      <div><div class="woname">MetaMask</div><div class="wodesc">Browser extension &amp; mobile</div></div>
+    </div>
+    <div class="wal-opt" id="walOptTrust">
+      <div class="woico woico-trust">🛡️</div>
+      <div><div class="woname">Trust Wallet</div><div class="wodesc">Mobile &amp; browser extension</div></div>
+    </div>
+    <div class="wal-opt" id="walOptWC">
+      <div class="woico woico-wc">🔗</div>
+      <div><div class="woname">WalletConnect</div><div class="wodesc">300+ wallets — scan QR code</div></div>
+    </div>
+    <div class="wal-opt" id="walOptCoinbase">
+      <div class="woico woico-coinbase">🔵</div>
+      <div><div class="woname">Coinbase Wallet</div><div class="wodesc">Browser extension &amp; mobile</div></div>
+    </div>
+    <div class="wal-opt" id="walOptOKX">
+      <div class="woico woico-okx">⬛</div>
+      <div><div class="woname">OKX Wallet</div><div class="wodesc">Browser extension &amp; mobile</div></div>
+    </div>
   </div>
 </div>
 
-<!-- ════ OVERLAY: CONFIRMACIÓN VENTA ═══════════════════════════════════════ -->
 <div class="overlay" id="sellOverlay">
   <div class="modal">
     <button class="modal-x" id="sellOverlayX">✕</button>
@@ -330,7 +318,6 @@
   </div>
 </div>
 
-<!-- ════ OVERLAY: CONFIRMACIÓN SWAP ════════════════════════════════════════ -->
 <div class="overlay" id="swapOverlay">
   <div class="modal">
     <button class="modal-x">✕</button>
@@ -351,7 +338,6 @@
   </div>
 </div>
 
-<!-- ════ OVERLAY: TEST TOKEN ═══════════════════════════════════════════════ -->
 <div class="overlay" id="secOverlay">
   <div class="modal">
     <button class="modal-x">✕</button>
@@ -374,7 +360,6 @@
   </div>
 </div>
 
-<!-- ════ OVERLAY: ACCESO DENEGADO ══════════════════════════════════════════ -->
 <div class="overlay" id="accessDeniedOverlay" style="align-items:center">
   <div class="access-modal">
     <div class="access-icon">🔒</div>
@@ -384,7 +369,7 @@
   </div>
 </div>
 
-<!-- ════ ADMIN PANEL (drawer lateral) ══════════════════════════════════════ -->
+<!-- ════ ADMIN PANEL ════════════════════════════════════════════════════════ -->
 <div class="adm-overlay" id="admOverlay"></div>
 <div class="adm-panel" id="admPanel">
   <div class="adm-hdr">
@@ -411,7 +396,7 @@
 
   <!-- ② PRECIO -->
   <div class="asec">
-    <div class="asec-title"><span class="asec-icon">💱</span> <span data-i18n="price_config">Price Configuration</span> <button class="info-btn" data-info="price">+info</button></div>
+    <div class="asec-title"><span class="asec-icon">💱</span> <span data-i18n="price_config">Price Configuration</span> <button class="info-btn" data-info="price">ℹ Info</button></div>
     <div class="afld">
       <label class="albl" data-i18n="live_bnb_price">Live BNB Price (real-time)</label>
       <div style="font-family:var(--mono);font-size:.88rem;color:var(--bnb);font-weight:700">$<span id="adminBnbPrice">—</span> <span style="font-size:.65rem;color:var(--t3)" data-i18n="fetching">Fetching…</span></div>
@@ -448,13 +433,12 @@
         <div class="pcr"><span class="pcrl" style="font-weight:700;color:var(--t2)" data-i18n="resulting_rate">Resulting swap rate</span><span class="pcrv ok"><strong>1 BNB = <span id="ratRate">—</span> USDT.z</strong></span></div>
       </div>
     </div>
-    <!-- FIX BUG 3: Botón ahora tiene ID para bindearse en app.js -->
     <button class="btn btn-ac btn-full mt12" id="adminApplyPriceBtn" style="padding:11px">✓ <span data-i18n="apply_price">Apply Price</span></button>
   </div>
 
   <!-- ③ POOL -->
   <div class="asec">
-    <div class="asec-title"><span class="asec-icon">💧</span> <span data-i18n="pool_management">Pool Management</span> <button class="info-btn" data-info="pool">+info</button></div>
+    <div class="asec-title"><span class="asec-icon">💧</span> <span data-i18n="pool_management">Pool Management</span> <button class="info-btn" data-info="pool">ℹ Info</button></div>
     <div class="afld">
       <label class="albl" data-i18n="deposit_usdt">Deposit USDT.z into Pool</label>
       <div class="deposit-bal-row">
@@ -474,14 +458,13 @@
       <div class="wd-title">⚠ <span data-i18n="withdraw_title">Withdraw USDT.z to Wallet</span></div>
       <div class="wd-desc" data-i18n="withdraw_desc">Returns all unsold USDT.z from the pool to your wallet.</div>
       <div class="wd-amt" id="wdAmtDisp">0.00 USDT.z available</div>
-      <!-- FIX BUG 3: Botón ahora tiene ID -->
       <button class="btn btn-er btn-full" id="adminWithdrawBtn" data-i18n="withdraw_all">Withdraw All to My Wallet</button>
     </div>
   </div>
 
   <!-- ④ CONTRATO Y MARCA -->
   <div class="asec">
-    <div class="asec-title"><span class="asec-icon">⚙</span> <span data-i18n="contract_branding">Contract & Branding</span> <button class="info-btn" data-info="branding">+info</button></div>
+    <div class="asec-title"><span class="asec-icon">⚙</span> <span data-i18n="contract_branding">Contract & Branding</span> <button class="info-btn" data-info="branding">ℹ Info</button></div>
     <div class="afld">
       <label class="albl" data-i18n="smart_contract_address">Smart Contract Address</label>
       <input type="text" class="ainp" id="brandContract" value="0x345Ccc716c6536d97D6Ef65D542303691a4400B6" placeholder="0x…">
@@ -496,7 +479,6 @@
       <label class="albl" data-i18n="token_symbol">Token Symbol</label>
       <input type="text" class="ainp" id="brandToken" value="USDT.z">
     </div>
-    <!-- FIX BUG 3: Botón ahora tiene ID -->
     <button class="btn btn-gl btn-full btn-sm mt8" id="adminBrandingBtn" data-i18n="apply_branding">Apply Branding</button>
   </div>
 
@@ -563,7 +545,7 @@
   </div>
 </div>
 
-<!-- ════ MODAL INFO ADMIN ═══════════════════════════════════════════════════ -->
+<!-- ════ MODAL INFO ═════════════════════════════════════════════════════════ -->
 <div class="info-modal-overlay" id="infoModalOverlay">
   <div class="info-modal">
     <button class="info-modal-x" id="infoModalX">✕</button>
@@ -572,64 +554,32 @@
   </div>
 </div>
 
-<!-- Stack de notificaciones -->
 <div id="notifStack"></div>
 
-<!-- ════ DEPENDENCIAS ═══════════════════════════════════════════════════════ -->
-<!--
-  WalletConnect CDN — carga con fallback automático.
-  
-  Problema raíz: Los CDNs fallan de formas distintas:
-  - jsdelivr: devuelve MIME 'text/plain' → navegador rechaza ejecutar
-  - unpkg con crossOrigin='anonymous': triggerea CORS check → falla si no hay header
-  - esm.run: sirve ES Module, no UMD → window.EthereumProvider no se registra
-  
-  Solución: cargar sin atributo crossOrigin (no se triggerea CORS check en <script>).
-  Si el primer CDN falla, el onerror lo detecta y prueba el siguiente.
-  Si todos fallan: WalletConnect no está disponible pero el app sigue funcionando
-  (wallet.js ya maneja this.case con el check typeof window.EthereumProvider).
--->
+<!-- ════ DEPENDENCIAS ══════════════════════════════════════════════════════ -->
 <script>
 (function(){
   var WC_VERSION = '2.13.0';
   var WC_PATH = '@walletconnect/ethereum-provider@' + WC_VERSION + '/dist/umd/index.min.js';
-  // Sin crossOrigin — evita el CORS check que bloquea unpkg y otros.
-  // El MIME check de strict mode solo falla si el servidor manda text/plain (jsdelivr bug).
-  // unpkg siempre sirve application/javascript correctamente.
   var CDNS = [
     'https://unpkg.com/' + WC_PATH,
     'https://cdn.jsdelivr.net/npm/' + WC_PATH,
   ];
   var idx = 0;
-
   function tryNext() {
-    if (idx >= CDNS.length) {
-      console.warn('[WC] Todos los CDNs fallaron — WalletConnect no disponible. El swap BNB sigue funcionando.');
-      return;
-    }
+    if (idx >= CDNS.length) { console.warn('[WC] Todos los CDNs fallaron'); return; }
     var s = document.createElement('script');
     s.src = CDNS[idx++];
-    // SIN crossOrigin: evita el CORS preflight que bloquea unpkg desde GitHub Pages
-    s.onerror = function() {
-      console.warn('[WC] CDN fallido, intentando siguiente…', s.src);
-      tryNext();
-    };
-    s.onload = function() {
-      if (typeof window.EthereumProvider === 'undefined') {
-        // El script cargó pero no registró EthereumProvider (p.ej. formato ESM)
-        console.warn('[WC] Script cargado pero EthereumProvider no disponible, probando siguiente…');
-        tryNext();
-      }
-    };
+    s.onerror = function() { tryNext(); };
+    s.onload = function() { if (typeof window.EthereumProvider === 'undefined') tryNext(); };
     document.head.appendChild(s);
   }
-
   tryNext();
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js" integrity="sha512-bLwLr3lzJN1cvtbClBMhKDyaD0uocWmphiqO8v0w3/z/XqUwzkM00gZq7BV3dQS9mQu0rarZMTsxlcnIHszElA==" crossorigin="anonymous"></script>
 
-<!-- ════ MÓDULOS ════════════════════════════════════════════════════════════ -->
+<!-- ════ MÓDULOS ═══════════════════════════════════════════════════════════ -->
 <script src="./src/config.js"></script>
 <script src="./src/guards.js"></script>
 <script src="./src/state.js"></script>
